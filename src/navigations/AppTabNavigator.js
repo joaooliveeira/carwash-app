@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
-
-import { View } from 'react-native';
-import { BottomNavigation, Provider } from 'react-native-paper';
-
+import { BottomNavigation, Provider, PaperProvider } from 'react-native-paper';
+import { AppStatusBar } from '../components/AppStatusBar';
+import { Header } from '../components/Header';
+import { Colors } from '../styles';
 import { ServiceScreen } from '../screens/Service/index';
 import { SearchScreen } from '../screens/Search/index';
+import { Expense } from '../screens/Expense/index';
 import { ClientScreen } from '../screens/Client/index';
 import { ReportScreen } from '../screens/Report';
-
-import Header from '../components/Header';
-import AppStatusBar from '../components/AppStatusBar';
-import { Colors } from '../styles';
 
 export default class AppTabNavigator extends Component {
   state = {
@@ -18,9 +15,9 @@ export default class AppTabNavigator extends Component {
     routes: [
       {
         key: 'service',
-        title: 'Serviço',
+        title: 'Serviços',
         icon: 'cart',
-        headerTitle: 'Serviço'
+        headerTitle: 'Serviços'
       },
       {
         key: 'search',
@@ -33,6 +30,12 @@ export default class AppTabNavigator extends Component {
         title: 'Clientes',
         icon: 'account',
         headerTitle: 'Clientes'
+      },
+      {
+        key: 'finance',
+        title: 'Gastos',
+        icon: "currency-usd",
+        headerTitle: 'Finanças'
       },
       {
         key: 'report',
@@ -48,18 +51,23 @@ export default class AppTabNavigator extends Component {
   _renderScene = BottomNavigation.SceneMap({
     service: () => <ServiceScreen {...this.props} />,
     search: () => <SearchScreen {...this.props} />,
+    finance: () => <Expense {...this.props} />,
     client: () => <ClientScreen {...this.props} />,
     report: () => <ReportScreen {...this.props} />,
   });
 
   render() {
+    // if (this.state.routes[this.state.index].key === 'service') {
+    //   const runningServices = () => this.props.navigation.navigate("RunningServices");
+    // }
     return (
-      <View style={{ flex: 1 }}>
+      <Provider style={{ flex: 1 }}>
         <AppStatusBar />
         <Header
+          {...this.props}
           title={this.state.routes[this.state.index].headerTitle}
-          settingsButton={() =>
-            this.props.navigation.navigate("SettingsScreen")
+          action={
+            this.state.routes[this.state.index].key == 'service' ? true : false
           }
         />
         <BottomNavigation
@@ -70,7 +78,7 @@ export default class AppTabNavigator extends Component {
           barStyle={{ backgroundColor: Colors.PRIMARY, height: 60 }}
           sceneAnimationEnabled={true}
         />
-      </View>
+      </Provider>
     );
   }
 }

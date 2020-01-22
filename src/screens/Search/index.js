@@ -43,7 +43,7 @@ export class SearchScreen extends React.Component {
     setTimeout(() => {
       this.setState({ loading: false });
       this.props.navigation.navigate('SearchResult');
-    }, 1500);
+    }, 1000);
   };
 
   render() {

@@ -1,14 +1,14 @@
 import React from "react";
 import { View } from "react-native";
+import { AppStatusBar } from "../../components/AppStatusBar";
 import LottieView from "lottie-react-native";
-import AppStatusBar from "../../components/AppStatusBar";
 import { Colors } from "../../styles";
 
 export default class Splash extends React.Component {
   componentDidMount = () => {
     setTimeout(() => {
       this.props.navigation.replace("AppTabNavigator");
-    }, 1500);
+    }, 1300);
   };
 
   render() {

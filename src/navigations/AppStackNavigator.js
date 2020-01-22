@@ -1,19 +1,20 @@
 import React, { Component } from "react";
+import { Provider } from "react-native-paper";
+
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
 
 import AppTabNavigator from "./AppTabNavigator";
 import Splash from "../screens/Splash/index";
 import SearchResult from "../screens/SearchResult/index";
-import SettingsScreen from "../screens/Settings/index"
-import { Provider } from "react-native-paper";
+import RunningServices from "../screens/RunningServices/index";
 
 const AppNavigator = createStackNavigator(
   {
     Splash,
     AppTabNavigator,
     SearchResult,
-    SettingsScreen
+    RunningServices,
   },
   {
     initialRouteName: "Splash",

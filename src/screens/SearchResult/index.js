@@ -9,7 +9,7 @@ import {
 } from "react-native-paper";
 import { DialogContent } from "../../components/DialogContent";
 import { MaterialDialog } from "react-native-material-dialog";
-import Header from "../../components/Header";
+import { Header } from "../../components/Header";
 import { Colors } from "../../styles";
 import { createPdfFile } from "../../utils/createPdfFile";
 import Table from "../../components/Table";

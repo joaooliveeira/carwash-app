@@ -9,8 +9,8 @@ export const FONT_WEIGHT_REGULAR = "400";
 export const FONT_WEIGHT_BOLD = "700";
 
 // FONT SIZE
-export const FONT_SIZE_TITLE = scaleFont(20);
-export const FONT_SIZE_TEXT = scaleFont(18);
+export const FONT_SIZE_TITLE = scaleFont(19);
+export const FONT_SIZE_TEXT = scaleFont(17);
 export const FONT_SIZE_SMALL_TEXT = scaleFont(15);
 
 // LINE HEIGHT
