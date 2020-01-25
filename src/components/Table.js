@@ -1,6 +1,6 @@
 import React from "react";
 import { DataTable } from "react-native-paper";
-import { ScrollView, Text } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { FONT_REGULAR } from "../styles/typography";
 import TableRow from "./TableRow";
 
@@ -37,7 +37,9 @@ export default function Table(props) {
 
       <ScrollView>
         {props.data.map((row, index) => (
-          <TableRow item={row} onPress={() => props.onPressRow(index)} />
+          <View>
+            <TableRow item={row} onPress={() => props.onPressRow(index)} />
+          </View>
         ))}
       </ScrollView>
     </DataTable>

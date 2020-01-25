@@ -20,9 +20,11 @@ export default function SearchScreen(props) {
   const [register, setRegister] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState({ startDate: false });
 
   const showPicker = picker => {
     if (picker == "startDate") {
+      setError({ startDate: false });
       setStartDatePicker(true);
     } else {
       setEndDatePicker(true);
@@ -30,25 +32,30 @@ export default function SearchScreen(props) {
   };
 
   const setDate = (event, date, picker) => {
-    if (picker == "startDate") {
+    if (picker === "startDate") {
+      setStartDatePicker(false);
       date = date || startDate;
       setStartDate(date);
-      setStartDatePicker(false);
     } else {
+      setEndDatePicker(false);
       date = date || endDate;
       setEndDate(date);
-      setEndDatePicker(false);
     }
   };
 
   const searchRequest = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      props.navigation.navigate('SearchResult');
-    }, 1200);
+    if (!startDate) {
+      setError({ startDate: true });
+    } else {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        props.navigation.navigate('SearchResult', {
+          period: { startDate, endDate: endDate || new Date(moment()) },
+        });
+      }, 1200);
+    }
   };
-
   return (
     <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
       {startDatePicker && (
@@ -77,7 +84,9 @@ export default function SearchScreen(props) {
               style={{
                 elevation: 5,
                 width: '50%',
-                marginRight: 15
+                marginRight: 15,
+                borderColor: error.startDate ? '#f44336' : 'transparent',
+                borderWidth: error.startDate ? 1 : 0
               }}
               onPress={() => showPicker("startDate")}
             >
@@ -112,7 +121,7 @@ export default function SearchScreen(props) {
             <TextInput
               label="Modelo"
               theme={themes.input}
-              style={[styles.input, {flex: 1}]}
+              style={[styles.input, { flex: 1 }]}
               error={false}
               value={carModel}
               onChangeText={text => setCarModel(text)}
