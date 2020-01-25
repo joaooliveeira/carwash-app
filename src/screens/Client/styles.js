@@ -1,6 +1,5 @@
-import {StyleSheet} from 'react-native';
-import { Colors } from '../../styles';
-import { FONT_SIZE_TEXT, FONT_FAMILY_REGULAR } from '../../styles/typography';
+import { StyleSheet } from 'react-native';
+import { FONT_FAMILY_REGULAR } from '../../styles/typography';
 
 export const styles = StyleSheet.create({
   container: {
@@ -9,21 +8,16 @@ export const styles = StyleSheet.create({
   card: {
     margin: 15,
     paddingHorizontal: 5,
+    borderRadius: 5,
   },
   input: {
     paddingVertical: 0,
     paddingHorizontal: 5,
-    fontSize: FONT_SIZE_TEXT,
-    fontFamily: FONT_FAMILY_REGULAR
+    fontFamily: FONT_FAMILY_REGULAR,
   },
-  dialog: {
-    position: 'absolute',
-    zIndex: 1,
-    height: "100%",
-    width: "100%",
+  buttonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 25,
   },
-  optionalFormView: {
-    marginTop: 20,
-    overflow: 'hidden'
-  }
 });

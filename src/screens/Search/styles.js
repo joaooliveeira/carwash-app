@@ -6,19 +6,21 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  search: {
+  card: {
     margin: 15,
+    padding: 5,
+    borderRadius: 5,
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
+    marginBottom: 5
   },
   input: {
     paddingVertical: 0,
     paddingHorizontal: 5,
-    fontSize: FONT_SIZE_TEXT,
     fontFamily: FONT_FAMILY_REGULAR
-  },
-  card: {
-    margin: 15,
-    padding: 5,
-    borderRadius: 5
   },
   filterTitle: {
     fontFamily: FONT_FAMILY_BOLD,

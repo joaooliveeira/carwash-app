@@ -1,22 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View } from "react-native";
 import { AppStatusBar } from "../../components/AppStatusBar";
 import LottieView from "lottie-react-native";
 import { Colors } from "../../styles";
 
-export default class Splash extends React.Component {
-  componentDidMount = () => {
+export default function Splash(props) {
+  useEffect(() => {
     setTimeout(() => {
-      this.props.navigation.replace("AppTabNavigator");
+      props.navigation.replace("AppTabNavigator");
     }, 1300);
-  };
+  });
 
-  render() {
-    return (
-      <View style={{ flex: 1, backgroundColor: Colors.PRIMARY }}>
-        <AppStatusBar />
-        <LottieView source={require("./splashAnimation.json")} autoPlay loop />
-      </View>
-    );
-  }
+  return (
+    <View style={{ flex: 1, backgroundColor: Colors.PRIMARY }}>
+      <AppStatusBar />
+      <LottieView source={require("./splashAnimation.json")} autoPlay loop />
+    </View>
+  );
 }

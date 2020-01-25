@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 
 import {
   ScrollView,
@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Keyboard,
   Animated,
-  Text,
+  Text
 } from 'react-native';
 import { TextInput, List, Card, Snackbar } from 'react-native-paper';
 import { SinglePickerMaterialDialog } from 'react-native-material-dialog';
@@ -14,302 +14,293 @@ import { TextInputMask } from 'react-native-masked-text';
 
 import { themes } from '../../assets/themes';
 import { styles } from './styles';
-import constants from '../../utils/constants';
 import moment from 'moment';
 import { Colors } from '../../styles';
-import ButtonContained from '../../components/ButtonCustom';
-import { FONT_TITLE, FONT_TEXT } from '../../styles/typography';
-import { WINDOW_HEIGHT } from '../../styles/mixins';
+import ButtonCustom from '../../components/ButtonCustom';
+import { FONT_REGULAR } from '../../styles/typography';
 
-export class ServiceScreen extends React.Component {
-  state = {
-    licensePlate: '',
-    carModel: '',
-    client: '',
-    washType: '',
-    value: '',
-    date: moment().format("DD/MM/YYYY"),
-    time: moment().format("HH:mm"),
-    cardNumber: '',
-    register: '',
-    kilometrage: '',
-    washTypesDialogIsVisible: false,
-    optionalDataExpanded: false,
-    optionalDataAnimation: new Animated.Value(56),
-    loading: false,
-    snackbar: false
+const washTypesData = [
+  { label: 'Ducha', value: 20 },
+  { label: 'Simples', value: 40 },
+  { label: 'Completa', value: 60 },
+  { label: 'Enceramento', value: 70 },
+  { label: 'Polimento', value: 150 },
+  { label: 'Higienização', value: 200 },
+];
+
+export default function ServiceScree(props) {
+  const [licensePlate, setLicensePlate] = useState('');
+  const [carModel, setCarModel] = useState('');
+  const [client, setClient] = useState('');
+  const [washType, setWashType] = useState('');
+  const [washTypesDialogIsVisible, setWashTypesDialogIsVisible] = useState(
+    false
+  );
+  const [value, setValue] = useState('');
+  const [date, setDate] = useState(moment().format("DD/MM/YYYY"));
+  const [time, setTime] = useState(moment().format("HH:mm"));
+  const [optionalDataExpanded, setOptionalDataExpanded] = useState(false);
+  const [optionalDataAnimation] = useState(new Animated.Value(56));
+  const [cardNumber, setCardNumber] = useState('');
+  const [register, setRegister] = useState('');
+  const [kilometrage, setKilometrage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [snackbar, setSnackbar] = useState(false);
+
+  const showDialog = () => {
+    Keyboard.dismiss();
+    setWashTypesDialogIsVisible(true);
   };
 
-  _showDialog = () => {
-    Keyboard.dismiss(), this.setState({ washTypesDialogIsVisible: true });
-  };
+  const hideDialog = () => setWashTypesDialogIsVisible(false);
 
-  _hideDialog = () => this.setState({ washTypesDialogIsVisible: false });
-
-  setWashType = result => {
+  const toSelectWashType = result => {
     if (result.selectedItem) {
-      this.setState({
-        washType: result.selectedItem.label,
-        value: result.selectedItem.price,
-        washTypesDialogIsVisible: false
-      });
+      setWashType(result.selectedItem.label);
+      setValue(result.selectedItem.price);
+      setWashTypesDialogIsVisible(false);
     } else {
-      this._hideDialog();
+      hideDialog();
     }
   };
 
-  saveServiceRequest = () => {
-    this.setState({ loading: true });
+  const saveServiceRequest = () => {
+    setLoading(true);
     Keyboard.dismiss();
     setTimeout(() => {
-      this.setState({ loading: false, snackbar: true });
-      this.clearAllInputs();
-    }, 1500);
+      setLoading(false);
+      setSnackbar(true);
+      clearAllInputs();
+    }, 1200);
   };
 
-  clearAllInputs = () => {
-    this.setState({
-      licensePlate: '',
-      carModel: '',
-      client: '',
-      washType: '',
-      value: '',
-      date: moment().format("DD/MM/YYYY"),
-      cardNumber: '',
-      register: '',
-      kilometrage: ""
-    });
+  const clearAllInputs = () => {
+    setLicensePlate('');
+    setCarModel('');
+    setClient('');
+    setWashType('');
+    setValue('');
+    setDate(moment().format("DD/MM/YYYY"));
+    setCardNumber('');
+    setRegister('');
+    setKilometrage('');
   };
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <ScrollView keyboardShouldPersistTaps="handled">
-          <Card elevation={2} style={styles.card}>
-            <Card.Title title="Criar novo serviço" />
-            <Card.Content>
-              <View style={{ flexDirection: 'row' }}>
-                <TextInput
-                  label="Placa"
-                  theme={themes.input}
-                  style={[styles.input, { width: 120, marginRight: 15 }]}
-                  error={false}
-                  value={this.state.licensePlate}
-                  onChangeText={text => this.setState({ licensePlate: text })}
-                  autoCapitalize="characters"
-                />
-
-                <TextInput
-                  label="Modelo"
-                  theme={themes.input}
-                  style={[styles.input, { flex: 1 }]}
-                  error={false}
-                  value={this.state.carModel}
-                  onChangeText={text => this.setState({ carModel: text })}
-                  autoCapitalize="characters"
-                />
-              </View>
+  return (
+    <View style={styles.container}>
+      <ScrollView keyboardShouldPersistTaps="handled">
+        <Card elevation={2} style={styles.card}>
+          <Card.Title title="Criar novo serviço" />
+          <Card.Content>
+            <View style={{ flexDirection: 'row' }}>
+              <TextInput
+                label="Placa"
+                theme={themes.input}
+                style={[styles.input, { width: 120, marginRight: 15 }]}
+                error={false}
+                value={licensePlate}
+                onChangeText={text => setLicensePlate(text)}
+                autoCapitalize="characters"
+              />
 
               <TextInput
-                label="Cliente"
+                label="Modelo"
+                theme={themes.input}
+                style={[styles.input, { flex: 1 }]}
+                error={false}
+                value={carModel}
+                onChangeText={text => setCarModel(text)}
+                autoCapitalize="characters"
+              />
+            </View>
+
+            <TextInput
+              label="Cliente"
+              theme={themes.input}
+              style={styles.input}
+              error={false}
+              value={client}
+              onChangeText={text => setClient(text)}
+              autoCapitalize="words"
+            />
+
+            {/* It takes to overlay the TextInput component. */}
+            <TouchableOpacity onPress={showDialog}>
+              <View style={styles.dialog} />
+              <TextInput
+                label="Tipo de lavagem"
                 theme={themes.input}
                 style={styles.input}
                 error={false}
-                value={this.state.client}
-                onChangeText={text => this.setState({ client: text })}
-                autoCapitalize="words"
+                value={washType}
+              />
+            </TouchableOpacity>
+
+            <SinglePickerMaterialDialog
+              title={'Selecione uma opção'}
+              items={washTypesData.map((row, index) => ({
+                value: index,
+                label: row.label,
+                price: row.value,
+              }))}
+              visible={washTypesDialogIsVisible}
+              selectedItem={washType}
+              colorAccent={Colors.PRIMARY}
+              cancelLabel="CANCELAR"
+              onCancel={hideDialog}
+              onOk={result => toSelectWashType(result)}
+            />
+
+            <View style={{ flexDirection: 'row' }}>
+              <TextInput
+                label="Valor"
+                theme={themes.input}
+                style={[styles.input, { width: 150, marginRight: 15 }]}
+                error={false}
+                value={value}
+                render={props => (
+                  <TextInputMask
+                    {...props}
+                    type={'money'}
+                    onChangeText={text => setValue(text)}
+                  />
+                )}
               />
 
-              {/* It takes to overlay the TextInput component. */}
-              <TouchableOpacity onPress={() => this._showDialog()}>
-                <View style={styles.dialog} />
-                <TextInput
-                  label="Tipo de lavagem"
-                  theme={themes.input}
-                  style={styles.input}
-                  error={false}
-                  value={this.state.washType}
-                />
-              </TouchableOpacity>
-
-              <SinglePickerMaterialDialog
-                title={'Selecione uma opção'}
-                items={constants.washTypesData.map((row, index) => ({
-                  value: index,
-                  label: row.label,
-                  price: row.value,
-                }))}
-                visible={this.state.washTypesDialogIsVisible}
-                selectedItem={this.state.washType}
-                colorAccent={Colors.PRIMARY}
-                cancelLabel="CANCELAR"
-                onCancel={() => this._hideDialog()}
-                onOk={result => this.setWashType(result)}
+              <TextInput
+                label="Data"
+                theme={themes.input}
+                style={[styles.input, { flex: 1 }]}
+                error={false}
+                value={date}
+                render={props => (
+                  <TextInputMask
+                    {...props}
+                    type={'datetime'}
+                    options={{
+                      format: 'DD/MM/YYYY'
+                    }}
+                    onChangeText={text => setDate(text)}
+                  />
+                )}
               />
+            </View>
 
-              <View style={{ flexDirection: 'row' }}>
-                <TextInput
-                  label="Valor"
-                  theme={themes.input}
-                  style={[styles.input, { width: 150, marginRight: 15 }]}
-                  error={false}
-                  value={this.state.value}
-                  onChangeText={text => this.setState({ value: text })}
-                  render={props => (
-                    <TextInputMask
-                      {...props}
-                      type={'money'}
-                      options={{
-                        precision: 2,
-                        separator: ',',
-                        delimiter: '.',
-                        unit: 'R$ ',
-                        suffixUnit: ''
-                      }}
-                    />
-                  )}
-                />
-
-                <TextInput
-                  label="Data"
-                  theme={themes.input}
-                  style={[styles.input, { flexGrow: 1 }]}
-                  error={false}
-                  value={this.state.date}
-                  render={props => (
-                    <TextInputMask
-                      {...props}
-                      type={'datetime'}
-                      options={{
-                        format: 'DD/MM/YYYY'
-                      }}
-                      onChangeText={text => this.setState({ date: text })}
-                    />
-                  )}
-                />
-              </View>
-
-              <Animated.View
-                style={{
-                  ...styles.optionalFormView,
-                  height: this.state.optionalDataAnimation
-                }}
-              >
-                <List.Accordion
-                  title="Dados adicionais"
-                  theme={themes.input}
-                  titleStyle={[
-                    FONT_TITLE,
-                    {
-                      color: !this.state.optionalDataExpanded
-                        ? 'rgba(0, 0, 0, 0.54)'
-                        : Colors.PRIMARY,
-                    },
-                  ]}
-                  style={{ padding: 0, margin: 0 }}
-                  left={props => (
-                    <List.Icon
-                      {...props}
-                      color={
-                        !this.state.optionalDataExpanded
-                          ? 'rgba(0, 0, 0, 0.54)'
-                          : Colors.PRIMARY
-                      }
-                      icon="plus-box-outline"
-                    />
-                  )}
-                  onPress={() => {
-                    Animated.timing(this.state.optionalDataAnimation, {
-                      toValue: this.state.optionalDataExpanded ? 56 : 273.1,
-                      duration: 500
-                    }).start();
-
-                    this.setState({
-                      optionalDataExpanded: !this.state.optionalDataExpanded,
-                    });
-                  }}
-                />
-
-                <View>
-                  <TextInput
-                    label="Matrícula"
-                    theme={themes.input}
-                    style={styles.input}
-                    value={this.state.register}
-                    onChangeText={text => this.setState({ register: text })}
-                    render={props => (
-                      <TextInputMask {...props} type={'only-numbers'} />
-                    )}
-                  />
-
-                  <TextInput
-                    label="Número do cartão"
-                    theme={themes.input}
-                    style={styles.input}
-                    value={this.state.cardNumber}
-                    onChangeText={text => this.setState({ cardNumber: text })}
-                    render={props => (
-                      <TextInputMask {...props} type={'only-numbers'} />
-                    )}
-                  />
-
-                  <TextInput
-                    label="Quilometragem"
-                    theme={themes.input}
-                    style={[styles.input, { FONT_TITLE }, { marginBottom: 25 }]}
-                    value={this.state.kilometrage}
-                    onChangeText={text => this.setState({ kilometrage: text })}
-                    render={props => (
-                      <TextInputMask {...props} type={'only-numbers'} />
-                    )}
-                  />
-                </View>
-              </Animated.View>
-            </Card.Content>
-
-            <View
+            <Animated.View
               style={{
-                flexDirection: "row",
-                justifyContent: "space-around",
-                marginVertical: 25,
+                ...styles.optionalFormView,
+                height: optionalDataAnimation
               }}
             >
-              <View style={{ flexGrow: 1, marginHorizontal: 15 }}>
-                <ButtonContained
-                  mode="text"
-                  onPress={() => this.clearAllInputs()}
-                  label="LIMPAR"
-                />
-              </View>
+              <List.Accordion
+                title="Dados adicionais"
+                theme={themes.input}
+                titleStyle={{
+                  color: !optionalDataExpanded
+                    ? 'rgba(0, 0, 0, 0.54)'
+                    : Colors.PRIMARY,
+                }}
+                style={{ padding: 0, margin: 0 }}
+                left={props => (
+                  <List.Icon
+                    {...props}
+                    color={
+                      !optionalDataExpanded
+                        ? 'rgba(0, 0, 0, 0.54)'
+                        : Colors.PRIMARY
+                    }
+                    icon="plus-box-outline"
+                  />
+                )}
+                onPress={() => {
+                  Animated.timing(optionalDataAnimation, {
+                    toValue: optionalDataExpanded ? 56 : 273.1,
+                    duration: 500
+                  }).start();
 
-              <View style={{ flexGrow: 1, marginRight: 15 }}>
-                <ButtonContained
-                  icon="content-save"
-                  mode="contained"
-                  loading={this.state.loading}
-                  onPress={() => this.saveServiceRequest()}
-                  label="SALVAR"
+                  setOptionalDataExpanded(!optionalDataExpanded);
+                }}
+              />
+
+              <View>
+                <TextInput
+                  label="Matrícula"
+                  theme={themes.input}
+                  style={styles.input}
+                  render={props => (
+                    <TextInputMask
+                      {...props}
+                      type={'only-numbers'}
+                      value={register}
+                      onChangeText={text => setRegister(text)}
+                    />
+                  )}
+                />
+
+                <TextInput
+                  label="Número do cartão"
+                  theme={themes.input}
+                  style={styles.input}
+                  value={cardNumber}
+                  render={props => (
+                    <TextInputMask
+                      {...props}
+                      type={'only-numbers'}
+                      onChangeText={text => setCardNumber(text)}
+                    />
+                  )}
+                />
+
+                <TextInput
+                  label="Quilometragem"
+                  theme={themes.input}
+                  style={[styles.input, { marginBottom: 25 }]}
+                  value={kilometrage}
+                  render={props => (
+                    <TextInputMask
+                      {...props}
+                      type={'only-numbers'}
+                      onChangeText={text => setKilometrage(text)}
+                    />
+                  )}
                 />
               </View>
+            </Animated.View>
+          </Card.Content>
+
+          <View style={styles.buttonsContainer}>
+            <View style={{ flexGrow: 1, marginHorizontal: 15 }}>
+              <ButtonCustom
+                mode="text"
+                onPress={clearAllInputs}
+                label="LIMPAR"
+              />
             </View>
-          </Card>
-        </ScrollView>
 
-        <Snackbar
-          visible={this.state.snackbar}
-          style={{ flex: 1, position: 'relative' }}
-          onDismiss={() => this.setState({ snackbar: false })}
-          duration={5000}
-          action={{
-            label: "OK",
-            onPress: () => {
-              this.setState({ snackbar: false });
-            }
-          }}
-        >
-          <Text style={FONT_TEXT}>Serviço registrado com sucesso.</Text>
-        </Snackbar>
-      </View>
-    );
-  }
+            <View style={{ flexGrow: 1, marginRight: 15 }}>
+              <ButtonCustom
+                icon="content-save"
+                mode="contained"
+                loading={loading}
+                onPress={saveServiceRequest}
+                label="SALVAR"
+              />
+            </View>
+          </View>
+        </Card>
+      </ScrollView>
+
+      <Snackbar
+        visible={snackbar}
+        onDismiss={() => setSnackbar(false)}
+        duration={5000}
+        action={{
+          label: "OK",
+          onPress: () => setSnackbar(false)
+        }}
+      >
+        <Text style={FONT_REGULAR}>Serviço registrado com sucesso.</Text>
+      </Snackbar>
+    </View>
+  );
 }

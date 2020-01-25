@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Dimensions, ScrollView } from 'react-native';
+import { Dimensions, ScrollView } from 'react-native';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 import { Card, Divider } from 'react-native-paper';
 
@@ -22,8 +22,8 @@ export const ReportScreen = () => {
           Math.random() * 1000,
           Math.random() * 1000,
         ],
-        strokeWidth: 3,
-        color: (opacity = 1) => `rgba(51, 105, 30, ${opacity})`,
+        strokeWidth: 4,
+        color: (opacity = 1) => `rgba(1,87,155, ${opacity})`,
       },
       {
         data: [
@@ -40,7 +40,7 @@ export const ReportScreen = () => {
           Math.random() * 1000,
           Math.random() * 1000,
         ],
-        strokeWidth: 3,
+        strokeWidth: 4,
         color: (opacity = 1) => `rgba(191,54,12, ${opacity})`,
       },
     ],
@@ -110,7 +110,7 @@ export const ReportScreen = () => {
         <Card
           style={{ margin: 10, alignItems: 'center', padding: 5, elevation: 5 }}
         >
-          <Card.Title title="Lucro e dívida / mês" />
+          <Card.Title title="Lucro bruto e despesa / mês" />
           <LineChart
             data={dataLine}
             width={Dimensions.get('window').width - 40}
@@ -118,12 +118,12 @@ export const ReportScreen = () => {
             fromZero={true}
             yAxisLabel={'R$ '}
             chartConfig={{
-              backgroundGradientFrom: '#c5e1a5',
+              backgroundGradientFrom: '#ffffff',
               backgroundGradientFromOpacity: 0,
-              backgroundGradientTo: '#33691e',
+              backgroundGradientTo: '#ffffff',
               backgroundGradientToOpacity: 0.5,
               decimalPlaces: 0, // optional, defaults to 2dp
-              color: (opacity = 1) => `rgba(51, 105, 30, ${opacity})`,
+              color: (opacity = 1) => `rgba(158,158,158, ${opacity})`,
             }}
             style={{
               marginTop: 10,
@@ -134,26 +134,24 @@ export const ReportScreen = () => {
 
           <Divider style={{ borderTopWidth: 0.1, marginBottom: 10 }} />
 
-          <Card.Title title="Média: lavagens / dia da semana" />
+          <Card.Title title="Média de lavagens / dia da semana" />
           <BarChart
-            style={dataBar}
             data={dataBar}
             fromZero={true}
             width={Dimensions.get('window').width - 40}
             height={220}
             chartConfig={{
-              backgroundGradientFrom: '#81d4fa',
+              backgroundGradientFrom: '#ffffff',
               backgroundGradientFromOpacity: 0,
-              backgroundGradientTo: '#01579b',
+              backgroundGradientTo: '#ffffff',
               backgroundGradientToOpacity: 0.5,
               color: (opacity = 1) => `rgba(1, 87, 155, ${opacity})`,
-              decimalPlaces: 0,
               barPercentage: 0.6,
             }}
             style={{ borderRadius: 10, marginTop: 10, marginBottom: 30 }}
           />
           <Divider style={{ borderTopWidth: 0.1, marginBottom: 10 }} />
-          <Card.Title title="Relação: tipo de lavagem / total" />
+          <Card.Title title="Tipo de lavagem / total" />
           <PieChart
             data={dataPie}
             width={Dimensions.get('window').width - 40}
@@ -165,7 +163,6 @@ export const ReportScreen = () => {
               backgroundGradientTo: '#08130D',
               backgroundGradientToOpacity: 0.5,
               color: (opacity = 0) => "rgba(26, 89, 146, 1)",
-              barPercentage: 0.5,
             }}
             accessor="population"
             backgroundColor="transparent"

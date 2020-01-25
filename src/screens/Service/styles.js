@@ -1,6 +1,5 @@
 import {StyleSheet} from 'react-native';
-import { Colors } from '../../styles';
-import { FONT_SIZE_TEXT, FONT_FAMILY_REGULAR } from '../../styles/typography';
+import {  FONT_FAMILY_REGULAR } from '../../styles/typography';
 
 export const styles = StyleSheet.create({
   container: {
@@ -9,11 +8,11 @@ export const styles = StyleSheet.create({
   card: {
     margin: 15,
     paddingHorizontal: 5,
+    borderRadius: 5,
   },
   input: {
     paddingVertical: 0,
     paddingHorizontal: 5,
-    fontSize: FONT_SIZE_TEXT,
     fontFamily: FONT_FAMILY_REGULAR
   },
   dialog: {
@@ -25,5 +24,10 @@ export const styles = StyleSheet.create({
   optionalFormView: {
     marginTop: 20,
     overflow: 'hidden'
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginVertical: 25,
   }
 });

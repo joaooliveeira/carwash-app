@@ -1,7 +1,7 @@
 import * as React from "react";
 import { TextInput } from "react-native-paper";
 import { themes } from "../assets/themes";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { styles } from "../screens/Service/styles";
 import { TextInputMask } from "react-native-masked-text";
 import { WINDOW_WIDTH } from "../styles/mixins";

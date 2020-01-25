@@ -1,18 +1,35 @@
 import React from "react";
-import { Appbar } from "react-native-paper";
+import { Appbar, Badge } from "react-native-paper";
 import { Colors } from "../styles";
 import { FONT_TITLE } from "../styles/typography";
+import { View } from "react-native";
 
 export const Header = props => {
   return (
     <Appbar.Header style={{ backgroundColor: Colors.PRIMARY }}>
       {props.goBack && <Appbar.BackAction onPress={props.goBack} />}
       <Appbar.Content title={props.title} titleStyle={FONT_TITLE} />
-      {props.action && (
+      {props.runningService && (
+        <View>
+          <Appbar.Action
+            icon="playlist-check"
+            color="white"
+            animated={true}
+            size={32}
+            onPress={() => props.navigation.navigate("RunningServices")}
+          />
+          <Badge
+            style={{ position: "absolute", top: 17, right: 20 }}
+            size={9}
+          />
+        </View>
+      )}
+      {props.share && (
         <Appbar.Action
-          icon="playlist-check"
-          size={32}
-          onPress={() => props.navigation.navigate("RunningServices")}
+          icon="share-variant"
+          color="white"
+          animated={true}
+          onPress={() => props.onPress()}
         />
       )}
     </Appbar.Header>

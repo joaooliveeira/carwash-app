@@ -6,7 +6,7 @@ const guidelineBaseWidth = 375;
 
 export const scaleSize = size => (WINDOW_WIDTH / guidelineBaseWidth) * size;
 
-export const scaleFont = size => size * PixelRatio.getFontScale();
+export const scaleFont = size => size / PixelRatio.getFontScale();
 
 function dimensions(top, right = top, bottom = top, left = right, property) {
   let styles = {};
