@@ -15,6 +15,7 @@
     "@react-navigation/native": "^3.6.2",
     "@react-navigation/native-stack": "^5.0.0-alpha.24",
     "@react-navigation/stack": "^5.0.0-alpha.58",
+    "fast-sort": "^2.0.1",
     "install": "^0.13.0",
     "lottie-react-native": "^3.3.2",
     "moment": "^2.24.0",

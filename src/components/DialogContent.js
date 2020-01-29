@@ -18,9 +18,10 @@ export const DialogContent = props => (
       <TextInput
         label="Placa"
         theme={themes.input}
-        style={[styles.input, { width: 120, marginRight: 15 }]}
+        style={[styles.input, { width: 130, marginRight: 15 }]}
         error={false}
         value={props.serviceDetails.licensePlate}
+        underlineColor="transparent"
         editable={false}
       />
 
@@ -31,6 +32,7 @@ export const DialogContent = props => (
         error={false}
         selection={{ start: 0 }}
         value={props.serviceDetails.carModel}
+        underlineColor="transparent"
         editable={false}
       />
     </View>
@@ -42,6 +44,7 @@ export const DialogContent = props => (
       error={false}
       selection={{ start: 0 }}
       value={props.serviceDetails.client}
+      underlineColor="transparent"
       editable={false}
     />
 
@@ -52,6 +55,7 @@ export const DialogContent = props => (
       error={false}
       selection={{ start: 0 }}
       value={props.serviceDetails.washType}
+      underlineColor="transparent"
       editable={false}
     />
 
@@ -59,9 +63,10 @@ export const DialogContent = props => (
       <TextInput
         label="Valor"
         theme={themes.input}
-        style={[styles.input, { width: 150, marginRight: 15 }]}
+        style={[styles.input, { width: 130, marginRight: 15 }]}
         error={false}
         editable={false}
+        underlineColor="transparent"
         value={props.serviceDetails.value.toString()}
         render={props => (
           <TextInputMask
@@ -84,6 +89,7 @@ export const DialogContent = props => (
         style={[styles.input, { flexGrow: 1 }]}
         error={false}
         editable={false}
+        underlineColor="transparent"
         value={props.serviceDetails.date}
         render={props => (
           <TextInputMask

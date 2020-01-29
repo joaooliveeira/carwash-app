@@ -53,7 +53,7 @@ export default function SearchScreen(props) {
         props.navigation.navigate('SearchResult', {
           period: { startDate, endDate: endDate || new Date(moment()) },
         });
-      }, 1200);
+      }, 100);
     }
   };
   return (
