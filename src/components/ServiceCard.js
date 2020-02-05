@@ -12,7 +12,7 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-export default function ServiceCard(item) {
+export default function ServiceCard(props) {
   const [cardExpanded, setCardExpanded] = useState(false);
   const [checked, setChecked] = useState(false);
 
@@ -25,7 +25,7 @@ export default function ServiceCard(item) {
 
   const styles = {
     card: {
-      marginVertical: 3,
+      marginTop: 6,
       marginHorizontal: 10,
       paddingVertical: 5,
       borderRadius: 5,
@@ -45,25 +45,25 @@ export default function ServiceCard(item) {
       <View style={styles.cardContainer}>
         <View style={styles.checkbox}>
           <Checkbox
-            status={checked ? 'checked' : 'unchecked'}
+            status={props.checked || checked ? 'checked' : 'unchecked'}
             color={Colors.PRIMARY}
             onPress={() => setChecked(!checked)}
           />
         </View>
 
         <View style={{ width: '32%' }}>
-          <InfoText label="Modelo" text={item.carModel} />
-          {cardExpanded && <InfoText label="Cliente" text={item.client} />}
+          <InfoText label="Modelo" text={props.item.carModel} />
+          {cardExpanded && <InfoText label="Cliente" text={props.item.client} />}
         </View>
 
         <View style={{ width: '30%' }}>
-          <InfoText label="Placa" text={item.licensePlate} />
-          {cardExpanded && <InfoText label="Data" text={item.date} />}
+          <InfoText label="Placa" text={props.item.licensePlate} />
+          {cardExpanded && <InfoText label="Data" text={props.item.date} />}
         </View>
 
         <InfoText
           label="Valor"
-          text={formatValue(item.value.toString())}
+          text={formatValue(props.item.value.toString())}
           styleView={{ alignSelf: 'flex-start' }}
         />
       </View>

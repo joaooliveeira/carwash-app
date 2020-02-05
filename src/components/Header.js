@@ -32,6 +32,15 @@ export const Header = props => {
           onPress={() => props.onPress()}
         />
       )}
+
+      {props.done && (
+        <Appbar.Action
+          icon="check"
+          color="white"
+          animated={true}
+          onPress={() => console.log("Action done pressed")}
+        />
+      )}
     </Appbar.Header>
   );
 };

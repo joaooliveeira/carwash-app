@@ -1,26 +1,27 @@
-import React, { useMemo } from 'react';
-import { View, Text } from "react-native";
+import React, { useMemo } from "react";
+import { View, Text } from 'react-native';
+import { TextInputMask } from "react-native-masked-text";
 
 const styles = {
   container: {
-    flexGrow: 1,
+    width: '45%',
     height: 55,
     paddingHorizontal: 5,
-    justifyContent: 'center'
+    justifyContent: "center"
   },
   topText: {
     fontSize: 12,
-    color: 'rgba(0, 0, 0, 0.54)',
-    textAlignVertical: 'center',
-    textAlign: 'left'
+    color: "rgba(0, 0, 0, 0.54)",
+    textAlignVertical: "center",
+    textAlign: "left"
   },
   bottomText: {
     fontSize: 16,
-    color: "#000000",
-    textAlignVertical: 'center',
-    textAlign: 'left',
-    height: 30,
-  },
+    color: '#000000',
+    textAlignVertical: "center",
+    textAlign: "left",
+    height: 30
+  }
 };
 
 export default function InfoText(props) {
@@ -28,7 +29,21 @@ export default function InfoText(props) {
     () => (
       <View style={[styles.container, props.styleView]}>
         <Text style={styles.topText}>{props.label}</Text>
-        <Text style={styles.bottomText}>{props.text}</Text>
+        {!props.phoneType ? (
+          <Text style={styles.bottomText}>{props.text}</Text>
+        ) : (
+          <TextInputMask
+            value={props.text}
+            editable={false}
+            style={[styles.bottomText, { padding: 0 }]}
+            type={'cel-phone'}
+            options={{
+              maskType: 'BRL',
+              withDDD: true,
+              dddMask: '(99) '
+            }}
+          />
+        )}
       </View>
     ),
     [props]

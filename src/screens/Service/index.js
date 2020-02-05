@@ -151,40 +151,20 @@ export default function ServiceScree(props) {
               onOk={result => toSelectWashType(result)}
             />
 
-            <View style={{ flexDirection: 'row' }}>
-              <TextInput
-                label="Valor"
-                theme={themes.input}
-                style={[styles.input, { width: 150, marginRight: 15 }]}
-                error={false}
-                value={value}
-                render={props => (
-                  <TextInputMask
-                    {...props}
-                    type={'money'}
-                    onChangeText={text => setValue(text)}
-                  />
-                )}
-              />
-
-              <TextInput
-                label="Data"
-                theme={themes.input}
-                style={[styles.input, { flex: 1 }]}
-                error={false}
-                value={date}
-                render={props => (
-                  <TextInputMask
-                    {...props}
-                    type={'datetime'}
-                    options={{
-                      format: 'DD/MM/YYYY'
-                    }}
-                    onChangeText={text => setDate(text)}
-                  />
-                )}
-              />
-            </View>
+            <TextInput
+              label="Valor"
+              theme={themes.input}
+              style={styles.input}
+              error={false}
+              value={value}
+              render={props => (
+                <TextInputMask
+                  {...props}
+                  type={'money'}
+                  onChangeText={text => setValue(text)}
+                />
+              )}
+            />
 
             <Animated.View
               style={{

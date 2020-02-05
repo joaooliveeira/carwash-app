@@ -8,8 +8,6 @@ import ServiceCard from "../../components/ServiceCard";
 export default function RunningServices(props) {
   const [services] = useState(Data);
 
-  const renderItem = ({ item, index }) => <ServiceCard {...item} />;
-
   return (
     <View style={{ flex: 1 }}>
       <Header
@@ -18,9 +16,11 @@ export default function RunningServices(props) {
       />
 
       <FlatList
-        style={{ marginVertical: 5 }}
         data={services}
-        renderItem={renderItem}
+        renderItem={({ item, index }) => (
+          <ServiceCard item={item} index={index} checked={false} />
+        )}
+        keyExtractor={item => item.id}
         initialNumToRender={15}
       />
     </View>
