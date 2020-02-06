@@ -7,12 +7,12 @@ export const styles = StyleSheet.create({
   },
   card: {
     margin: 15,
-    paddingHorizontal: 5,
-    borderRadius: 5,
+    paddingHorizontal: 0
   },
   input: {
     paddingVertical: 0,
     paddingHorizontal: 5,
+    marginHorizontal: 20,
     fontFamily: FONT_FAMILY_REGULAR
   },
   dialog: {
@@ -22,12 +22,11 @@ export const styles = StyleSheet.create({
     width: "100%",
   },
   optionalFormView: {
-    marginTop: 20,
     overflow: 'hidden'
   },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginVertical: 25,
+    marginVertical: 15,
   }
 });
