@@ -9,7 +9,8 @@ import {
   Animated,
   Platform,
   UIManager,
-  LayoutAnimation
+  LayoutAnimation,
+  SafeAreaView
 } from 'react-native';
 import {
   TextInput,
@@ -26,7 +27,10 @@ import { styles } from './styles';
 import { Colors } from '../../styles';
 import ButtonCustom from '../../components/ButtonCustom';
 import { FONT_REGULAR } from '../../styles/typography';
+import { findClient } from "../../services/clientWS";
 import { findCarByLicensePlate } from '../../services/carWs';
+
+import TextInputSuggestion from '../../components/Autocomplete';
 
 if (
   Platform.OS === 'android' &&
@@ -47,7 +51,7 @@ const washTypesData = [
 export default function ServiceScree(props) {
   const [licensePlate, setLicensePlate] = useState('');
   const [carModel, setCarModel] = useState('');
-  const [client, setClient] = useState('');
+
   const [washType, setWashType] = useState('');
   const [washTypesDialogIsVisible, setWashTypesDialogIsVisible] = useState(
     false
@@ -58,8 +62,22 @@ export default function ServiceScree(props) {
   const [kilometrage, setKilometrage] = useState('');
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
-  const [registerNewClient, setRegisterNewClient] = useState(false);
-  const [optionalDataAnimation] = useState(new Animated.Value(64));
+
+  const [client, setClient] = useState({
+    id: '',
+    name: '',
+    phone: '',
+    email: ''
+  });
+  const [clientSuggestions, setClientSuggestions] = useState([]);
+
+  const [createNewClient, setCreateNewClient] = useState(false);
+  const [newClientFormHeight] = useState(new Animated.Value(0));
+  const [newClient, setNewClient] = useState({
+    name: '',
+    phone: '',
+    email: ''
+  });
 
   const showDialog = () => {
     Keyboard.dismiss();
@@ -99,65 +117,105 @@ export default function ServiceScree(props) {
     setKilometrage('');
   };
 
-  const showAnimation = () => {
-    Animated.timing(optionalDataAnimation, {
-      toValue: registerNewClient ? 192 : 64,
-      duration: 300
+  const handleNewClientForm = () => {
+    Animated.timing(newClientFormHeight, {
+      toValue: createNewClient ? 0 : 192,
+      duration: 500
     }).start();
 
-    setRegisterNewClient(!setRegisterNewClient);
+    setCreateNewClient(!createNewClient);
+  };
+
+  const getClientSuggestions = async text => {
+    setClient({ ...client, name: text });
+
+    if (text.length > 1) {
+      setClientSuggestions(await findClient(text));
+    } else {
+      setClientSuggestions([]);
+    }
+  };
+
+  const findCar = async text => {
+    const carFromDb = await findCarByLicensePlate(licensePlate);
+    if (carFromDb.code) {
+      setSnackbar(carFromDb.message);
+    } else {
+      setCarModel(carFromDb.model);
+      setCardNumber(carFromDb.cardNumber);
+    }
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView keyboardShouldPersistTaps="handled">
-        <Card elevation={2} style={styles.card}>
-          <Card.Title title="Novo serviço" />
-          <Divider style={{ marginBottom: 10 }} />
+        <Card style={styles.card}>
+          <Card.Title
+            title="Criar novo serviço"
+            titleStyle={{ fontSize: 20 }}
+          />
+
+          <Divider />
+
           <Card.Title
             title="Cliente"
-            titleStyle={{ fontSize: 16 }}
-            subtitle="Identifique ou cadastre um novo cliente"
+            titleStyle={{ fontSize: 17 }}
             rightStyle={{ marginRight: 12 }}
-            right={props => (
+            right={() => (
               <IconButton
+                animated={true}
                 color="rgba(0, 0, 0, 0.54)"
-                icon="account-plus"
-                onPress={showAnimation}
+                size={25}
+                icon={`account-${createNewClient ? 'minus' : 'plus'}`}
+                onPress={handleNewClientForm}
               />
             )}
           />
+
+          {!createNewClient && (
+            <View>
+              <TextInputSuggestion
+                data={clientSuggestions}
+                label="Cliente"
+                theme={themes.input}
+                style={styles.input}
+                autoCapitalize="words"
+                error={false}
+                value={client.name}
+                onChangeText={text => getClientSuggestions(text)}
+                selectClient={client => {
+                  setClient(client);
+                  setClientSuggestions([]);
+                }}
+              />
+            </View>
+          )}
+
+          {/* Animated client registration form. It allows the registration of a new client
+              without changing the screen */}
           <Animated.View
             style={{
-              ...styles.optionalFormView,
-              height: optionalDataAnimation
+              overflow: 'hidden',
+              height: newClientFormHeight
             }}
           >
-            <TextInput
-              label="Cliente"
-              theme={themes.input}
-              style={styles.input}
-              error={false}
-              value={client}
-              onChangeText={text => setClient(text)}
-              autoCapitalize="words"
-            />
             <TextInput
               label="Nome"
               theme={themes.input}
               style={styles.input}
               error={false}
               autoCapitalize="words"
-              value=""
-              onChangeText={text => {}}
+              value={newClient.name}
+              onChangeText={text => setNewClient({ ...newClient, name: text })}
             />
 
             <TextInput
               label="Telefone"
               theme={themes.input}
               style={styles.input}
-              value=""
               error={false}
+              value={newClient.phone}
+              onChangeText={text => setNewClient({ ...newClient, phone: text })}
               render={props => (
                 <TextInputMask
                   {...props}
@@ -167,7 +225,6 @@ export default function ServiceScree(props) {
                     withDDD: true,
                     dddMask: "(99) "
                   }}
-                  onChangeText={text => {}}
                 />
               )}
             />
@@ -179,38 +236,37 @@ export default function ServiceScree(props) {
               error={false}
               autoCapitalize="none"
               keyboardType="email-address"
-              value=""
-              onChangeText={text => {}}
+              value={newClient.email}
+              onChangeText={text => setNewClient({ ...newClient, email: text })}
             />
           </Animated.View>
+
           <TextInput
             label="Matrícula"
             theme={themes.input}
-            style={styles.input}
-            render={props => (
-              <TextInputMask
-                {...props}
-                type={'only-numbers'}
-                value={register}
-                onChangeText={text => setRegister(text)}
-              />
-            )}
+            // It is necessary to render TextInputSuggestion correctly.
+            style={[styles.input, { marginTop: !createNewClient ? 64 : 0 }]}
+            value={register}
+            onChangeText={text => setRegister(text)}
+            render={props => <TextInputMask {...props} type={'only-numbers'} />}
           />
-          <Divider style={{ marginTop: 35, marginBottom: 10 }} />
+
+          <Divider style={styles.sectionDivider} />
+
           <Card.Title
-            title="Veículo"
-            titleStyle={{ fontSize: 16 }}
-            subtitle="Informe os detalhes do veículo ou busque pela placa"
+            title="Informações do veículo"
+            titleStyle={{ fontSize: 17 }}
           />
+
           <View>
             <TextInput
               label="Placa"
               theme={themes.input}
               style={styles.input}
               error={false}
+              autoCapitalize="characters"
               value={licensePlate}
               onChangeText={text => setLicensePlate(text)}
-              autoCapitalize="characters"
             />
 
             <IconButton
@@ -218,33 +274,26 @@ export default function ServiceScree(props) {
               style={{ position: 'absolute', right: 10, top: 13 }}
               color="rgba(0, 0, 0, 0.54)"
               size={25}
-              onPress={async () => {
-                const carFromDb = await findCarByLicensePlate(licensePlate);
-                console.log(carFromDb);
-                if (carFromDb.code) {
-                  setSnackbar(carFromDb.message);
-                } else {
-                  setCarModel(carFromDb.model);
-                  setCardNumber(carFromDb.cardNumber);
-                }
-              }}
+              onPress={findCar}
             />
           </View>
+
           <TextInput
             label="Modelo"
             theme={themes.input}
-            style={[styles.input, { flex: 1 }]}
+            style={styles.input}
             error={false}
             value={carModel}
             onChangeText={text => setCarModel(text)}
-            autoCapitalize="characters"
           />
+
           <TextInput
             label="Número do cartão"
             theme={themes.input}
             style={styles.input}
-            value={cardNumber}
             keyboardType="numeric"
+            value={cardNumber}
+            onChangeText={text => setCardNumber(text)}
             render={props => (
               <TextInputMask
                 {...props}
@@ -252,46 +301,44 @@ export default function ServiceScree(props) {
                 options={{
                   mask: '9999 9999 9999 9999'
                 }}
-                onChangeText={text => setCardNumber(text)}
               />
             )}
           />
+
           <TextInput
             label="Quilometragem"
             theme={themes.input}
             style={styles.input}
             value={kilometrage}
-            render={props => (
-              <TextInputMask
-                {...props}
-                type={'only-numbers'}
-                onChangeText={text => setKilometrage(text)}
-              />
-            )}
+            onChangeText={text => setKilometrage(text)}
+            render={props => <TextInputMask {...props} type={'only-numbers'} />}
           />
-          <Divider style={{ marginTop: 35, marginBottom: 10 }} />
+
+          <Divider style={styles.sectionDivider} />
+
           <Card.Title
-            title="Lavagem"
-            titleStyle={{ fontSize: 18 }}
-            subtitle="Detalhes sobre a lavagem"
+            title="Detalhes da lavagem"
+            titleStyle={{ fontSize: 17 }}
           />
-          {/* It takes to overlay the TextInput component. */}
+
           <TouchableOpacity onPress={showDialog}>
+            {/* It takes to overlay the TextInput component. */}
             <View style={styles.dialog} />
             <TextInput
               label="Tipo de lavagem"
               theme={themes.input}
               style={styles.input}
-              error={false}
               value={washType}
+              error={false}
             />
           </TouchableOpacity>
+
           <SinglePickerMaterialDialog
             title={'Selecione uma opção'}
             items={washTypesData.map((row, index) => ({
               value: index,
               label: row.label,
-              price: row.value,
+              price: row.value
             }))}
             visible={washTypesDialogIsVisible}
             selectedItem={washType}
@@ -307,44 +354,39 @@ export default function ServiceScree(props) {
             style={styles.input}
             error={false}
             value={value}
-            render={props => (
-              <TextInputMask
-                {...props}
-                type={'money'}
-                onChangeText={text => setValue(text)}
-              />
-            )}
+            onChangeText={text => setValue(text)}
+            render={props => <TextInputMask {...props} type={'money'} />}
           />
-          <Divider style={{ marginTop: 40 }} />
-          <Card.Actions style={styles.buttonsContainer}>
-            <View style={{ flexGrow: 1, marginHorizontal: 15 }}>
-              <ButtonCustom
-                mode="text"
-                onPress={clearAllInputs}
-                label="LIMPAR"
-              />
-            </View>
 
-            <View style={{ flexGrow: 1, marginRight: 15 }}>
-              <ButtonCustom
-                icon="content-save"
-                mode="contained"
-                loading={loading}
-                onPress={saveServiceRequest}
-                label="SALVAR"
-              />
-            </View>
+          <Divider style={{ marginTop: 35 }} />
+
+          <Card.Actions style={styles.buttonsContainer}>
+            <ButtonCustom
+              mode="text"
+              onPress={clearAllInputs}
+              label="LIMPAR"
+              style={{ flexGrow: 1, marginHorizontal: 15 }}
+            />
+
+            <ButtonCustom
+              icon="content-save"
+              mode="contained"
+              loading={loading}
+              onPress={saveServiceRequest}
+              label="SALVAR"
+              style={{ flexGrow: 1, marginRight: 15 }}
+            />
           </Card.Actions>
         </Card>
       </ScrollView>
 
       <Snackbar
         visible={snackbar}
-        onDismiss={() => setSnackbar(false)}
         duration={4000}
+        onDismiss={() => setSnackbar(false)}
       >
         <Text style={FONT_REGULAR}>{snackbar}</Text>
       </Snackbar>
-    </View>
+    </SafeAreaView>
   );
 }

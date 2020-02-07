@@ -10,7 +10,7 @@ export const ClientInformationCard = React.memo(
     const styles = {
       card: {
         marginBottom: 6,
-        marginHorizontal: 15,
+        marginHorizontal: 0,
         paddingVertical: 5,
         borderRadius: 5
       },

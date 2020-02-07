@@ -1,13 +1,12 @@
-import {StyleSheet} from 'react-native';
-import {  FONT_FAMILY_REGULAR } from '../../styles/typography';
+import { StyleSheet } from 'react-native';
+import { FONT_FAMILY_REGULAR } from '../../styles/typography';
 
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   card: {
-    margin: 15,
-    paddingHorizontal: 0
+    margin: 15
   },
   input: {
     paddingVertical: 0,
@@ -15,18 +14,19 @@ export const styles = StyleSheet.create({
     marginHorizontal: 20,
     fontFamily: FONT_FAMILY_REGULAR
   },
+  sectionDivider: {
+    marginTop: 35,
+    marginBottom: 10
+  },
   dialog: {
     position: 'absolute',
     zIndex: 1,
     height: "100%",
-    width: "100%",
-  },
-  optionalFormView: {
-    overflow: 'hidden'
+    width: "100%"
   },
   buttonsContainer: {
     flexDirection: "row",
-    justifyContent: "flex-end",
-    marginVertical: 15,
+    justifyContent: 'space-around',
+    marginVertical: 15
   }
 });

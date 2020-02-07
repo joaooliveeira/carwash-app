@@ -20,7 +20,7 @@ const styles = {
     color: '#000000',
     textAlignVertical: "center",
     textAlign: "left",
-    height: 30
+    height: 30,
   }
 };
 
@@ -30,7 +30,13 @@ export default function InfoText(props) {
       <View style={[styles.container, props.styleView]}>
         <Text style={styles.topText}>{props.label}</Text>
         {!props.phoneType ? (
-          <Text style={styles.bottomText}>{props.text}</Text>
+          <Text
+            ellipsizeMode="tail"
+            numberOfLines={1}
+            style={styles.bottomText}
+          >
+            {props.text}
+          </Text>
         ) : (
           <TextInputMask
             value={props.text}
