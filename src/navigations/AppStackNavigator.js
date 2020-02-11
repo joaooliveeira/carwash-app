@@ -7,7 +7,7 @@ import { createStackNavigator } from "react-navigation-stack";
 import AppTabNavigator from "./AppTabNavigator";
 import Splash from "../screens/Splash/index";
 import SearchResult from "../screens/SearchResult/index";
-import RunningServices from "../screens/RunningServices/index";
+import RunningServices from "../screens/ServiceInProgress/index";
 
 const AppNavigator = createStackNavigator(
   {
@@ -25,6 +25,11 @@ const AppNavigator = createStackNavigator(
 const AppContainer = createAppContainer(AppNavigator);
 
 export default class AppStackNavigator extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { realm: null };
+  }
+
   render() {
     return (
       <Provider>

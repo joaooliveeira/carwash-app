@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, IconButton, Menu, Divider } from "react-native-paper";
 import { View, Alert } from "react-native";
 import InfoText from "./InfoText";
-import { deleteClient } from "../services/clientWS";
+import { deleteClient } from "../services/clientWs";
 import { ClientEditDialog } from "./ClientEditDialog";
 
 export const ClientInformationCard = React.memo(
@@ -10,7 +10,7 @@ export const ClientInformationCard = React.memo(
     const styles = {
       card: {
         marginBottom: 6,
-        marginHorizontal: 0,
+        marginHorizontal: 15,
         paddingVertical: 5,
         borderRadius: 5
       },

@@ -4,9 +4,10 @@ import React, { useState } from "react";
 import { Text, SafeAreaView, StyleSheet, ScrollView, View } from "react-native";
 import { Snackbar, Searchbar, Divider } from "react-native-paper";
 
-import { findClient } from "../../services/clientWS";
+// import { findClient } from "../../services/clientWs";
 import { FlatList } from "react-native-gesture-handler";
 import { ClientInformationCard } from "../../components/ClientInformationCard";
+import { findClient } from "../../storage/clientRepository";
 
 export default function ClientSearch(props) {
   const [query, setQuery] = useState('');
@@ -26,7 +27,7 @@ export default function ClientSearch(props) {
         value={query}
         onChangeText={async text => {
           setQuery(text);
-          if (text.length > 1) {
+          if (text.length > 0) {
             setSearchResult(await findClient(text));
           } else {
             setSearchResult([]);

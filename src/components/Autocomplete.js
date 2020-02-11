@@ -17,8 +17,6 @@ if (
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const data = ['João', 'Danilo', 'Gustavo', 'Fernando Marconato'];
-
 export default function TextInputSuggestion(props) {
   const showAnimation = () => {
     LayoutAnimation.configureNext(
@@ -66,8 +64,9 @@ export default function TextInputSuggestion(props) {
               onPress={() => props.selectClient(item)}
               style={{
                 flexDirection: "row",
-                justifyContent: 'space-around',
-                marginVertical: 4
+                justifyContent: 'space-between',
+                marginVertical: 4,
+                marginHorizontal: 15
               }}
             >
               <InfoText label="Nome" text={item.name} />

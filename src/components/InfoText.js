@@ -4,7 +4,6 @@ import { TextInputMask } from "react-native-masked-text";
 
 const styles = {
   container: {
-    width: '45%',
     height: 55,
     paddingHorizontal: 5,
     justifyContent: "center"

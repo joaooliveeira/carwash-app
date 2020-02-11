@@ -9,7 +9,6 @@ import {
   Animated,
   Platform,
   UIManager,
-  LayoutAnimation,
   SafeAreaView
 } from 'react-native';
 import {
@@ -27,17 +26,10 @@ import { styles } from './styles';
 import { Colors } from '../../styles';
 import ButtonCustom from '../../components/ButtonCustom';
 import { FONT_REGULAR } from '../../styles/typography';
-import { findClient } from "../../services/clientWS";
-import { findCarByLicensePlate } from '../../services/carWs';
 
 import TextInputSuggestion from '../../components/Autocomplete';
-
-if (
-  Platform.OS === 'android' &&
-  UIManager.setLayoutAnimationEnabledExperimental
-) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
+import { findClient } from '../../storage/clientRepository';
+import { getCarByLicensePlate, createCarLocal } from '../../storage/carRepository';
 
 const washTypesData = [
   { label: 'Ducha', value: 20 },
@@ -49,17 +41,6 @@ const washTypesData = [
 ];
 
 export default function ServiceScree(props) {
-  const [licensePlate, setLicensePlate] = useState('');
-  const [carModel, setCarModel] = useState('');
-
-  const [washType, setWashType] = useState('');
-  const [washTypesDialogIsVisible, setWashTypesDialogIsVisible] = useState(
-    false
-  );
-  const [value, setValue] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [register, setRegister] = useState('');
-  const [kilometrage, setKilometrage] = useState('');
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
 
@@ -71,34 +52,64 @@ export default function ServiceScree(props) {
   });
   const [clientSuggestions, setClientSuggestions] = useState([]);
 
+  /**
+   * If the client doesn't exists, I will show the new client form and create a new one.
+   */
   const [createNewClient, setCreateNewClient] = useState(false);
   const [newClientFormHeight] = useState(new Animated.Value(0));
-  const [newClient, setNewClient] = useState({
-    name: '',
-    phone: '',
-    email: ''
+
+  const [register, setRegister] = useState('');
+
+  const [car, setCar] = useState({
+    id: '',
+    model: '',
+    licensePlate: '',
+    cardNumber: ''
   });
 
-  const showDialog = () => {
+  const [kilometrage, setKilometrage] = useState('');
+
+  const [washType, setWashType] = useState('');
+  const [washTypesDialog, setWashTypesDialog] = useState(false);
+
+  const [value, setValue] = useState('');
+
+  const showWashTypesDialog = () => {
     Keyboard.dismiss();
-    setWashTypesDialogIsVisible(true);
+    setWashTypesDialog(true);
   };
 
-  const hideDialog = () => setWashTypesDialogIsVisible(false);
-
-  const toSelectWashType = result => {
+  const selectWashType = result => {
     if (result.selectedItem) {
       setWashType(result.selectedItem.label);
       setValue(result.selectedItem.price);
-      setWashTypesDialogIsVisible(false);
-    } else {
-      hideDialog();
     }
+
+    setWashTypesDialog(false);
   };
 
-  const saveServiceRequest = () => {
+  const createWash = async () => {
     setLoading(true);
     Keyboard.dismiss();
+
+    if (!car.id) {
+      const carFromStorage = await getCarByLicensePlate(car.licensePlate);
+      if (!carFromStorage) {
+        const newCar = createCarLocal(car);
+      }
+    }
+
+    const wash = {
+      clientId: client.id,
+      clientRegister: register,
+      carId: car.id,
+      kilometrage,
+      washType,
+      value
+    };
+
+    console.log(wash);
+
     setTimeout(() => {
       setLoading(false);
       setSnackbar(true);
@@ -107,14 +118,12 @@ export default function ServiceScree(props) {
   };
 
   const clearAllInputs = () => {
-    setLicensePlate('');
-    setCarModel('');
-    setClient('');
+    setClient({ name: '', phone: '', email: '' });
+    setRegister('');
+    setCar({ licensePlate: '', model: '', cardNumber: '' });
+    setKilometrage('');
     setWashType('');
     setValue('');
-    setCardNumber('');
-    setRegister('');
-    setKilometrage('');
   };
 
   const handleNewClientForm = () => {
@@ -129,21 +138,20 @@ export default function ServiceScree(props) {
   const getClientSuggestions = async text => {
     setClient({ ...client, name: text });
 
-    if (text.length > 1) {
-      setClientSuggestions(await findClient(text));
+    if (text.length > 0) {
+      setClientSuggestions(await findClient(text, "LIMIT(5)"));
     } else {
       setClientSuggestions([]);
     }
   };
 
-  const findCar = async text => {
-    const carFromDb = await findCarByLicensePlate(licensePlate);
-    if (carFromDb.code) {
-      setSnackbar(carFromDb.message);
-    } else {
-      setCarModel(carFromDb.model);
-      setCardNumber(carFromDb.cardNumber);
-    }
+  const findCar = async () => {
+    const carFromStorage = await getCarByLicensePlate(car.licensePlate);
+    // if (carFromDb.code) {
+    //   setSnackbar(carFromDb.message);
+    // } else {
+    console.log(carFromStorage);
+    // }
   };
 
   return (
@@ -205,8 +213,8 @@ export default function ServiceScree(props) {
               style={styles.input}
               error={false}
               autoCapitalize="words"
-              value={newClient.name}
-              onChangeText={text => setNewClient({ ...newClient, name: text })}
+              value={client.name}
+              onChangeText={text => setClient({ ...client, name: text })}
             />
 
             <TextInput
@@ -214,8 +222,8 @@ export default function ServiceScree(props) {
               theme={themes.input}
               style={styles.input}
               error={false}
-              value={newClient.phone}
-              onChangeText={text => setNewClient({ ...newClient, phone: text })}
+              value={client.phone}
+              onChangeText={text => setClient({ ...client, phone: text })}
               render={props => (
                 <TextInputMask
                   {...props}
@@ -236,8 +244,8 @@ export default function ServiceScree(props) {
               error={false}
               autoCapitalize="none"
               keyboardType="email-address"
-              value={newClient.email}
-              onChangeText={text => setNewClient({ ...newClient, email: text })}
+              value={client.email}
+              onChangeText={text => setClient({ ...client, email: text })}
             />
           </Animated.View>
 
@@ -264,9 +272,9 @@ export default function ServiceScree(props) {
               theme={themes.input}
               style={styles.input}
               error={false}
+              value={car.licensePlate}
               autoCapitalize="characters"
-              value={licensePlate}
-              onChangeText={text => setLicensePlate(text)}
+              onChangeText={text => setCar({ ...car, licensePlate: text })}
             />
 
             <IconButton
@@ -283,8 +291,8 @@ export default function ServiceScree(props) {
             theme={themes.input}
             style={styles.input}
             error={false}
-            value={carModel}
-            onChangeText={text => setCarModel(text)}
+            value={car.model}
+            onChangeText={text => setCar({ ...car, model: text })}
           />
 
           <TextInput
@@ -292,8 +300,8 @@ export default function ServiceScree(props) {
             theme={themes.input}
             style={styles.input}
             keyboardType="numeric"
-            value={cardNumber}
-            onChangeText={text => setCardNumber(text)}
+            value={car.cardNumber}
+            onChangeText={text => setCar({ ...car, cardNumber: text })}
             render={props => (
               <TextInputMask
                 {...props}
@@ -321,7 +329,7 @@ export default function ServiceScree(props) {
             titleStyle={{ fontSize: 17 }}
           />
 
-          <TouchableOpacity onPress={showDialog}>
+          <TouchableOpacity onPress={showWashTypesDialog}>
             {/* It takes to overlay the TextInput component. */}
             <View style={styles.dialog} />
             <TextInput
@@ -340,12 +348,12 @@ export default function ServiceScree(props) {
               label: row.label,
               price: row.value
             }))}
-            visible={washTypesDialogIsVisible}
+            visible={washTypesDialog}
             selectedItem={washType}
             colorAccent={Colors.PRIMARY}
             cancelLabel="CANCELAR"
-            onCancel={hideDialog}
-            onOk={result => toSelectWashType(result)}
+            onCancel={() => setWashTypesDialog(false)}
+            onOk={result => selectWashType(result)}
           />
 
           <TextInput
@@ -372,7 +380,7 @@ export default function ServiceScree(props) {
               icon="content-save"
               mode="contained"
               loading={loading}
-              onPress={saveServiceRequest}
+              onPress={createWash}
               label="SALVAR"
               style={{ flexGrow: 1, marginRight: 15 }}
             />

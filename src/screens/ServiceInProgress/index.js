@@ -5,7 +5,7 @@ import { Data } from '../SearchResult/data';
 import { FlatList } from "react-native-gesture-handler";
 import ServiceCard from "../../components/ServiceCard";
 
-export default function RunningServices(props) {
+export default function ServiceInProgress(props) {
   const [services] = useState(Data);
 
   return (

@@ -1,4 +1,4 @@
-const URL = "http://192.168.0.9:8080/";
+const URL = "http://192.168.0.94:8080/";
 
 export const createWash = async ({ wash }) => {
   return await fetch(URL + `car/?licensePlate=${wash}`, { method: 'GET' })

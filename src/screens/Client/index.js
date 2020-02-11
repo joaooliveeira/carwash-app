@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import { View, Keyboard, Text, ScrollView, SafeAreaView } from "react-native";
 import { TextInput, Card, Snackbar, HelperText } from "react-native-paper";
@@ -7,7 +7,8 @@ import { TextInputMask } from "react-native-masked-text";
 import { themes } from "../../assets/themes";
 import { styles } from "./styles";
 import ButtonCustom from "../../components/ButtonCustom";
-import { createClient } from "../../services/clientWS";
+import { createClient } from "../../services/clientWs";
+// import { createClient } from '../../storage/repository/client/createClientLocal';
 
 export default function ClientScreen(props) {
   const [name, setName] = useState("");
@@ -62,6 +63,8 @@ export default function ClientScreen(props) {
     setEmailIsValid(true);
   };
 
+  const phoneMask = useRef();
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView keyboardShouldPersistTaps="handled">
@@ -94,6 +97,7 @@ export default function ClientScreen(props) {
               render={props => (
                 <TextInputMask
                   {...props}
+                  ref={phoneMask}
                   type={"cel-phone"}
                   options={{
                     maskType: "BRL",
