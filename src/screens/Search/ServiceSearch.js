@@ -10,6 +10,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from "moment";
 
 export default function ServiceSearch(props) {
+  console.log(props);
   const [startDate, setStartDate] = useState('');
   const [startDatePicker, setStartDatePicker] = useState(false);
   const [endDate, setEndDate] = useState('');
@@ -50,7 +51,7 @@ export default function ServiceSearch(props) {
       setLoading(true);
       setTimeout(() => {
         setLoading(false);
-        props.navigation.navigate('SearchResult', {
+        props.route.navigation.navigate('SearchResult', {
           period: { startDate, endDate: endDate || new Date(moment()) },
         });
       }, 100);

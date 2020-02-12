@@ -38,8 +38,8 @@ export const ClientInformationCard = React.memo(
     return (
       <Card style={styles.card}>
         <View style={styles.cardContainer}>
-          <View style={{ flexDirection: 'row' }}>
-            <InfoText label="Nome" text={client.name} />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <InfoText label="Nome" text={client.name} styleView={{width: "40%"}}/>
             <InfoText label="Telefone" text={client.phone} phoneType />
             <Menu
               visible={menuIsVisible}

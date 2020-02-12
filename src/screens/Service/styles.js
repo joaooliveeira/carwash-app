@@ -15,8 +15,8 @@ export const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY_REGULAR
   },
   sectionDivider: {
-    marginTop: 35,
-    marginBottom: 10
+    marginTop: 30,
+    marginBottom: 5
   },
   dialog: {
     position: 'absolute',

@@ -46,7 +46,9 @@ export const findClient = async (term, limit) => {
       result = realm
         .objects('Client')
         .filtered(
-          `name CONTAINS[c] "${term}" OR phone BEGINSWITH "${term}" OR email BEGINSWITH "${term}" ${limit ? limit : ""}`
+          `name CONTAINS[c] "${term}" OR phone BEGINSWITH "${term}" OR email BEGINSWITH "${term}" ${
+            limit ? limit : ''
+          }`
         )
         .map(client => {
           return {
@@ -103,4 +105,30 @@ export const deleteClientLocal = async id => {
     }
   });
   return client;
+};
+
+export const getClient = async filter => {
+  let client;
+  await Realm.open({ schema: [ClientSchema] }).then(realm => {
+    try {
+      const result = realm.objects('Client').filtered(filter);
+      client = {
+        id: result[0].id,
+        name: result[0].name,
+        phone: result[0].phone,
+        email: result[0].email,
+        lastUpdate: result[0].lastUpdate,
+        status: result[0].status
+      };
+      realm.close();
+    } catch (error) {
+      console.log(error);
+      return undefined;
+    }
+  });
+  return client;
+};
+
+export const getClientById = async id => {
+  return getClient(`id == "${id}"`);
 };

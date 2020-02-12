@@ -7,11 +7,11 @@ import ClientSearch from "./ClientSearch";
 
 const initialLayout = { width: Dimensions.get('window').width };
 
-export default function SearchScreen() {
+export default function SearchScreen(props) {
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: 'service', title: 'Serviços' },
-    { key: 'client', title: 'Clientes' },
+    { key: 'service', title: 'Serviços', ...props },
+    { key: 'client', title: 'Clientes', ...props },
   ]);
 
   const renderScene = SceneMap({
@@ -29,6 +29,7 @@ export default function SearchScreen() {
 
   return (
     <TabView
+      {...props}
       navigationState={{ index, routes }}
       renderTabBar={renderTabBar}
       renderScene={renderScene}
