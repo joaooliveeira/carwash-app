@@ -1,12 +1,11 @@
 import React, { useMemo } from "react";
 import { View, Text } from 'react-native';
-import { TextInputMask } from "react-native-masked-text";
 
 const styles = {
   container: {
     height: 55,
     paddingHorizontal: 5,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   topText: {
     fontSize: 12,
@@ -23,32 +22,24 @@ const styles = {
   }
 };
 
+const formatPhoneNumber = text => {
+  let textFormated = '(' + text.slice(0, 2) + ') ';
+  if (text.length == 11) {
+    textFormated = textFormated + text.slice(2, 7) + '-' + text.slice(7, 12);
+  } else {
+    textFormated = textFormated + text.slice(2, 6) + '-' + text.slice(6, 11) + '  ';
+  }
+  return textFormated;
+};
+
 export default function InfoText(props) {
   const component = useMemo(
     () => (
       <View style={[styles.container, props.styleView]}>
         <Text style={styles.topText}>{props.label}</Text>
-        {!props.phoneType ? (
-          <Text
-            ellipsizeMode="tail"
-            numberOfLines={1}
-            style={styles.bottomText}
-          >
-            {props.text}
-          </Text>
-        ) : (
-          <TextInputMask
-            value={props.text}
-            editable={false}
-            style={[styles.bottomText, { padding: 0 }]}
-            type={'cel-phone'}
-            options={{
-              maskType: 'BRL',
-              withDDD: true,
-              dddMask: '(99) '
-            }}
-          />
-        )}
+        <Text ellipsizeMode={props.phoneType ? 'head' : 'tail'} numberOfLines={1} style={styles.bottomText}>
+          {props.phoneType ? formatPhoneNumber(props.text) : props.text}
+        </Text>
       </View>
     ),
     [props]

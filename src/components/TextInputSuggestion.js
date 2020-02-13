@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   TouchableOpacity,
   Platform,
   UIManager,
-  LayoutAnimation
+  LayoutAnimation,
+  Text
 } from "react-native";
 import InfoText from "./InfoText";
 import { Divider, TextInput } from "react-native-paper";
@@ -49,16 +50,35 @@ export default function TextInputSuggestion(props) {
     }
   };
 
+  let registerNewClient;
+  // if (props.value.length > 1 && props.data.length == 0 && props.createClient) {
+  //   registerNewClient = [
+  //     <TouchableOpacity
+  //       onPress={() => console.log("Adicionar novo cliente")}
+  //       style={{
+  //         marginVertical: 4,
+  //         marginHorizontal: 15,
+  //         justifyContent: 'center',
+  //         height: 40
+  //       }}
+  //     >
+  //       <Text>Cadastrar novo cliente</Text>
+  //     </TouchableOpacity>
+  //   ];
+  // }
+
   return (
     <Autocomplete
-      data={props.data}
+      data={registerNewClient || props.data}
       containerStyle={styles.containerStyle}
       inputContainerStyle={styles.inputContainerStyle}
       listStyle={styles.listStyle}
       keyboardShouldPersistTaps="always"
       renderItem={({ item, i }) => {
         showAnimation();
-        return (
+        return registerNewClient ? (
+          item
+        ) : (
           <>
             <TouchableOpacity
               onPress={() => props.selectClient(item)}
@@ -66,11 +86,20 @@ export default function TextInputSuggestion(props) {
                 flexDirection: "row",
                 justifyContent: 'space-between',
                 marginVertical: 4,
-                marginHorizontal: 15
+                marginHorizontal: 15,
               }}
             >
-              <InfoText label="Nome" text={item.name} />
-              <InfoText label="Telefone" text={item.phone} phoneType />
+              <InfoText
+                label="Nome"
+                text={item.name}
+                styleView={{ width: '50%' }}
+              />
+              <InfoText
+                label="Telefone"
+                text={item.phone}
+                phoneType
+                styleView={{ width: '50%' }}
+              />
             </TouchableOpacity>
             <Divider />
           </>

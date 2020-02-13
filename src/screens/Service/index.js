@@ -6,6 +6,8 @@ import {
   TouchableOpacity,
   Keyboard,
   Text,
+  SafeAreaView,
+  Alert,
 } from 'react-native';
 
 import {
@@ -36,6 +38,7 @@ import {
   createWashLocal,
   getWashesRunning,
 } from '../../storage/washRepository';
+import { createCar } from '../../storage/carService';
 
 const washTypesData = [
   { label: 'Ducha', value: "2000" },
@@ -62,15 +65,15 @@ export default function ServiceScree(props) {
   const [washTypesDialog, setWashTypesDialog] = useState(false);
   const [value, setValue] = useState('');
 
-  const [dataIsValid, setDataIsValid] = useState({
-    client: true,
-    register: true,
-    licensePlate: true,
-    model: true,
-    cardNumber: true,
-    kilometrage: true,
-    washType: true,
-    value: true
+  const [dataError, setDataError] = useState({
+    client: false,
+    register: false,
+    licensePlate: { type: '', message: '' },
+    model: false,
+    cardNumber: false,
+    kilometrage: false,
+    washType: false,
+    value: false
   });
 
   const [loading, setLoading] = useState(false);
@@ -95,8 +98,8 @@ export default function ServiceScree(props) {
     if (result.selectedItem) {
       setWashType(result.selectedItem.label);
       setValue(result.selectedItem.price);
-      if (!dataIsValid.washType || !dataIsValid.value) {
-        setDataIsValid({ ...dataIsValid, washType: true, value: true });
+      if (dataError.washType || dataError.value) {
+        setDataError({ ...dataError, washType: false, value: false });
       }
     }
 
@@ -106,31 +109,36 @@ export default function ServiceScree(props) {
   const validateData = async () => {
     Keyboard.dismiss();
 
-    const clientisValid = client.id != '';
-    const licensePlateIsValid = car.licensePlate.length == 7;
-    const modelIsValid = car.model.length > 1;
-    const cardNumberIsValid =
-      car.cardNumber.length == 19 || car.cardNumber.length == 0;
-    const washTypeIsValid = washType != '';
-    const valueIsValid = value != '';
+    const clientError = client.id == '';
+    const licensePlateError = car.licensePlate.length != 7;
+    const modelError = car.model.length <= 1;
+    const cardNumberError =
+      car.cardNumber.length != 19 && car.cardNumber.length != 0;
+    const washTypeError = washType == '';
+    const valueError = value == '';
 
-    setDataIsValid({
-      ...dataIsValid,
-      client: clientisValid,
-      licensePlate: licensePlateIsValid,
-      model: modelIsValid,
-      cardNumber: cardNumberIsValid,
-      washType: washTypeIsValid,
-      value: valueIsValid
+    setDataError({
+      ...dataError,
+      client: clientError,
+      licensePlate: {
+        type: licensePlateError ? 'error' : '',
+        message: licensePlateError ? 'Placa inválida.' : ''
+      },
+      model: modelError,
+      cardNumber: cardNumberError,
+      washType: washTypeError,
+      value: valueError
     });
 
     if (
-      clientisValid &&
-      licensePlateIsValid &&
-      modelIsValid &&
-      cardNumberIsValid &&
-      washTypeIsValid &&
-      valueIsValid
+      !(
+        clientError ||
+        licensePlateError ||
+        modelError ||
+        cardNumberError ||
+        washTypeError ||
+        valueError
+      )
     ) {
       createWash();
     }
@@ -139,37 +147,29 @@ export default function ServiceScree(props) {
   const createWash = async () => {
     Keyboard.dismiss();
     setLoading(true);
-    setTimeout(async () => {
-      let newCar;
-      if (!car.id) {
-        const carFromStorage = await getCarByLicensePlate(car.licensePlate);
-        if (!carFromStorage) {
-          newCar = createCarLocal(car);
-          setCar(newCar);
-        } else {
-          newCar = carFromStorage;
-        }
-      }
 
-      const wash = {
-        clientId: client.id,
-        clientRegister: register,
-        carId: car.id || newCar.id,
-        kilometrage,
-        washType,
-        value
-      };
+    // setTimeout(async () => {
+    let newCar = await createCar(car);
+    console.log(newCar);
+    // const wash = {
+    //   clientId: client.id,
+    //   clientRegister: register,
+    //   carId: car.id || newCar.id,
+    //   kilometrage,
+    //   washType,
+    //   value
+    // };
 
-      const newWash = await createWashLocal(wash);
+    // const newWash = await createWashLocal(wash);
 
-      setSnackbar(
-        newWash.id
-          ? 'Serviço registrado com sucesso'
-          : 'Algo deu errado, tente novamente'
-      );
-      clearAllInputs();
-      setLoading(false);
-    }, 100);
+    //   setSnackbar(
+    //     newWash.id
+    //       ? 'Serviço registrado com sucesso'
+    //       : 'Algo deu errado, tente novamente'
+    //   );
+    //   clearAllInputs();
+    //   setLoading(false);
+    // }, 100);
   };
 
   const clearAllInputs = async () => {
@@ -179,15 +179,15 @@ export default function ServiceScree(props) {
     setKilometrage('');
     setWashType('');
     setValue('');
-    setDataIsValid({
-      client: true,
-      register: true,
-      licensePlate: true,
-      model: true,
-      cardNumber: true,
-      kilometrage: true,
-      washType: true,
-      value: true
+    setDataError({
+      client: false,
+      register: false,
+      licensePlate: { message: '' },
+      model: false,
+      cardNumber: false,
+      kilometrage: false,
+      washType: false,
+      value: false
     });
   };
 
@@ -196,12 +196,14 @@ export default function ServiceScree(props) {
     if (!carFromStorage) {
       setSnackbar("Veículo não encontrado");
     } else {
+      console.log(carFromStorage);
       setCar(carFromStorage);
+      setDataError({ ...dataError, licensePlate: {type: 'info', message: ''}})
     }
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView keyboardShouldPersistTaps="handled">
         <Card style={styles.card}>
           <Card.Title
@@ -220,19 +222,20 @@ export default function ServiceScree(props) {
               theme={themes.input}
               style={styles.input}
               autoCapitalize="words"
-              error={!dataIsValid.client}
+              error={dataError.client}
               value={client.name}
+              createClient={client.id ? false : true}
               onChangeText={text => getClientSuggestions(text)}
               selectClient={client => {
                 setClient(client);
-                setDataIsValid({ ...dataIsValid, client: true });
+                setDataError({ ...dataError, client: false });
                 setClientSuggestions([]);
               }}
             />
           </View>
           <HelperText
             type="error"
-            visible={!dataIsValid.client}
+            visible={dataError.client}
             padding="none"
             style={{ marginHorizontal: 25 }}
           >
@@ -244,7 +247,7 @@ export default function ServiceScree(props) {
             theme={themes.input}
             // It is necessary to render TextInputSuggestion correctly.
             style={styles.input}
-            error={!dataIsValid.register}
+            error={dataError.register}
             value={register}
             onChangeText={text => setRegister(text)}
             render={props => <TextInputMask {...props} type={'only-numbers'} />}
@@ -262,23 +265,48 @@ export default function ServiceScree(props) {
               label="Placa"
               theme={themes.input}
               style={styles.input}
-              error={!dataIsValid.licensePlate}
+              error={dataError.licensePlate.type == "error"}
               value={car.licensePlate}
               autoCapitalize="characters"
-              onChangeText={text => {
+              onChangeText={async text => {
                 setCar({ ...car, licensePlate: text });
-                if (!dataIsValid.licensePlate && text.length == 7) {
-                  setDataIsValid({ ...dataIsValid, licensePlate: true });
+                if (text.length == 7) {
+                  const carFromStorage = await getCarByLicensePlate(text);
+                  if (carFromStorage) {
+                    setDataError({
+                      ...dataError,
+                      licensePlate: {
+                        type: 'info',
+                        message:
+                          'Veículo já cadastrado, clique no ícone ao lado para prosseguir.'
+                      }
+                    });
+                  } else if (dataError.licensePlate.type == "error") {
+                    setDataError({
+                      ...dataError,
+                      licensePlate: { type: '', message: '' },
+                    });
+                  }
+                } else if (text.length > 7) {
+                  setDataError({
+                    ...dataError,
+                    licensePlate: { type: 'error', message: 'Placa inválida.' },
+                  });
+                } else if (text.length < 7) {
+                  setDataError({
+                    ...dataError,
+                    licensePlate: { type: '', message: '' },
+                  });
                 }
               }}
             />
             <HelperText
-              type="error"
-              visible={!dataIsValid.licensePlate}
+              type={dataError.licensePlate.type}
+              visible={dataError.licensePlate.message}
               padding="none"
               style={{ marginHorizontal: 25 }}
             >
-              Placa inválida
+              {dataError.licensePlate.message}
             </HelperText>
 
             <IconButton
@@ -294,35 +322,57 @@ export default function ServiceScree(props) {
             label="Modelo"
             theme={themes.input}
             style={styles.input}
-            error={!dataIsValid.model}
+            error={dataError.model}
             value={car.model}
             onChangeText={text => {
               setCar({ ...car, model: text });
-              if (!dataIsValid.model && text.length > 1) {
-                setDataIsValid({ ...dataIsValid, model: true });
+              if (dataError.model && text.length > 1) {
+                setDataError({ ...dataError, model: false });
+              }
+            }}
+            onFocus={() => {
+              if (dataError.licensePlate.type == "info") {
+                Alert.alert(
+                  'Veículo já cadastrado!',
+                  'Os dados serão sobreescritos e isso afetará as informações de serviços anteriores.',
+                  [
+                    {
+                      text: 'Cancelar',
+                      style: 'cancel'
+                    },
+                    {
+                      text: 'Continuar',
+                      onPress: () =>
+                        setDataError({
+                          ...dataError,
+                          licensePlate: { type: '', message: '' },
+                        })
+                    }
+                  ]
+                );
               }
             }}
           />
           <HelperText
             type="error"
-            visible={!dataIsValid.model}
+            visible={dataError.model}
             padding="none"
             style={{ marginHorizontal: 25 }}
           >
-            O modelo deve conter pelo menos dois caracteres
+            O modelo deve conter pelo menos dois caracteres.
           </HelperText>
 
           <TextInput
             label="Número do cartão"
             theme={themes.input}
             style={styles.input}
-            error={!dataIsValid.cardNumber}
+            error={dataError.cardNumber}
             keyboardType="numeric"
             value={car.cardNumber}
             onChangeText={text => {
               setCar({ ...car, cardNumber: text });
-              if (!dataIsValid.cardNumber && text.length == 19) {
-                setDataIsValid({ ...dataIsValid, cardNumber: true });
+              if (dataError.cardNumber && text.length == 19) {
+                setDataError({ ...dataError, cardNumber: true });
               }
             }}
             render={props => (
@@ -334,21 +384,43 @@ export default function ServiceScree(props) {
                 }}
               />
             )}
+            onFocus={() => {
+              if (dataError.licensePlate.type == "info") {
+                Alert.alert(
+                  'Veículo já cadastrado!',
+                  'Os dados serão sobreescritos e isso afetará as informações de serviços anteriores.',
+                  [
+                    {
+                      text: 'Cancelar',
+                      style: 'cancel'
+                    },
+                    {
+                      text: 'Continuar',
+                      onPress: () =>
+                        setDataError({
+                          ...dataError,
+                          licensePlate: { type: '', message: '' },
+                        })
+                    }
+                  ]
+                );
+              }
+            }}
           />
           <HelperText
             type="error"
-            visible={!dataIsValid.cardNumber}
+            visible={dataError.cardNumber}
             padding="none"
             style={{ marginHorizontal: 25 }}
           >
-            Cartão inválido
+            Número do cartão inválido.
           </HelperText>
 
           <TextInput
             label="Quilometragem"
             theme={themes.input}
             style={styles.input}
-            error={!dataIsValid.kilometrage}
+            error={dataError.kilometrage}
             value={kilometrage}
             onChangeText={text => setKilometrage(text)}
             render={props => <TextInputMask {...props} type={'only-numbers'} />}
@@ -368,13 +440,13 @@ export default function ServiceScree(props) {
               label="Tipo de lavagem"
               theme={themes.input}
               style={styles.input}
-              error={!dataIsValid.washType}
+              error={dataError.washType}
               value={washType}
             />
           </TouchableOpacity>
           <HelperText
             type="error"
-            visible={!dataIsValid.licensePlate}
+            visible={dataError.washType}
             padding="none"
             style={{ marginHorizontal: 25 }}
           >
@@ -400,14 +472,14 @@ export default function ServiceScree(props) {
             label="Valor"
             theme={themes.input}
             style={styles.input}
-            error={!dataIsValid.value}
+            error={dataError.value}
             value={value}
             onChangeText={text => setValue(text)}
             render={props => <TextInputMask {...props} type={'money'} />}
           />
           <HelperText
             type="error"
-            visible={!dataIsValid.licensePlate}
+            visible={dataError.value}
             padding="none"
             style={{ marginHorizontal: 25 }}
           >
@@ -443,6 +515,6 @@ export default function ServiceScree(props) {
       >
         <Text style={FONT_REGULAR}>{snackbar}</Text>
       </Snackbar>
-    </View>
+    </SafeAreaView>
   );
 }
