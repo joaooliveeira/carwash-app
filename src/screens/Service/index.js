@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 import {
   ScrollView,
@@ -8,7 +8,8 @@ import {
   Text,
   SafeAreaView,
   Alert,
-} from 'react-native';
+  Animated,
+} from "react-native";
 
 import {
   TextInput,
@@ -16,64 +17,73 @@ import {
   Snackbar,
   IconButton,
   Divider,
-  HelperText,
-} from 'react-native-paper';
+  HelperText
+} from "react-native-paper";
 
-import { SinglePickerMaterialDialog } from 'react-native-material-dialog';
-import { TextInputMask } from 'react-native-masked-text';
-import ButtonCustom from '../../components/ButtonCustom';
-import TextInputSuggestion from '../../components/TextInputSuggestion';
+import { SinglePickerMaterialDialog } from "react-native-material-dialog";
+import { TextInputMask } from "react-native-masked-text";
+import ButtonCustom from "../../components/ButtonCustom";
+import TextInputSuggestion from "../../components/TextInputSuggestion";
 
-import { themes } from '../../assets/themes';
-import { styles } from './styles';
-import { Colors } from '../../styles';
-import { FONT_REGULAR } from '../../styles/typography';
+import { themes } from "../../assets/themes";
+import { styles } from "./styles";
+import { Colors } from "../../styles";
+import { FONT_REGULAR } from "../../styles/typography";
 
-import { findClient, getClientById } from '../../storage/clientRepository';
+import { findClient, getClientById } from "../../services/client/clientLocalDb";
 import {
   getCarByLicensePlate,
-  createCarLocal,
-} from '../../storage/carRepository';
+  createCarLocal
+} from "../../services/car/carLocalDb";
 import {
   createWashLocal,
-  getWashesRunning,
-} from '../../storage/washRepository';
-import { createCar } from '../../storage/carService';
+  getWashesRunning
+} from "../../services/wash/washLocalDb";
+import { createCar } from "../../services/car/carService";
 
 const washTypesData = [
-  { label: 'Ducha', value: "2000" },
-  { label: 'Simples', value: "4000" },
-  { label: 'Completa', value: '6000' },
-  { label: 'Enceramento', value: '7000' },
-  { label: 'Polimento', value: '15000' },
-  { label: 'Higienização', value: '20000' },
+  { label: "Ducha", value: '2000' },
+  { label: "Simples", value: '4000' },
+  { label: "Completa", value: "6000" },
+  { label: "Enceramento", value: "7000" },
+  { label: "Polimento", value: "15000" },
+  { label: "Higienização", value: "20000" }
 ];
 
 export default function ServiceScree(props) {
-  const [client, setClient] = useState({ id: '', name: '' });
+  const [client, setClient] = useState({
+    id: "",
+    name: "",
+    phone: "",
+    email: ""
+  });
   const [clientSuggestions, setClientSuggestions] = useState([]);
-  const [register, setRegister] = useState('');
+  const [registerNewClient, setRegisterNewClient] = useState(false);
+  const [optionalDataAnimation] = useState(new Animated.Value(0));
+  const [warnedUserAboutClient, setWarnedUserAboutClient] = useState(false);
+
+  const [register, setRegister] = useState("");
   const [car, setCar] = useState({
-    id: '',
-    model: '',
-    licensePlate: '',
-    cardNumber: ''
+    id: "",
+    model: "",
+    licensePlate: "",
+    cardNumber: ""
   });
 
-  const [kilometrage, setKilometrage] = useState('');
-  const [washType, setWashType] = useState('');
+  const [kilometrage, setKilometrage] = useState("");
+  const [washType, setWashType] = useState("");
   const [washTypesDialog, setWashTypesDialog] = useState(false);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
 
   const [dataError, setDataError] = useState({
     client: false,
     register: false,
-    licensePlate: { type: '', message: '' },
+    licensePlate: { type: "", message: "" },
     model: false,
     cardNumber: false,
     kilometrage: false,
     washType: false,
-    value: false
+    value: false,
   });
 
   const [loading, setLoading] = useState(false);
@@ -82,11 +92,20 @@ export default function ServiceScree(props) {
   const getClientSuggestions = async text => {
     setClient({ ...client, name: text });
 
-    if (text.length > 0) {
-      setClientSuggestions(await findClient(text, "LIMIT(5)"));
+    if (text.length > 0 && !registerNewClient) {
+      setClientSuggestions(await findClient(text, 'LIMIT(5)'));
     } else {
       setClientSuggestions([]);
     }
+  };
+
+  const showAnimation = () => {
+    Animated.timing(optionalDataAnimation, {
+      toValue: registerNewClient ? 0 : 176,
+      duration: 600
+    }).start();
+
+    setRegisterNewClient(!registerNewClient);
   };
 
   const showWashTypesDialog = () => {
@@ -109,25 +128,25 @@ export default function ServiceScree(props) {
   const validateData = async () => {
     Keyboard.dismiss();
 
-    const clientError = client.id == '';
+    const clientError = client.id == "";
     const licensePlateError = car.licensePlate.length != 7;
     const modelError = car.model.length <= 1;
     const cardNumberError =
       car.cardNumber.length != 19 && car.cardNumber.length != 0;
-    const washTypeError = washType == '';
-    const valueError = value == '';
+    const washTypeError = washType == "";
+    const valueError = value == "";
 
     setDataError({
       ...dataError,
       client: clientError,
       licensePlate: {
-        type: licensePlateError ? 'error' : '',
-        message: licensePlateError ? 'Placa inválida.' : ''
+        type: licensePlateError ? "error" : "",
+        message: licensePlateError ? "Placa inválida." : ""
       },
       model: modelError,
       cardNumber: cardNumberError,
       washType: washTypeError,
-      value: valueError
+      value: valueError,
     });
 
     if (
@@ -146,11 +165,13 @@ export default function ServiceScree(props) {
 
   const createWash = async () => {
     Keyboard.dismiss();
-    setLoading(true);
+    // setLoading(true);
+
+    console.log({ client, register });
 
     // setTimeout(async () => {
-    let newCar = await createCar(car);
-    console.log(newCar);
+    // let newCar = await createCar(car);
+    // console.log(newCar);
     // const wash = {
     //   clientId: client.id,
     //   clientRegister: register,
@@ -173,32 +194,35 @@ export default function ServiceScree(props) {
   };
 
   const clearAllInputs = async () => {
-    setClient({ id: '', name: '' });
-    setRegister('');
-    setCar({ licensePlate: '', model: '', cardNumber: '' });
-    setKilometrage('');
-    setWashType('');
-    setValue('');
+    setClient({ id: "", name: "", phone: "", email: "" });
+    setRegister("");
+    setCar({ licensePlate: "", model: "", cardNumber: "" });
+    setKilometrage("");
+    setWashType("");
+    setValue("");
     setDataError({
       client: false,
       register: false,
-      licensePlate: { message: '' },
+      licensePlate: { message: "" },
       model: false,
       cardNumber: false,
       kilometrage: false,
       washType: false,
-      value: false
+      value: false,
     });
   };
 
   const findCar = async () => {
     const carFromStorage = await getCarByLicensePlate(car.licensePlate);
     if (!carFromStorage) {
-      setSnackbar("Veículo não encontrado");
+      setSnackbar('Veículo não encontrado');
     } else {
       console.log(carFromStorage);
       setCar(carFromStorage);
-      setDataError({ ...dataError, licensePlate: {type: 'info', message: ''}})
+      setDataError({
+        ...dataError,
+        licensePlate: { type: "info", message: "" }
+      });
     }
   };
 
@@ -215,32 +239,131 @@ export default function ServiceScree(props) {
 
           <Card.Title title="Cliente" titleStyle={{ fontSize: 17 }} />
 
-          <View style={{ height: 64 }}>
+          <View style={{ height: 88 }}>
             <TextInputSuggestion
               data={clientSuggestions}
               label="Cliente"
+              value={client.name}
               theme={themes.input}
               style={styles.input}
               autoCapitalize="words"
               error={dataError.client}
-              value={client.name}
-              createClient={client.id ? false : true}
               onChangeText={text => getClientSuggestions(text)}
               selectClient={client => {
                 setClient(client);
                 setDataError({ ...dataError, client: false });
                 setClientSuggestions([]);
+                setWarnedUserAboutClient(false);
               }}
             />
+
+            <HelperText
+              type="error"
+              visible={dataError.client}
+              padding="none"
+              style={{ marginHorizontal: 25 }}
+            >
+              Selecione uma das sugestões de clientes
+            </HelperText>
+
+            <IconButton
+              icon={
+                registerNewClient
+                  ? "account-minus-outline"
+                  : "account-plus-outline"
+              }
+              animated
+              style={{
+                zIndex: 1,
+                position: "absolute",
+                right: 10,
+                top: 13
+              }}
+              color="rgba(0, 0, 0, 0.54)"
+              size={25}
+              onPress={showAnimation}
+            />
           </View>
-          <HelperText
-            type="error"
-            visible={dataError.client}
-            padding="none"
-            style={{ marginHorizontal: 25 }}
+
+          <Animated.View
+            style={{
+              overflow: "hidden",
+              height: optionalDataAnimation,
+            }}
           >
-            Selecione uma das sugestões de clientes
-          </HelperText>
+            <TextInput
+              label="Telefone"
+              value={client.phone}
+              theme={themes.input}
+              style={styles.input}
+              error={false}
+              onChangeText={text => setClient({ ...client, phone: text })}
+              render={props => (
+                <TextInputMask
+                  {...props}
+                  type={'cel-phone'}
+                  options={{
+                    maskType: 'BRL',
+                    withDDD: true,
+                    dddMask: '(99) '
+                  }}
+                />
+              )}
+              onFocus={() => {
+                if (client.id && !warnedUserAboutClient) {
+                  Alert.alert(
+                    "Um cliente já foi selecionado!",
+                    "Você pode alterar os dados deste cliente ou cadastrar um novo.",
+                    [
+                      {
+                        text: "Alterar",
+                        onPress: () => setWarnedUserAboutClient(true)
+                      },
+                      {
+                        text: "Cadastrar novo",
+                        onPress: () => setClient({ id: '', name: '', phone: '', email: '' })
+                      }
+                    ]
+                  );
+                }
+              }}
+            />
+            <HelperText type="error" visible={false} padding="none">
+              Número de telefone incompleto.
+            </HelperText>
+
+            <TextInput
+              label="E-mail"
+              theme={themes.input}
+              style={styles.input}
+              error={false}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              value={client.email}
+              onChangeText={text => setClient({ ...client, email: text })}
+              onFocus={() => {
+                if (client.id && !warnedUserAboutClient) {
+                  Alert.alert(
+                    "Um cliente já foi selecionado!",
+                    "Você pode alterar os dados deste cliente ou cadastrar um novo.",
+                    [
+                      {
+                        text: "Alterar",
+                        onPress: () => setWarnedUserAboutClient(true)
+                      },
+                      {
+                        text: "Cadastrar novo",
+                        onPress: () => setClient({ id: '', name: '', phone: '', email: '' })
+                      }
+                    ]
+                  );
+                }
+              }}
+            />
+            <HelperText type="error" visible={false} padding="none">
+              Insira um email válido.
+            </HelperText>
+          </Animated.View>
 
           <TextInput
             label="Matrícula"
@@ -250,7 +373,7 @@ export default function ServiceScree(props) {
             error={dataError.register}
             value={register}
             onChangeText={text => setRegister(text)}
-            render={props => <TextInputMask {...props} type={'only-numbers'} />}
+            render={props => <TextInputMask {...props} type={"only-numbers"} />}
           />
 
           <Divider style={styles.sectionDivider} />
@@ -265,7 +388,7 @@ export default function ServiceScree(props) {
               label="Placa"
               theme={themes.input}
               style={styles.input}
-              error={dataError.licensePlate.type == "error"}
+              error={dataError.licensePlate.type == 'error'}
               value={car.licensePlate}
               autoCapitalize="characters"
               onChangeText={async text => {
@@ -276,26 +399,26 @@ export default function ServiceScree(props) {
                     setDataError({
                       ...dataError,
                       licensePlate: {
-                        type: 'info',
+                        type: "info",
                         message:
-                          'Veículo já cadastrado, clique no ícone ao lado para prosseguir.'
-                      }
+                          "Veículo já cadastrado, clique no ícone ao lado para prosseguir."
+                      },
                     });
-                  } else if (dataError.licensePlate.type == "error") {
+                  } else if (dataError.licensePlate.type == 'error') {
                     setDataError({
                       ...dataError,
-                      licensePlate: { type: '', message: '' },
+                      licensePlate: { type: "", message: "" }
                     });
                   }
                 } else if (text.length > 7) {
                   setDataError({
                     ...dataError,
-                    licensePlate: { type: 'error', message: 'Placa inválida.' },
+                    licensePlate: { type: "error", message: "Placa inválida." }
                   });
                 } else if (text.length < 7) {
                   setDataError({
                     ...dataError,
-                    licensePlate: { type: '', message: '' },
+                    licensePlate: { type: "", message: "" }
                   });
                 }
               }}
@@ -311,7 +434,7 @@ export default function ServiceScree(props) {
 
             <IconButton
               icon="magnify"
-              style={{ position: 'absolute', right: 10, top: 13 }}
+              style={{ position: "absolute", right: 10, top: 13 }}
               color="rgba(0, 0, 0, 0.54)"
               size={25}
               onPress={findCar}
@@ -331,23 +454,23 @@ export default function ServiceScree(props) {
               }
             }}
             onFocus={() => {
-              if (dataError.licensePlate.type == "info") {
+              if (dataError.licensePlate.type == 'info') {
                 Alert.alert(
-                  'Veículo já cadastrado!',
-                  'Os dados serão sobreescritos e isso afetará as informações de serviços anteriores.',
+                  "Veículo já cadastrado!",
+                  "Os dados serão sobreescritos e isso afetará as informações de serviços anteriores.",
                   [
                     {
-                      text: 'Cancelar',
-                      style: 'cancel'
+                      text: "Cancelar",
+                      style: "cancel"
                     },
                     {
-                      text: 'Continuar',
+                      text: "Continuar",
                       onPress: () =>
                         setDataError({
                           ...dataError,
-                          licensePlate: { type: '', message: '' },
-                        })
-                    }
+                          licensePlate: { type: "", message: "" }
+                        }),
+                    },
                   ]
                 );
               }
@@ -378,30 +501,30 @@ export default function ServiceScree(props) {
             render={props => (
               <TextInputMask
                 {...props}
-                type={'custom'}
+                type={"custom"}
                 options={{
-                  mask: '9999 9999 9999 9999'
+                  mask: "9999 9999 9999 9999"
                 }}
               />
             )}
             onFocus={() => {
-              if (dataError.licensePlate.type == "info") {
+              if (dataError.licensePlate.type == 'info') {
                 Alert.alert(
-                  'Veículo já cadastrado!',
-                  'Os dados serão sobreescritos e isso afetará as informações de serviços anteriores.',
+                  "Veículo já cadastrado!",
+                  "Os dados serão sobreescritos e isso afetará as informações de serviços anteriores.",
                   [
                     {
-                      text: 'Cancelar',
-                      style: 'cancel'
+                      text: "Cancelar",
+                      style: "cancel"
                     },
                     {
-                      text: 'Continuar',
+                      text: "Continuar",
                       onPress: () =>
                         setDataError({
                           ...dataError,
-                          licensePlate: { type: '', message: '' },
-                        })
-                    }
+                          licensePlate: { type: "", message: "" }
+                        }),
+                    },
                   ]
                 );
               }
@@ -423,7 +546,7 @@ export default function ServiceScree(props) {
             error={dataError.kilometrage}
             value={kilometrage}
             onChangeText={text => setKilometrage(text)}
-            render={props => <TextInputMask {...props} type={'only-numbers'} />}
+            render={props => <TextInputMask {...props} type={"only-numbers"} />}
           />
 
           <Divider style={styles.sectionDivider} />
@@ -454,11 +577,11 @@ export default function ServiceScree(props) {
           </HelperText>
 
           <SinglePickerMaterialDialog
-            title={'Selecione uma opção'}
+            title={"Selecione uma opção"}
             items={washTypesData.map((row, index) => ({
               value: index,
               label: row.label,
-              price: row.value
+              price: row.value,
             }))}
             visible={washTypesDialog}
             selectedItem={washType}
@@ -475,7 +598,7 @@ export default function ServiceScree(props) {
             error={dataError.value}
             value={value}
             onChangeText={text => setValue(text)}
-            render={props => <TextInputMask {...props} type={'money'} />}
+            render={props => <TextInputMask {...props} type={"money"} />}
           />
           <HelperText
             type="error"
@@ -500,7 +623,7 @@ export default function ServiceScree(props) {
               icon="content-save"
               mode="contained"
               loading={loading}
-              onPress={validateData}
+              onPress={createWash}
               label="SALVAR"
               style={{ flexGrow: 1, marginRight: 15 }}
             />

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Card, IconButton, Menu, Divider } from "react-native-paper";
 import { View, Alert } from "react-native";
 import InfoText from "./InfoText";
-import { deleteClient } from "../services/clientWs";
 import { ClientEditDialog } from "./ClientEditDialog";
+import { deleteClient } from "../services/client/clientWs";
 
 export const ClientInformationCard = React.memo(
   ({ client, refreshSearchList }) => {

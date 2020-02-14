@@ -6,7 +6,7 @@ import { styles } from "../screens/Service/styles";
 import { TextInputMask } from "react-native-masked-text";
 import { MaterialDialog } from "react-native-material-dialog";
 import { Colors } from "../styles";
-import { updateClient } from "../services/clientWs";
+import { updateClient } from "../services/client/clientWs";
 
 export const ClientEditDialog = ({ client, onDismiss }) => {
   const [name, setName] = useState(client.name);

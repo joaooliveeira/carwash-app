@@ -9,8 +9,8 @@ export const FONT_WEIGHT_REGULAR = "400";
 export const FONT_WEIGHT_BOLD = "700";
 
 // FONT SIZE
-export const FONT_SIZE_TITLE = scaleFont(19);
-export const FONT_SIZE_TEXT = scaleFont(17);
+export const FONT_SIZE_TITLE = scaleFont(20);
+export const FONT_SIZE_TEXT = scaleFont(18);
 export const FONT_SIZE_SMALL_TEXT = scaleFont(16);
 
 // LINE HEIGHT
@@ -26,6 +26,7 @@ export const FONT_REGULAR = {
 
 export const FONT_BOLD = {
   fontFamily: FONT_FAMILY_BOLD,
+  fontWeight: FONT_WEIGHT_BOLD
 };
 
 export const FONT_TITLE = [FONT_REGULAR, { fontSize: FONT_SIZE_TITLE }];

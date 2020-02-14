@@ -1,9 +1,8 @@
 import uuid from "uuid";
-import { createCarLocal, getCarByLicensePlate, updateCarLocal } from "./carRepository";
-import { createCarDb, updateCarDb, findCarByLicensePlate, findCarById } from "../services/carWs";
+import { createCarLocal, getCarByLicensePlate, updateCarLocal } from "./carLocalDb";
+import { createCarDb } from "./carWs";
 
 export const createCar = async car => {
-  console.log("inicio da função");
   let newCar = {
     id: uuid.v1(),
     model: car.model,
@@ -12,17 +11,13 @@ export const createCar = async car => {
     lastUpdate: null
   };
 
-  console.log("newCar", newCar);
-
   const fromStorage = await getCarByLicensePlate(car.licensePlate);
-  console.log("fromStorage", fromStorage);
 
   if (fromStorage) {
     const updatedCar = {...newCar, id: fromStorage.id};
-    console.log("updatedCar", updatedCar);
 
     const fromDb = await createCarDb(updatedCar);
-    console.log("fromDb", fromDb);
+    console.log(fromDb);
     if (fromDb) {
       updateCarLocal(fromDb);
     } else {
@@ -30,7 +25,7 @@ export const createCar = async car => {
     }
   } else {
     const fromDb = await createCarDb(newCar);
-    console.log("fromDbFim", fromDb);
+    console.log(fromDb);
     if (fromDb) {
       createCarLocal(fromDb);
     } else {

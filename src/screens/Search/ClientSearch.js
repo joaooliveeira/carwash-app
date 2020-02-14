@@ -7,7 +7,7 @@ import { Snackbar, Searchbar, Divider } from "react-native-paper";
 // import { findClient } from "../../services/clientWs";
 import { FlatList } from "react-native-gesture-handler";
 import { ClientInformationCard } from "../../components/ClientInformationCard";
-import { findClient } from "../../storage/clientRepository";
+import { findClient } from "../../services/client/clientLocalDb";
 
 export default function ClientSearch(props) {
   const [query, setQuery] = useState('');

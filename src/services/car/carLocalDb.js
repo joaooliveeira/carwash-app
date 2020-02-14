@@ -53,8 +53,7 @@ export const getCar = async filter => {
           model: result[0].model,
           licensePlate: result[0].licensePlate,
           cardNumber: result[0].cardNumber,
-          status: result[0].status,
-          lastUpdate: result[0].lastUpdate,
+          lastUpdate: result[0].lastUpdate
         };
       } else {
         car = undefined;
@@ -71,7 +70,7 @@ export const getCar = async filter => {
 export const findCar = async filter => {
   return Realm.open({ schema: [CarSchema] }).then(realm => {
     try {
-      var result = realm
+      const result = realm
         .objects("Car")
         .filtered(filter)
         .map(car => {
@@ -80,10 +79,10 @@ export const findCar = async filter => {
             model: car.model,
             licensePlate: car.licensePlate,
             cardNumber: car.cardNumber,
-            status: car.status,
-            lastUpdate: car.lastUpdate,
+            lastUpdate: car.lastUpdate
           };
         });
+
       realm.close();
       return result;
     } catch (error) {

@@ -4,7 +4,6 @@ import {
   Platform,
   UIManager,
   LayoutAnimation,
-  Text
 } from "react-native";
 import InfoText from "./InfoText";
 import { Divider, TextInput } from "react-native-paper";
@@ -21,7 +20,7 @@ if (
 export default function TextInputSuggestion(props) {
   const showAnimation = () => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(180, "easeInEaseOut", "opacity")
+      LayoutAnimation.create(200, "easeInEaseOut", "opacity")
     );
   };
 
@@ -36,7 +35,7 @@ export default function TextInputSuggestion(props) {
       position: "absolute",
       left: 0,
       right: 0,
-      zIndex: 1,
+      zIndex: 1
     },
     listStyle: {
       marginHorizontal: 20,
@@ -50,35 +49,16 @@ export default function TextInputSuggestion(props) {
     }
   };
 
-  let registerNewClient;
-  // if (props.value.length > 1 && props.data.length == 0 && props.createClient) {
-  //   registerNewClient = [
-  //     <TouchableOpacity
-  //       onPress={() => console.log("Adicionar novo cliente")}
-  //       style={{
-  //         marginVertical: 4,
-  //         marginHorizontal: 15,
-  //         justifyContent: 'center',
-  //         height: 40
-  //       }}
-  //     >
-  //       <Text>Cadastrar novo cliente</Text>
-  //     </TouchableOpacity>
-  //   ];
-  // }
-
   return (
     <Autocomplete
-      data={registerNewClient || props.data}
+      data={props.data}
       containerStyle={styles.containerStyle}
       inputContainerStyle={styles.inputContainerStyle}
       listStyle={styles.listStyle}
       keyboardShouldPersistTaps="always"
       renderItem={({ item, i }) => {
         showAnimation();
-        return registerNewClient ? (
-          item
-        ) : (
+        return (
           <>
             <TouchableOpacity
               onPress={() => props.selectClient(item)}

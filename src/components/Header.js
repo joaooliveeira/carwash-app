@@ -1,14 +1,14 @@
 import React from "react";
 import { Appbar, Badge } from "react-native-paper";
 import { Colors } from "../styles";
-import { FONT_TITLE } from "../styles/typography";
+import { FONT_TITLE, FONT_TITLE_BOLD } from "../styles/typography";
 import { View } from "react-native";
 
 export const Header = props => {
   return (
     <Appbar.Header style={{ backgroundColor: Colors.PRIMARY }}>
       {props.goBack && <Appbar.BackAction onPress={props.goBack} />}
-      <Appbar.Content title={props.title} titleStyle={FONT_TITLE} />
+      <Appbar.Content title={props.title} titleStyle={FONT_TITLE_BOLD} />
       {props.runningService && (
         <View>
           <Appbar.Action

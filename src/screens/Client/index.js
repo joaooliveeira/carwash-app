@@ -7,7 +7,7 @@ import { TextInputMask } from "react-native-masked-text";
 import { themes } from "../../assets/themes";
 import { styles } from "./styles";
 import ButtonCustom from "../../components/ButtonCustom";
-import { createClient } from "../../services/clientWs";
+import { createClient } from "../../services/client/clientWs";
 // import { createClient } from '../../storage/repository/client/createClientLocal';
 
 export default function ClientScreen(props) {

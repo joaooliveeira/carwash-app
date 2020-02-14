@@ -1,6 +1,6 @@
 import uuid from 'uuid';
-import { getCarById } from './carRepository';
-import { getClient, getClientById } from './clientRepository';
+import { getCarById } from '../car/carLocalDb';
+import { getClient, getClientById } from '../client/clientLocalDb';
 
 const Realm = require('realm');
 
