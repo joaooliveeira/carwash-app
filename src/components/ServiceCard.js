@@ -3,7 +3,7 @@ import { Card, Checkbox } from "react-native-paper";
 import { View, UIManager, LayoutAnimation, Platform } from "react-native";
 import { Colors } from "../styles";
 import InfoText from "./InfoText";
-import { formatValue } from "../utils/formatValue";
+import { formatValue } from "../utils/formatter";
 
 if (
   Platform.OS === 'android' &&
@@ -37,7 +37,7 @@ export default function ServiceCard(props) {
     },
     checkbox: {
       marginTop: 6,
-    },
+    }
   };
 
   return (
@@ -47,7 +47,9 @@ export default function ServiceCard(props) {
           <Checkbox
             status={props.checked || checked ? 'checked' : 'unchecked'}
             color={Colors.PRIMARY}
-            onPress={() => setChecked(!checked)}
+            onPress={() => {
+              setChecked(!checked);
+            }}
           />
         </View>
 

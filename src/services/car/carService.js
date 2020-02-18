@@ -1,35 +1,36 @@
 import uuid from "uuid";
-import { createCarLocal, getCarByLicensePlate, updateCarLocal } from "./carLocalDb";
+import { formatNumber } from "../../utils/formatter";
 import { createCarDb } from "./carWs";
+import { createCarLocal, updateCarLocal } from "./carLocalDb";
 
 export const createCar = async car => {
   let newCar = {
-    id: uuid.v1(),
+    id: car.id ? car.id : uuid.v1(),
     model: car.model,
     licensePlate: car.licensePlate,
-    cardNumber: car.cardNumber.split(' ').join(''),
+    cardNumber: formatNumber(car.cardNumber),
     lastUpdate: null
   };
 
-  const fromStorage = await getCarByLicensePlate(car.licensePlate);
+  const carFromDb = await createCarDb(newCar);
 
-  if (fromStorage) {
-    const updatedCar = {...newCar, id: fromStorage.id};
+  console.log(carFromDb);
 
-    const fromDb = await createCarDb(updatedCar);
-    console.log(fromDb);
-    if (fromDb) {
-      updateCarLocal(fromDb);
+  if (car.id) {
+    if (carFromDb) {
+      updateCarLocal(carFromDb);
+      return carFromDb;
     } else {
-      updateCarLocal(updatedCar);
+      updateCarLocal(newCar);
+      return newCar;
     }
   } else {
-    const fromDb = await createCarDb(newCar);
-    console.log(fromDb);
-    if (fromDb) {
-      createCarLocal(fromDb);
+    if (carFromDb) {
+      createCarLocal(carFromDb);
+      return carFromDb;
     } else {
       createCarLocal(newCar);
+      return newCar;
     }
   }
 };

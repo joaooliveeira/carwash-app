@@ -7,7 +7,7 @@ export const createClientDb = async newClient => {
     body: JSON.stringify(newClient)
   };
 
-  return await fetch(URL + "client", request)
+  return await fetch(URL + "client/create", request)
     .then(response => response.json())
     .catch(e => console.log(e));
 };

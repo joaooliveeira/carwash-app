@@ -7,13 +7,13 @@ const ClientSchema = {
     id: 'string',
     name: { type: 'string', indexed: true },
     phone: { type: 'string', indexed: true },
-    email: { type: 'string', indexed: true },
+    email: { type: 'string', indexed: true, optional: true },
     status: { type: 'string', indexed: true },
-    lastUpdate: { type: 'date', indexed: true }
+    lastUpdate: { type: 'string', indexed: true, optional: true }
   }
 };
 
-export const createClientLocal = newClient => {
+export const createClientLocal = async newClient => {
   return Realm.open({ schema: [ClientSchema] }).then(realm => {
     try {
       realm.write(() => {
@@ -22,6 +22,7 @@ export const createClientLocal = newClient => {
       realm.close();
       return true;
     } catch (error) {
+      console.log(error);
       return false;
     }
   });
@@ -68,7 +69,7 @@ export const getClient = async filter => {
   });
 };
 
-export const findClient = async (term, limit) => {
+export const findClient = async filter => {
   return await Realm.open({ schema: [ClientSchema] }).then(realm => {
     try {
       const result = realm
@@ -84,11 +85,15 @@ export const findClient = async (term, limit) => {
             lastUpdate: client.lastUpdate
           };
         });
-
       realm.close();
-      return result;
+      if (result.length == 0) {
+        return ["NOT_FOUND"];
+      } else {
+        return result;
+      }
     } catch (error) {
-      return [];
+      console.log(error);
+      return ["ERROR"];
     }
   });
 };
@@ -129,9 +134,9 @@ export const getClientByEmail = async email => {
   return getClient(`email == "${email}"`);
 };
 
-export const findClientByNameOrPhoneOrEmail = async (term, limit) => {
+export const findClientByNameOrPhone = async (term, limit) => {
   return findClient(
-    `name CONTAINS[c] "${term}" OR phone BEGINSWITH "${term}" OR email BEGINSWITH "${term}" ${
+    `name CONTAINS[c] "${term}" OR phone CONTAINS "${term}" OR email BEGINSWITH "${term}" ${
       limit ? limit : ''
     }`
   );

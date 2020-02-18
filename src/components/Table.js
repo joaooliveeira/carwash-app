@@ -3,7 +3,7 @@ import { DataTable } from "react-native-paper";
 import { Text, FlatList } from "react-native";
 import { FONT_REGULAR } from "../styles/typography";
 import { TableRow } from "./TableRow";
-import { Data } from "../screens/SearchResult/data";
+import { Data } from "../screens/Sheet/data";
 
 export const Table = React.memo(props => {
   const data = useState(Data);

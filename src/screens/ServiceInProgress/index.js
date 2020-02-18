@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { Header } from "../../components/Header";
-import { Data } from '../SearchResult/data';
+import { Data } from '../Sheet/data';
 import { FlatList } from "react-native-gesture-handler";
 import ServiceCard from "../../components/ServiceCard";
 
 export default function ServiceInProgress(props) {
   const [services] = useState(Data);
+  const [finishedServices, setFinishedServces] = useState([]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -17,6 +18,7 @@ export default function ServiceInProgress(props) {
 
       <FlatList
         data={services}
+        extraData={services}
         renderItem={({ item, index }) => (
           <ServiceCard item={item} index={index} checked={false} />
         )}

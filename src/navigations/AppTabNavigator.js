@@ -5,8 +5,7 @@ import { Header } from '../components/Header';
 import { Colors } from '../styles';
 import ServiceScreen from '../screens/Service/index';
 import SearchScreen from '../screens/Search/index';
-import Expense from '../screens/Expense/index';
-import ClientScreen from '../screens/Client/index';
+import SheetFilterScreen from '../screens/SheetFilter/index';
 import { ReportScreen } from '../screens/Report';
 
 export default class AppTabNavigator extends Component {
@@ -26,16 +25,10 @@ export default class AppTabNavigator extends Component {
         headerTitle: 'Busca'
       },
       {
-        key: 'client',
-        title: 'Clientes',
-        icon: 'account',
-        headerTitle: 'Clientes'
-      },
-      {
-        key: 'expense',
-        title: 'Despesas',
-        icon: "currency-usd",
-        headerTitle: 'Despesas'
+        key: 'sheet',
+        title: 'Planilhas',
+        icon: "table",
+        headerTitle: 'Planilhas'
       },
       {
         key: 'report',
@@ -51,22 +44,25 @@ export default class AppTabNavigator extends Component {
   _renderScene = BottomNavigation.SceneMap({
     service: () => <ServiceScreen {...this.props} />,
     search: () => <SearchScreen {...this.props} />,
-    client: () => <ClientScreen {...this.props} />,
-    expense: () => <Expense {...this.props} />,
-    report: () => <ReportScreen {...this.props} />,
+    sheet: () => <SheetFilterScreen {...this.props} />,
+    report: () => <ReportScreen {...this.props} />
   });
 
   render() {
     return (
       <Provider style={{ flex: 1 }}>
         <AppStatusBar />
-        <Header
-          {...this.props}
-          title={this.state.routes[this.state.index].headerTitle}
-          runningService={
-            this.state.routes[this.state.index].key == 'service' ? true : false
-          }
-        />
+        {!(this.state.routes[this.state.index].key == 'search') && (
+          <Header
+            {...this.props}
+            title={this.state.routes[this.state.index].headerTitle}
+            runningService={
+              this.state.routes[this.state.index].key == 'service'
+                ? true
+                : false
+            }
+          />
+        )}
         <BottomNavigation
           navigationState={this.state}
           onIndexChange={this._handleIndexChange}

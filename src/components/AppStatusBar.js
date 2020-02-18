@@ -2,8 +2,11 @@ import React from "react";
 import { StatusBar } from "react-native";
 import { Colors } from "../styles";
 
-export const AppStatusBar = () => {
+export const AppStatusBar = props => {
   return (
-    <StatusBar backgroundColor={Colors.SECONDARY} barStyle="light-content" />
+    <StatusBar
+      backgroundColor={props.color || Colors.SECONDARY}
+      barStyle={props.barStyle || "light-content"}
+    />
   );
 };

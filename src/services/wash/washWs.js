@@ -1,7 +1,12 @@
-const URL = "http://192.168.0.94:8080/";
+const URL = "http://192.168.0.9:8080/";
 
-export const createWash = async ({ wash }) => {
-  return await fetch(URL + `car/?licensePlate=${wash}`, { method: 'GET' })
+export const createWashDb = async newWash => {
+  let request = {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(newWash)
+  };
+  return await fetch(URL + `wash/create`, request)
     .then(response => response.json())
     .catch(err => console.log(err));
 };

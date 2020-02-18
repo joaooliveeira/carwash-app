@@ -6,15 +6,15 @@ import { createStackNavigator } from "react-navigation-stack";
 
 import AppTabNavigator from "./AppTabNavigator";
 import Splash from "../screens/Splash/index";
-import SearchResult from "../screens/SearchResult/index";
+import Sheet from "../screens/Sheet/index";
 import RunningServices from "../screens/ServiceInProgress/index";
 
 const AppNavigator = createStackNavigator(
   {
     Splash,
     AppTabNavigator,
-    SearchResult,
-    RunningServices,
+    Sheet,
+    RunningServices
   },
   {
     initialRouteName: "Splash",

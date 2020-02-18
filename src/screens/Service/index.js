@@ -8,7 +8,6 @@ import {
   Text,
   SafeAreaView,
   Alert,
-  Animated,
 } from "react-native";
 
 import {
@@ -17,8 +16,10 @@ import {
   Snackbar,
   IconButton,
   Divider,
-  HelperText
+  HelperText,
 } from "react-native-paper";
+
+import Modal from "react-native-modal";
 
 import { SinglePickerMaterialDialog } from "react-native-material-dialog";
 import { TextInputMask } from "react-native-masked-text";
@@ -30,37 +31,30 @@ import { styles } from "./styles";
 import { Colors } from "../../styles";
 import { FONT_REGULAR } from "../../styles/typography";
 
-import { findClient, getClientById } from "../../services/client/clientLocalDb";
-import {
-  getCarByLicensePlate,
-  createCarLocal
-} from "../../services/car/carLocalDb";
-import {
-  createWashLocal,
-  getWashesRunning
-} from "../../services/wash/washLocalDb";
+import { findClientByNameOrPhone } from "../../services/client/clientLocalDb";
+import ClientForm from "../../components/clientForm";
+import { getCarByLicensePlate } from "../../services/car/carLocalDb";
 import { createCar } from "../../services/car/carService";
+import { createWash } from "../../services/wash/washService";
+import { formatNumber } from "../../utils/formatter";
+import { AppStatusBar } from "../../components/AppStatusBar";
 
 const washTypesData = [
-  { label: "Ducha", value: '2000' },
-  { label: "Simples", value: '4000' },
-  { label: "Completa", value: "6000" },
-  { label: "Enceramento", value: "7000" },
-  { label: "Polimento", value: "15000" },
-  { label: "Higienização", value: "20000" }
+  { label: "Ducha", value: '20,00' },
+  { label: "Simples", value: '40,00' },
+  { label: "Completa", value: "60,00" },
+  { label: "Enceramento", value: "70,00" },
+  { label: "Polimento", value: "150,00" },
+  { label: "Higienização", value: "200,00" }
 ];
 
 export default function ServiceScree(props) {
   const [client, setClient] = useState({
     id: "",
     name: "",
-    phone: "",
-    email: ""
+    phone: ""
   });
   const [clientSuggestions, setClientSuggestions] = useState([]);
-  const [registerNewClient, setRegisterNewClient] = useState(false);
-  const [optionalDataAnimation] = useState(new Animated.Value(0));
-  const [warnedUserAboutClient, setWarnedUserAboutClient] = useState(false);
 
   const [register, setRegister] = useState("");
   const [car, setCar] = useState({
@@ -88,24 +82,15 @@ export default function ServiceScree(props) {
 
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
+  const [newClientForm, setNewClientForm] = useState(false);
 
   const getClientSuggestions = async text => {
-    setClient({ ...client, name: text });
+    console.log(new Date().toString());
+    setClient({ id: '', name: text, phone: '', email: '' });
 
-    if (text.length > 0 && !registerNewClient) {
-      setClientSuggestions(await findClient(text, 'LIMIT(5)'));
-    } else {
-      setClientSuggestions([]);
-    }
-  };
-
-  const showAnimation = () => {
-    Animated.timing(optionalDataAnimation, {
-      toValue: registerNewClient ? 0 : 176,
-      duration: 600
-    }).start();
-
-    setRegisterNewClient(!registerNewClient);
+    text.length > 0
+      ? setClientSuggestions(await findClientByNameOrPhone(text, 'LIMIT(5)'))
+      : setClientSuggestions([]);
   };
 
   const showWashTypesDialog = () => {
@@ -126,27 +111,24 @@ export default function ServiceScree(props) {
   };
 
   const validateData = async () => {
+    setLoading(true);
     Keyboard.dismiss();
 
-    const clientError = client.id == "";
-    const licensePlateError = car.licensePlate.length != 7;
-    const modelError = car.model.length <= 1;
-    const cardNumberError =
-      car.cardNumber.length != 19 && car.cardNumber.length != 0;
-    const washTypeError = washType == "";
-    const valueError = value == "";
+    const clientError = validateClient();
+    const licensePlateError = validateLicensePlate();
+    const modelError = validateCarModel();
+    const cardNumberError = validateCardNumber();
+    const washTypeError = validateWashType();
+    const valueError = validateValue();
 
     setDataError({
       ...dataError,
       client: clientError,
-      licensePlate: {
-        type: licensePlateError ? "error" : "",
-        message: licensePlateError ? "Placa inválida." : ""
-      },
+      licensePlate: licensePlateError,
       model: modelError,
       cardNumber: cardNumberError,
       washType: washTypeError,
-      value: valueError,
+      value: valueError
     });
 
     if (
@@ -159,38 +141,65 @@ export default function ServiceScree(props) {
         valueError
       )
     ) {
-      createWash();
+      await createNewWash();
     }
+
+    setLoading(false);
   };
 
-  const createWash = async () => {
-    Keyboard.dismiss();
-    // setLoading(true);
+  const validateClient = () => {
+    return client.id
+      ? false
+      : "Busque um cliente e selecione uma das sugestões.";
+  };
 
-    console.log({ client, register });
+  const validateLicensePlate = () => {
+    return car.licensePlate.length == 7
+      ? false
+      : { type: 'error', message: 'Placa inválida.' };
+  };
 
-    // setTimeout(async () => {
-    // let newCar = await createCar(car);
-    // console.log(newCar);
-    // const wash = {
-    //   clientId: client.id,
-    //   clientRegister: register,
-    //   carId: car.id || newCar.id,
-    //   kilometrage,
-    //   washType,
-    //   value
-    // };
+  const validateCarModel = () => {
+    return car.model.length >= 2
+      ? false
+      : "O modelo deve conter pelo menos dois caracteres.";
+  };
 
-    // const newWash = await createWashLocal(wash);
+  const validateCardNumber = () => {
+    return car.cardNumber.length != 0 && formatNumber(car.cardNumber).length != 16
+      ? "Número do cartão inválido."
+      : false;
+  };
 
-    //   setSnackbar(
-    //     newWash.id
-    //       ? 'Serviço registrado com sucesso'
-    //       : 'Algo deu errado, tente novamente'
-    //   );
-    //   clearAllInputs();
-    //   setLoading(false);
-    // }, 100);
+  const validateWashType = () => {
+    return washType != "" ? false : "Selecione um tipo de lavagem.";
+  };
+
+  const validateValue = () => {
+    return value != "" ? false : "Insira o valor do serviço.";
+  };
+
+  const createNewWash = async () => {
+    let newCar = await createCar(car);
+    const wash = {
+      clientId: client.id,
+      clientRegister: register,
+      carId: newCar.id,
+      kilometrage,
+      washType,
+      value: formatNumber(value)
+    };
+
+    const newWash = await createWash(wash);
+    console.log("retorno do servico createWash", newWash);
+
+    setSnackbar(
+      newWash.id
+        ? 'Serviço registrado com sucesso'
+        : 'Algo deu errado, tente novamente'
+    );
+    clearAllInputs();
+    setLoading(false);
   };
 
   const clearAllInputs = async () => {
@@ -208,7 +217,7 @@ export default function ServiceScree(props) {
       cardNumber: false,
       kilometrage: false,
       washType: false,
-      value: false,
+      value: false
     });
   };
 
@@ -227,22 +236,22 @@ export default function ServiceScree(props) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView keyboardShouldPersistTaps="handled">
+    <SafeAreaView>
+      <ScrollView keyboardShouldPersistTaps="always">
         <Card style={styles.card}>
           <Card.Title
             title="Criar novo serviço"
-            titleStyle={{ fontSize: 20 }}
+            titleStyle={{ fontSize: 21 }}
           />
 
-          <Divider style={{ marginBottom: 5 }} />
+          <Divider style={styles.divider} />
 
-          <Card.Title title="Cliente" titleStyle={{ fontSize: 17 }} />
+          <Card.Title title="Dados do cliente" titleStyle={{ fontSize: 18 }} />
 
-          <View style={{ height: 88 }}>
+          <View style={{ height: 64 }}>
             <TextInputSuggestion
               data={clientSuggestions}
-              label="Cliente"
+              label="Cliente *"
               value={client.name}
               theme={themes.input}
               style={styles.input}
@@ -251,128 +260,63 @@ export default function ServiceScree(props) {
               onChangeText={text => getClientSuggestions(text)}
               selectClient={client => {
                 setClient(client);
-                setDataError({ ...dataError, client: false });
                 setClientSuggestions([]);
-                setWarnedUserAboutClient(false);
+                setDataError({
+                  ...dataError,
+                  client: false
+                });
               }}
             />
 
-            <HelperText
-              type="error"
-              visible={dataError.client}
-              padding="none"
-              style={{ marginHorizontal: 25 }}
-            >
-              Selecione uma das sugestões de clientes
-            </HelperText>
-
             <IconButton
-              icon={
-                registerNewClient
-                  ? "account-minus-outline"
-                  : "account-plus-outline"
-              }
-              animated
-              style={{
-                zIndex: 1,
-                position: "absolute",
-                right: 10,
-                top: 13
-              }}
+              icon="account-plus-outline"
+              style={styles.newClientIcon}
               color="rgba(0, 0, 0, 0.54)"
               size={25}
-              onPress={showAnimation}
+              onPress={() => {
+                setClientSuggestions([]);
+                setNewClientForm(true);
+              }}
             />
           </View>
 
-          <Animated.View
-            style={{
-              overflow: "hidden",
-              height: optionalDataAnimation,
-            }}
+          <HelperText
+            type="error"
+            visible={dataError.client}
+            padding="none"
+            style={styles.helperText}
           >
-            <TextInput
-              label="Telefone"
-              value={client.phone}
-              theme={themes.input}
-              style={styles.input}
-              error={false}
-              onChangeText={text => setClient({ ...client, phone: text })}
-              render={props => (
-                <TextInputMask
-                  {...props}
-                  type={'cel-phone'}
-                  options={{
-                    maskType: 'BRL',
-                    withDDD: true,
-                    dddMask: '(99) '
-                  }}
-                />
-              )}
-              onFocus={() => {
-                if (client.id && !warnedUserAboutClient) {
-                  Alert.alert(
-                    "Um cliente já foi selecionado!",
-                    "Você pode alterar os dados deste cliente ou cadastrar um novo.",
-                    [
-                      {
-                        text: "Alterar",
-                        onPress: () => setWarnedUserAboutClient(true)
-                      },
-                      {
-                        text: "Cadastrar novo",
-                        onPress: () => setClient({ id: '', name: '', phone: '', email: '' })
-                      }
-                    ]
-                  );
-                }
-              }}
-            />
-            <HelperText type="error" visible={false} padding="none">
-              Número de telefone incompleto.
-            </HelperText>
+            {dataError.client}
+          </HelperText>
 
-            <TextInput
-              label="E-mail"
-              theme={themes.input}
-              style={styles.input}
-              error={false}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              value={client.email}
-              onChangeText={text => setClient({ ...client, email: text })}
-              onFocus={() => {
-                if (client.id && !warnedUserAboutClient) {
-                  Alert.alert(
-                    "Um cliente já foi selecionado!",
-                    "Você pode alterar os dados deste cliente ou cadastrar um novo.",
-                    [
-                      {
-                        text: "Alterar",
-                        onPress: () => setWarnedUserAboutClient(true)
-                      },
-                      {
-                        text: "Cadastrar novo",
-                        onPress: () => setClient({ id: '', name: '', phone: '', email: '' })
-                      }
-                    ]
-                  );
-                }
+          <Modal
+            isVisible={newClientForm}
+            useNativeDriver={true}
+            deviceHeight={require("react-native-extra-dimensions-android").get(
+              'REAL_WINDOW_HEIGHT'
+            )}
+          >
+            <ClientForm
+              hideForm={() => setNewClientForm(false)}
+              onFinished={newClient => {
+                setNewClientForm(false);
+                setTimeout(() => {
+                  setClient(newClient);
+                  setSnackbar('Cliente cadastrado com sucesso');
+                }, 150);
               }}
             />
-            <HelperText type="error" visible={false} padding="none">
-              Insira um email válido.
-            </HelperText>
-          </Animated.View>
+          </Modal>
 
           <TextInput
             label="Matrícula"
             theme={themes.input}
-            // It is necessary to render TextInputSuggestion correctly.
             style={styles.input}
             error={dataError.register}
             value={register}
-            onChangeText={text => setRegister(text)}
+            onChangeText={text => {
+              setRegister(text);
+            }}
             render={props => <TextInputMask {...props} type={"only-numbers"} />}
           />
 
@@ -380,12 +324,12 @@ export default function ServiceScree(props) {
 
           <Card.Title
             title="Informações do veículo"
-            titleStyle={{ fontSize: 17 }}
+            titleStyle={{ fontSize: 18 }}
           />
 
           <View>
             <TextInput
-              label="Placa"
+              label="Placa *"
               theme={themes.input}
               style={styles.input}
               error={dataError.licensePlate.type == 'error'}
@@ -393,6 +337,7 @@ export default function ServiceScree(props) {
               autoCapitalize="characters"
               onChangeText={async text => {
                 setCar({ ...car, licensePlate: text });
+
                 if (text.length == 7) {
                   const carFromStorage = await getCarByLicensePlate(text);
                   if (carFromStorage) {
@@ -402,7 +347,7 @@ export default function ServiceScree(props) {
                         type: "info",
                         message:
                           "Veículo já cadastrado, clique no ícone ao lado para prosseguir."
-                      },
+                      }
                     });
                   } else if (dataError.licensePlate.type == 'error') {
                     setDataError({
@@ -442,10 +387,14 @@ export default function ServiceScree(props) {
           </View>
 
           <TextInput
-            label="Modelo"
+            label="Modelo *"
             theme={themes.input}
             style={styles.input}
             error={dataError.model}
+            disabled={
+              dataError.licensePlate.type == 'info' &&
+              dataError.licensePlate.message != ''
+            }
             value={car.model}
             onChangeText={text => {
               setCar({ ...car, model: text });
@@ -469,8 +418,8 @@ export default function ServiceScree(props) {
                         setDataError({
                           ...dataError,
                           licensePlate: { type: "", message: "" }
-                        }),
-                    },
+                        })
+                    }
                   ]
                 );
               }
@@ -490,6 +439,10 @@ export default function ServiceScree(props) {
             theme={themes.input}
             style={styles.input}
             error={dataError.cardNumber}
+            disabled={
+              dataError.licensePlate.type == 'info' &&
+              dataError.licensePlate.message != ''
+            }
             keyboardType="numeric"
             value={car.cardNumber}
             onChangeText={text => {
@@ -523,8 +476,8 @@ export default function ServiceScree(props) {
                         setDataError({
                           ...dataError,
                           licensePlate: { type: "", message: "" }
-                        }),
-                    },
+                        })
+                    }
                   ]
                 );
               }
@@ -553,14 +506,14 @@ export default function ServiceScree(props) {
 
           <Card.Title
             title="Detalhes da lavagem"
-            titleStyle={{ fontSize: 17 }}
+            titleStyle={{ fontSize: 18 }}
           />
 
           <TouchableOpacity onPress={showWashTypesDialog}>
             {/* It takes to overlay the TextInput component. */}
             <View style={styles.dialog} />
             <TextInput
-              label="Tipo de lavagem"
+              label="Tipo de lavagem *"
               theme={themes.input}
               style={styles.input}
               error={dataError.washType}
@@ -581,7 +534,7 @@ export default function ServiceScree(props) {
             items={washTypesData.map((row, index) => ({
               value: index,
               label: row.label,
-              price: row.value,
+              price: row.value
             }))}
             visible={washTypesDialog}
             selectedItem={washType}
@@ -592,13 +545,34 @@ export default function ServiceScree(props) {
           />
 
           <TextInput
-            label="Valor"
+            label="Valor *"
             theme={themes.input}
             style={styles.input}
             error={dataError.value}
             value={value}
             onChangeText={text => setValue(text)}
-            render={props => <TextInputMask {...props} type={"money"} />}
+            render={props => (
+              <TextInputMask
+                {...props}
+                type={'custom'}
+                options={{
+                  /**
+                   * mask: (String | required | default '')
+                   * the mask pattern
+                   * 9 - accept digit.
+                   * A - accept alpha.
+                   * S - accept alphanumeric.
+                   * * - accept all, EXCEPT white space.
+                   */
+                  mask:
+                    value.length <= 8
+                      ? 'R$ 99,9999'
+                      : value.length == 9
+                      ? 'R$ 999,999'
+                      : 'R$ 9999,99'
+                }}
+              />
+            )}
           />
           <HelperText
             type="error"
@@ -623,7 +597,7 @@ export default function ServiceScree(props) {
               icon="content-save"
               mode="contained"
               loading={loading}
-              onPress={createWash}
+              onPress={validateData}
               label="SALVAR"
               style={{ flexGrow: 1, marginRight: 15 }}
             />

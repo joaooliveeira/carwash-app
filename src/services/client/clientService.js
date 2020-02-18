@@ -1,11 +1,10 @@
 import uuid from "uuid";
-import { getClientById, updateClientLocal, createClientLocal } from "./clientLocalDb";
 import { createClientDb } from "./clientWs";
-import { createCarLocal } from "../car/carLocalDb";
+import { updateClientLocal, createClientLocal } from "./clientLocalDb";
 
 export const createClient = async client => {
   let newClient = {
-    id: uuid.v1(),
+    id: client.id ? client.id : uuid.v1(),
     name: client.name,
     phone: client.phone,
     email: client.email,
@@ -13,24 +12,23 @@ export const createClient = async client => {
     lastUpdate: null
   };
 
-  const fromStorage = client.id ? await getClientById(client.id) : undefined;
+  const clientFromDb = await createClientDb(newClient);
 
-  if (fromStorage) {
-    const fromDb = await createClientDb(client);
-    console.log(fromDb);
-    if (fromDb) {
-      updateClientLocal(fromDb);
+  if (client.id) {
+    if (clientFromDb) {
+      updateClientLocal(clientFromDb);
+      return clientFromDb;
     } else {
-      const updatedClient = { ...client, lastUpdate: null };
-      updateClientLocal(updatedClient);
+      updateClientLocal(newClient);
+      return newClient;
     }
   } else {
-    const fromDb = await createClientDb(newClient);
-    console.log(fromDb);
-    if (fromDb) {
-      createClientLocal(fromDb);
+    if (clientFromDb) {
+      createClientLocal(clientFromDb);
+      return clientFromDb;
     } else {
-      createCarLocal(newClient);
+      createClientLocal(newClient);
+      return newClient;
     }
   }
 };

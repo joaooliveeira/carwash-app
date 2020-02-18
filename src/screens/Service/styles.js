@@ -2,11 +2,12 @@ import { StyleSheet } from 'react-native';
 import { FONT_FAMILY_REGULAR } from '../../styles/typography';
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
   card: {
-    margin: 15
+    margin: 15,
+    borderRadius: 8
+  },
+  divider: {
+    marginBottom: 5
   },
   input: {
     paddingVertical: 0,
@@ -14,9 +15,18 @@ export const styles = StyleSheet.create({
     marginHorizontal: 20,
     fontFamily: FONT_FAMILY_REGULAR
   },
+  helperText: {
+    marginHorizontal: 25
+  },
   sectionDivider: {
     marginTop: 30,
     marginBottom: 5
+  },
+  newClientIcon: {
+    position: "absolute",
+    right: 10,
+    top: 13,
+    zIndex: 1
   },
   dialog: {
     position: 'absolute',

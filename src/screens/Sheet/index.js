@@ -11,7 +11,7 @@ import RNFetchBlob from "rn-fetch-blob";
 import { styles } from "./styles";
 import { Data } from "./data";
 
-export default function SearchResult(props) {
+export default function SheetScreen(props) {
   const [data, setData] = useState(Data);
   const [pdfFile, setPdfFile] = useState(null);
   const [loading, setLoading] = useState(false);

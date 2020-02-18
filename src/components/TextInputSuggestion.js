@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   TouchableOpacity,
   Platform,
   UIManager,
   LayoutAnimation,
+  Text
 } from "react-native";
 import InfoText from "./InfoText";
 import { Divider, TextInput } from "react-native-paper";
@@ -18,74 +19,94 @@ if (
 }
 
 export default function TextInputSuggestion(props) {
+  const [hideResults, setHideResults] = useState(false);
   const showAnimation = () => {
     LayoutAnimation.configureNext(
       LayoutAnimation.create(200, "easeInEaseOut", "opacity")
     );
   };
 
-  const styles = {
-    input: {
-      paddingVertical: 0,
-      paddingHorizontal: 5,
-      marginHorizontal: 20,
-      fontFamily: FONT_FAMILY_REGULAR,
-    },
-    containerStyle: {
-      position: "absolute",
-      left: 0,
-      right: 0,
-      zIndex: 1
-    },
-    listStyle: {
-      marginHorizontal: 20,
-      borderBottomLeftRadius: 5,
-      borderBottomRightRadius: 5,
-      elevation: 4,
-      borderWidth: 0.3,
-    },
-    inputContainerStyle: {
-      borderWidth: 0,
-    }
-  };
-
   return (
     <Autocomplete
       data={props.data}
+      hideResults={hideResults}
       containerStyle={styles.containerStyle}
       inputContainerStyle={styles.inputContainerStyle}
       listStyle={styles.listStyle}
       keyboardShouldPersistTaps="always"
       renderItem={({ item, i }) => {
         showAnimation();
-        return (
-          <>
-            <TouchableOpacity
-              onPress={() => props.selectClient(item)}
-              style={{
-                flexDirection: "row",
-                justifyContent: 'space-between',
-                marginVertical: 4,
-                marginHorizontal: 15,
-              }}
-            >
-              <InfoText
-                label="Nome"
-                text={item.name}
-                styleView={{ width: '50%' }}
-              />
-              <InfoText
-                label="Telefone"
-                text={item.phone}
-                phoneType
-                styleView={{ width: '50%' }}
-              />
-            </TouchableOpacity>
-            <Divider />
-          </>
-        );
+        if (props.data[0] == "NOT_FOUND") {
+          return (
+            <Text style={styles.notFoundText}>Nenhum cliente encontrado.</Text>
+          );
+        } else {
+          return (
+            <>
+              <TouchableOpacity
+                onPress={() => props.selectClient(item)}
+                style={styles.item}
+              >
+                <InfoText
+                  label="Nome"
+                  text={item.name}
+                  styleView={{ width: '50%' }}
+                />
+                <InfoText
+                  label="Telefone"
+                  text={item.phone}
+                  phoneType
+                  styleView={{ width: '50%' }}
+                />
+              </TouchableOpacity>
+              <Divider />
+            </>
+          );
+        }
       }}
-      renderTextInput={() => <TextInput {...props} />}
+      renderTextInput={() => (
+        <TextInput
+          {...props}
+          onBlur={() => setHideResults(true)}
+          onFocus={() => setHideResults(false)}
+        />
+      )}
     />
   );
 }
+
+const styles = {
+  input: {
+    paddingVertical: 0,
+    paddingHorizontal: 5,
+    marginHorizontal: 20,
+    fontFamily: FONT_FAMILY_REGULAR,
+  },
+  containerStyle: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    zIndex: 1
+  },
+  listStyle: {
+    marginHorizontal: 20,
+    borderBottomLeftRadius: 5,
+    borderBottomRightRadius: 5,
+    elevation: 4,
+    borderWidth: 0.3,
+  },
+  inputContainerStyle: {
+    borderWidth: 0,
+  },
+  notFoundText: {
+    height: 40,
+    textAlignVertical: 'center',
+    marginLeft: 10,
+  },
+  item: {
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    marginVertical: 4,
+    marginHorizontal: 15,
+  }
+};

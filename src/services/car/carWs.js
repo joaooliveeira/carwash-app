@@ -6,7 +6,7 @@ export const createCarDb = async newCar => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(newCar)
   };
-  return await fetch(URL + 'car', request)
+  return await fetch(URL + 'car/create', request)
     .then(response => response.json())
     .catch(e => console.log(e));
 };

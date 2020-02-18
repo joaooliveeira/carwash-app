@@ -1,14 +1,20 @@
 import React from "react";
-import { Appbar, Badge } from "react-native-paper";
+import { Appbar, Badge, Searchbar } from "react-native-paper";
 import { Colors } from "../styles";
 import { FONT_TITLE, FONT_TITLE_BOLD } from "../styles/typography";
 import { View } from "react-native";
 
 export const Header = props => {
-  return (
+  return props.search ? (
+    <Searchbar
+      placeholder="Digite para pesquisar..."
+      value=""
+      onChangeText={{}}
+    />
+  ) : (
     <Appbar.Header style={{ backgroundColor: Colors.PRIMARY }}>
       {props.goBack && <Appbar.BackAction onPress={props.goBack} />}
-      <Appbar.Content title={props.title} titleStyle={FONT_TITLE_BOLD} />
+      <Appbar.Content title={props.title} titleStyle={FONT_TITLE} />
       {props.runningService && (
         <View>
           <Appbar.Action
