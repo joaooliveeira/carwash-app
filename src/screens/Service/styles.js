@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
   input: {
     paddingVertical: 0,
     paddingHorizontal: 5,
-    marginHorizontal: 20,
+    marginHorizontal: 25,
     fontFamily: FONT_FAMILY_REGULAR
   },
   helperText: {
@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
   },
   newClientIcon: {
     position: "absolute",
-    right: 10,
+    right: 15,
     top: 13,
     zIndex: 1
   },

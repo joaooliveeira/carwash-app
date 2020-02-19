@@ -3,10 +3,5 @@ import { StatusBar } from "react-native";
 import { Colors } from "../styles";
 
 export const AppStatusBar = props => {
-  return (
-    <StatusBar
-      backgroundColor={props.color || Colors.SECONDARY}
-      barStyle={props.barStyle || "light-content"}
-    />
-  );
+  return <StatusBar backgroundColor="#EBEBEB" barStyle="dark-content" />;
 };

@@ -79,7 +79,7 @@ const styles = {
   input: {
     paddingVertical: 0,
     paddingHorizontal: 5,
-    marginHorizontal: 20,
+    marginHorizontal: 25,
     fontFamily: FONT_FAMILY_REGULAR,
   },
   containerStyle: {
@@ -89,7 +89,7 @@ const styles = {
     zIndex: 1
   },
   listStyle: {
-    marginHorizontal: 20,
+    marginHorizontal: 25,
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
     elevation: 4,

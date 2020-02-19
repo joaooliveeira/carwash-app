@@ -14,7 +14,7 @@ export default class AppTabNavigator extends Component {
     routes: [
       {
         key: 'service',
-        title: 'Serviços',
+        title: 'Serviço',
         icon: 'car-multiple',
         headerTitle: 'Serviços'
       },
@@ -26,14 +26,14 @@ export default class AppTabNavigator extends Component {
       },
       {
         key: 'sheet',
-        title: 'Planilhas',
-        icon: "table",
+        title: 'Planilha',
+        icon: "file-chart",
         headerTitle: 'Planilhas'
       },
       {
         key: 'report',
-        title: 'Relatórios',
-        icon: 'chart-areaspline',
+        title: 'Relatório',
+        icon: 'finance',
         headerTitle: 'Relatórios'
       },
     ],
@@ -67,9 +67,10 @@ export default class AppTabNavigator extends Component {
           navigationState={this.state}
           onIndexChange={this._handleIndexChange}
           renderScene={this._renderScene}
-          shifting={true}
-          barStyle={{ backgroundColor: Colors.PRIMARY, height: 60 }}
-          sceneAnimationEnabled={true}
+          shifting={false}
+          activeColor={Colors.PRIMARY}
+          barStyle={{ backgroundColor: 'white', paddingVertical: 5, elevation: 8, borderTopWidth: 0.3, borderColor: "#EEEEEE" }}
+          sceneAnimationEnabled={false}
         />
       </Provider>
     );

@@ -8,6 +8,7 @@ import {
   Text,
   SafeAreaView,
   Alert,
+  StatusBar,
 } from "react-native";
 
 import {
@@ -29,7 +30,7 @@ import TextInputSuggestion from "../../components/TextInputSuggestion";
 import { themes } from "../../assets/themes";
 import { styles } from "./styles";
 import { Colors } from "../../styles";
-import { FONT_REGULAR } from "../../styles/typography";
+import { FONT_REGULAR, FONT_TITLE_BOLD, FONT_TITLE, FONT_BOLD } from "../../styles/typography";
 
 import { findClientByNameOrPhone } from "../../services/client/clientLocalDb";
 import ClientForm from "../../components/clientForm";
@@ -37,7 +38,6 @@ import { getCarByLicensePlate } from "../../services/car/carLocalDb";
 import { createCar } from "../../services/car/carService";
 import { createWash } from "../../services/wash/washService";
 import { formatNumber } from "../../utils/formatter";
-import { AppStatusBar } from "../../components/AppStatusBar";
 
 const washTypesData = [
   { label: "Ducha", value: '20,00' },
@@ -241,12 +241,12 @@ export default function ServiceScree(props) {
         <Card style={styles.card}>
           <Card.Title
             title="Criar novo serviço"
-            titleStyle={{ fontSize: 21 }}
+            titleStyle={[FONT_BOLD, { fontSize: 20 }]}
           />
 
           <Divider style={styles.divider} />
 
-          <Card.Title title="Dados do cliente" titleStyle={{ fontSize: 18 }} />
+          <Card.Title title="Dados do cliente" titleStyle={[FONT_BOLD, { fontSize: 17 }]} />
 
           <View style={{ height: 64 }}>
             <TextInputSuggestion
@@ -324,7 +324,7 @@ export default function ServiceScree(props) {
 
           <Card.Title
             title="Informações do veículo"
-            titleStyle={{ fontSize: 18 }}
+            titleStyle={[FONT_BOLD, { fontSize: 17 }]}
           />
 
           <View>
@@ -379,7 +379,7 @@ export default function ServiceScree(props) {
 
             <IconButton
               icon="magnify"
-              style={{ position: "absolute", right: 10, top: 13 }}
+              style={{ position: "absolute", right: 15, top: 13 }}
               color="rgba(0, 0, 0, 0.54)"
               size={25}
               onPress={findCar}
@@ -506,7 +506,7 @@ export default function ServiceScree(props) {
 
           <Card.Title
             title="Detalhes da lavagem"
-            titleStyle={{ fontSize: 18 }}
+            titleStyle={[FONT_BOLD, { fontSize: 17 }]}
           />
 
           <TouchableOpacity onPress={showWashTypesDialog}>

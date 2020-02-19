@@ -5,21 +5,15 @@ import { FONT_TITLE, FONT_TITLE_BOLD } from "../styles/typography";
 import { View } from "react-native";
 
 export const Header = props => {
-  return props.search ? (
-    <Searchbar
-      placeholder="Digite para pesquisar..."
-      value=""
-      onChangeText={{}}
-    />
-  ) : (
-    <Appbar.Header style={{ backgroundColor: Colors.PRIMARY }}>
+  return (
+    <Appbar.Header style={{ backgroundColor: "white" }}>
       {props.goBack && <Appbar.BackAction onPress={props.goBack} />}
       <Appbar.Content title={props.title} titleStyle={FONT_TITLE} />
       {props.runningService && (
         <View>
           <Appbar.Action
             icon="playlist-check"
-            color="white"
+            color='rgba(0, 0, 0, 0.54)'
             animated={true}
             size={32}
             onPress={() => props.navigation.navigate("RunningServices")}
@@ -33,7 +27,7 @@ export const Header = props => {
       {props.share && (
         <Appbar.Action
           icon="share-variant"
-          color="white"
+          color='rgba(0, 0, 0, 0.54)'
           animated={true}
           onPress={() => props.onPress()}
         />

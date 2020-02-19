@@ -18,6 +18,7 @@ const WashSchema = {
 };
 
 export const createWashLocal = async newWash => {
+  console.log("create local", newWash);
   return Realm.open({ schema: [WashSchema] }).then(realm => {
     try {
       realm.write(() => {

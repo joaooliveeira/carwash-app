@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { styles } from "./styles";
 import ButtonCustom from "../../components/ButtonCustom";
-import { FONT_TEXT, FONT_TITLE, FONT_REGULAR } from "../../styles/typography";
+import { FONT_TEXT, FONT_TITLE, FONT_REGULAR, FONT_BOLD } from "../../styles/typography";
 import { themes } from "../../assets/themes";
 import { TextInputMask } from "react-native-masked-text";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -86,11 +86,11 @@ export default function SheetFilterScreent(props) {
         )}
 
         <Card style={styles.card}>
-          <Card.Title title="Gerar planilha" titleStyle={{ fontSize: 21 }} />
+          <Card.Title title="Gerar planilha" titleStyle={[FONT_BOLD, { fontSize: 20 }]} />
 
           <Divider style={styles.divider} />
 
-          <Card.Title title="Período" titleStyle={{ fontSize: 18 }} />
+          <Card.Title title="Período" titleStyle={[FONT_BOLD, { fontSize: 17 }]} />
 
           <View style={styles.dateContainer}>
             <Chip
@@ -125,7 +125,7 @@ export default function SheetFilterScreent(props) {
 
           <Divider style={styles.sectionDivider} />
 
-          <Card.Title title="Filtros" titleStyle={{ fontSize: 18 }} />
+          <Card.Title title="Filtros" titleStyle={[FONT_BOLD, { fontSize: 17 }]} />
 
           <TextInput
             label="Placa"
@@ -150,12 +150,12 @@ export default function SheetFilterScreent(props) {
           <Divider style={{ marginTop: 35 }} />
 
           <ButtonCustom
-            icon="filter-outline"
+            icon="table-plus"
             mode="contained"
             style={{ marginVertical: 20, marginHorizontal: 25 }}
             loading={loading}
             onPress={searchRequest}
-            label="FILTRAR"
+            label="GERAR"
           />
         </Card>
       </ScrollView>

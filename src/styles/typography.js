@@ -6,10 +6,10 @@ export const FONT_FAMILY_BOLD = "OpenSans-Bold";
 
 // FONT WEIGHT
 export const FONT_WEIGHT_REGULAR = "400";
-export const FONT_WEIGHT_BOLD = "700";
+export const FONT_WEIGHT_BOLD = "600";
 
 // FONT SIZE
-export const FONT_SIZE_TITLE = scaleFont(20);
+export const FONT_SIZE_TITLE = scaleFont(22);
 export const FONT_SIZE_TEXT = scaleFont(18);
 export const FONT_SIZE_SMALL_TEXT = scaleFont(16);
 
@@ -25,11 +25,11 @@ export const FONT_REGULAR = {
 };
 
 export const FONT_BOLD = {
-  fontFamily: FONT_FAMILY_BOLD,
+  fontFamily: FONT_FAMILY_REGULAR,
   fontWeight: FONT_WEIGHT_BOLD
 };
 
-export const FONT_TITLE = [FONT_REGULAR, { fontSize: FONT_SIZE_TITLE }];
+export const FONT_TITLE = [FONT_BOLD, { fontSize: FONT_SIZE_TITLE }];
 export const FONT_TITLE_BOLD = [FONT_BOLD, { fontSize: FONT_SIZE_TITLE }];
 export const FONT_TEXT = [FONT_REGULAR, { fontSize: FONT_SIZE_TEXT }];
 export const FONT_SMALL_TEXT = [
