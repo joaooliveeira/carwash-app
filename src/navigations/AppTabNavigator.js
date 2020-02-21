@@ -5,7 +5,7 @@ import { Header } from '../components/Header';
 import { Colors } from '../styles';
 import ServiceScreen from '../screens/Service/index';
 import SearchScreen from '../screens/Search/index';
-import SheetFilterScreen from '../screens/SheetFilter/index';
+import { SheetFilterScreen } from '../screens/SheetFilter/index';
 import { ReportScreen } from '../screens/Report';
 
 export default class AppTabNavigator extends Component {

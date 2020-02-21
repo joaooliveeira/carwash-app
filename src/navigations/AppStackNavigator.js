@@ -17,7 +17,7 @@ const AppNavigator = createStackNavigator(
     RunningServices
   },
   {
-    initialRouteName: "Splash",
+    initialRouteName: "AppTabNavigator",
     headerMode: "none"
   }
 );

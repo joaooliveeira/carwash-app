@@ -84,7 +84,11 @@ export const findCar = async filter => {
         });
 
       realm.close();
-      return result;
+      if (result.length == 0) {
+        return ["NOT_FOUND"];
+      } else {
+        return result;
+      }
     } catch (error) {
       console.log(error);
       return [];
@@ -102,4 +106,10 @@ export const getCarByLicensePlate = async licensePlate => {
 
 export const getCarByCardNumber = async cardNumber => {
   return getCar(`cardNumber == "${cardNumber}"`);
+};
+
+export const findCarByLicensePlateOrCardNumber = async (term, limit) => {
+  return findCar(
+    `licensePlate CONTAINS[c] "${term}" OR cardNumber CONTAINS "${term}" ${limit ? limit : ''}`
+  );
 };

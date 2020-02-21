@@ -134,7 +134,7 @@ export const getClientByEmail = async email => {
   return getClient(`email == "${email}"`);
 };
 
-export const findClientByNameOrPhone = async (term, limit) => {
+export const findClientByNameOrPhoneOrEmail = async (term, limit) => {
   return findClient(
     `name CONTAINS[c] "${term}" OR phone CONTAINS "${term}" OR email BEGINSWITH "${term}" ${
       limit ? limit : ''

@@ -32,7 +32,7 @@ import { styles } from "./styles";
 import { Colors } from "../../styles";
 import { FONT_REGULAR, FONT_TITLE_BOLD, FONT_TITLE, FONT_BOLD } from "../../styles/typography";
 
-import { findClientByNameOrPhone } from "../../services/client/clientLocalDb";
+import { findClientByNameOrPhoneOrEmail } from "../../services/client/clientLocalDb";
 import ClientForm from "../../components/clientForm";
 import { getCarByLicensePlate } from "../../services/car/carLocalDb";
 import { createCar } from "../../services/car/carService";
@@ -89,7 +89,7 @@ export default function ServiceScree(props) {
     setClient({ id: '', name: text, phone: '', email: '' });
 
     text.length > 0
-      ? setClientSuggestions(await findClientByNameOrPhone(text, 'LIMIT(5)'))
+      ? setClientSuggestions(await findClientByNameOrPhoneOrEmail(text, 'LIMIT(5)'))
       : setClientSuggestions([]);
   };
 
