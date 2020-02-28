@@ -1,6 +1,7 @@
 import uuid from "uuid";
 import { createWashDb } from "./washWs";
 import { createWashLocal, updataWashLocal } from "./washLocalDb";
+import moment from "moment";
 
 export const createWash = async wash => {
   let newWash = {
@@ -12,7 +13,7 @@ export const createWash = async wash => {
     washType: wash.washType,
     value: wash.value,
     status: 'RUNNING',
-    created: new Date(),
+    created: new Date(moment().format("YYYY-MM-DD")),
     lastUpdate: null
   };
 

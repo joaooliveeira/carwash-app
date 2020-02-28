@@ -5,21 +5,21 @@ import { requestAppPermition } from "./requestAppPermission";
 import RNFetchBlob from "rn-fetch-blob";
 import moment from "moment";
 
-export const createPdfFile = async (fileName, content, period) => {
+export const createPdfFile = async (data, period) => {
   if (await requestAppPermition("WRITE_EXTERNAL_STORAGE")) {
     let options = {
-      html: generateHtml(content, period),
-      fileName: fileName,
-      directory: "lavarapido/pdf"
+      html: generateHtml(data, period),
+      fileName: `tabela-${moment().format('DD-MM-YY')}`,
+      directory: "lavarapido/"
     };
 
-    const file = await RNHTMLtoPDF.convert(options);
-    return file;
+    return await RNHTMLtoPDF.convert(options);
   } else {
+    return undefined;
   }
 };
 
-const generateHtml = (content, period) => {
+const generateHtml = (data, period) => {
   let html = `<style>
                 body {
                   width: 21cm;
@@ -83,7 +83,9 @@ const generateHtml = (content, period) => {
               <div class="title">
                 <h1>Lava Rápido Mizinho</h1>
               </div>
-              <h3>Relatório de lavagens de ${moment(period.startDate).format("DD/MM/YYYY")} até ${moment(period.endDate).format("DD/MM/YYYY")}</h3>
+              <h3>Relatório de lavagens de ${moment(period.startDate).format(
+                'DD/MM/YYYY'
+              )} até ${moment(period.endDate).format("DD/MM/YYYY")}</h3>
               <table>
                 <tr>
                   <th>
@@ -96,15 +98,17 @@ const generateHtml = (content, period) => {
                   <th>Valor</th>
                 </tr>`;
 
-  content.forEach((item, index) => {
+  data.forEach((item, index) => {
     html = html.concat(
       `<tr>
         <td class="index">${index + 1}</td>
-        <td>${item.carModel}</td>
-        <td>${item.licensePlate}</td>
-        <td>${item.client}</td>
+        <td>${item.car.model}</td>
+        <td>${item.car.licensePlate}</td>
+        <td>${item.client.name}</td>
         <td>${item.washType}</td>
-        <td>${item.date}</td>
+        <td>${moment(item.created)
+          .utc()
+          .format("DD/MM/YYYY")}</td>
         <td>${formatValue(item.value.toString())}</td>
       </tr>`
     );
@@ -115,7 +119,7 @@ const generateHtml = (content, period) => {
       <hr/>
       <div class="total">
         Total:
-        <span>${getFullValue(content)}</span>
+        <span>${getFullValue(data)}</span>
       </div>`
   );
 
@@ -124,7 +128,7 @@ const generateHtml = (content, period) => {
 
 const getFullValue = list => {
   let fullValue = 0;
-  list.forEach(item => (fullValue += item.value));
+  list.forEach(item => (fullValue += parseInt(item.value)));
   return formatValue(fullValue.toString());
 };
 

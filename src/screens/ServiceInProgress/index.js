@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import { Header } from "../../components/Header";
-import { Data } from '../Sheet/data';
 import { FlatList } from "react-native-gesture-handler";
 import ServiceCard from "../../components/ServiceCard";
 

@@ -27,8 +27,14 @@ import moment from "moment";
 import { Colors } from "../../styles";
 import Autocomplete from "react-native-autocomplete-input";
 import InfoText from "../../components/InfoText";
-import { findCarByLicensePlateOrCardNumber } from "../../services/car/carLocalDb";
-import { findClientByNameOrPhoneOrEmail } from "../../services/client/clientLocalDb";
+import {
+  findCarByLicensePlateOrCardNumber,
+  getCarById,
+} from "../../services/car/carLocalDb";
+import {
+  findClientByNameOrPhoneOrEmail,
+  getClientById,
+} from "../../services/client/clientLocalDb";
 import { filterWashes } from "../../services/wash/washWs";
 
 if (
@@ -104,9 +110,11 @@ export const SheetFilterScreen = props => {
 
       const filter = {
         id: filterType + "Id=" + filterTypeId,
-        startDate: startDate.toISOString().split('T')[0],
-        endDate: endDate.toISOString().split('T')[0]
+        startDate: moment(startDate).format("YYYY-MM-DD"),
+        endDate: moment(endDate).format("YYYY-MM-DD")
       };
+
+      console.log("filter", filter);
 
       const result = await filterWashes(filter);
       setLoading(false);
@@ -119,9 +127,27 @@ export const SheetFilterScreen = props => {
         setSnackbar("Nenhum resultado encontrado.");
       }
 
-      // if (result.length != 0) {
-      //   props.navigation.navigate("Sheet");
-      // }
+      if (result.length !== 0) {
+        let data = [];
+        await result.forEach(async item => {
+          data.push({
+            id: item.id,
+            client: await getClientById(item.clientId),
+            car: await getCarById(item.carId),
+            clientRegister: item.clientRegister,
+            kilometrage: item.kilometrage,
+            washType: item.washType,
+            value: item.value,
+            status: item.status,
+            created: item.created,
+            lastUpdate: item.lastUpdate
+          });
+        });
+        props.navigation.navigate("SheetScreen", {
+          data,
+          period: { startDate, endDate },
+        });
+      }
     } else {
       setError(true);
     }

@@ -18,12 +18,7 @@ export const filterWashes = async filter => {
   };
 
   return await fetch(
-    URL +
-      `wash/filter/?${filter.id}&fromDate=${filter.startDate}&toDate=${
-        filter.endDate
-      }`,
-    request
-  )
+    URL + `wash/filter/?${filter.id}&fromDate=${filter.startDate}&toDate=${filter.endDate}`, request)
     .then(response => response.json())
     .catch(err => console.log(err));
 };
