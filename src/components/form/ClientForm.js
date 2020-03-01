@@ -1,21 +1,21 @@
 import React, { useState } from "react";
-import { View, Keyboard } from "react-native";
+import { View, Keyboard, StyleSheet } from "react-native";
 import { TextInput, Card, HelperText, Divider } from "react-native-paper";
 import { TextInputMask } from "react-native-masked-text";
-import ButtonCustom from "../../components/ButtonCustom";
+import ButtonCustom from "../ButtonCustom";
 import { createClient } from "../../services/client/clientService";
 import { themes } from "../../assets/themes";
-import { styles } from "./styles";
 import {
   getClientByPhone,
-  getClientByEmail,
+  getClientByEmail
 } from "../../services/client/clientLocalDb";
-import { formatNumber } from "../../utils/formatter";
+import { clearNumber } from "../../utils/formatter";
+import { FONT_FAMILY_REGULAR } from "../../styles/typography";
 
 export default function ClientForm(props) {
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
 
   const [error, setError] = useState({
     name: false,
@@ -45,7 +45,7 @@ export default function ClientForm(props) {
     if (!(nameError || phoneError || emailError)) {
       const newClient = await createClient({
         name,
-        phone: formatNumber(phone),
+        phone: clearNumber(phone),
         email
       });
 
@@ -61,10 +61,10 @@ export default function ClientForm(props) {
 
   const validatePhone = async text => {
     if (text.length < 14) {
-      return 'Número de telefone inválido.'
+      return "Número de telefone inválido."
     }
 
-    if (await getClientByPhone(formatNumber(text))) {
+    if (await getClientByPhone(clearNumber(text))) {
       return "Número de telefone já cadastrado.";
     }
 
@@ -73,7 +73,7 @@ export default function ClientForm(props) {
 
   const validateEmail = async text => {
     if (text.length != 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) {
-      return 'Insira um email válido.';
+      return "Insira um email válido.";
     }
 
     if (text.length != 0 && (await getClientByEmail(text))) {
@@ -195,3 +195,23 @@ export default function ClientForm(props) {
     </Card>
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    margin: 2,
+    borderRadius: 8
+  },
+  helperText: {
+    marginHorizontal: 5
+  },
+  input: {
+    paddingVertical: 0,
+    paddingHorizontal: 5,
+    fontFamily: FONT_FAMILY_REGULAR
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 20
+  }
+});

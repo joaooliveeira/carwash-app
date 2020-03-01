@@ -26,12 +26,12 @@ const styles = {
 };
 
 const formatPhoneNumber = text => {
-  let textFormated = '(' + text.slice(0, 2) + ') ';
+  let textFormated = "(" + text.slice(0, 2) + ") ";
   if (text.length == 11) {
     textFormated = textFormated + text.slice(2, 7) + '-' + text.slice(7, 12);
   } else {
     textFormated =
-      textFormated + text.slice(2, 6) + '-' + text.slice(6, 11) + '  ';
+      textFormated + text.slice(2, 6) + "-" + text.slice(6, 11) + "  ";
   }
   return textFormated;
 };

@@ -27,14 +27,8 @@ import moment from "moment";
 import { Colors } from "../../styles";
 import Autocomplete from "react-native-autocomplete-input";
 import InfoText from "../../components/InfoText";
-import {
-  findCarByLicensePlateOrCardNumber,
-  getCarById,
-} from "../../services/car/carLocalDb";
-import {
-  findClientByNameOrPhoneOrEmail,
-  getClientById,
-} from "../../services/client/clientLocalDb";
+import { getCarById, findCar } from "../../services/car/carLocalDb";
+import { findClient, getClientById } from "../../services/client/clientLocalDb";
 import { filterWashes } from "../../services/wash/washWs";
 
 if (
@@ -94,33 +88,34 @@ export const SheetFilterScreen = props => {
     if (text.length > 1) {
       setSuggestions(
         searchFilter == 'client'
-          ? await findClientByNameOrPhoneOrEmail(text, 'LIMIT(5)')
-          : await findCarByLicensePlateOrCardNumber(text, 'LIMIT(5)')
+          ? await findClient(text, 'LIMIT(5)')
+          : await findCar(text, 'LIMIT(5)')
       );
     } else {
       setSuggestions([]);
     }
   };
 
-  const validateRequest = async () => {
+  const getData = async () => {
     if (filterTypeId && startDate && endDate) {
-      setError(false);
       Keyboard.dismiss();
+      setError(false);
       setLoading(true);
 
       const filter = {
         id: filterType + "Id=" + filterTypeId,
-        startDate: moment(startDate).format("YYYY-MM-DD"),
-        endDate: moment(endDate).format("YYYY-MM-DD")
+        startDate: moment(startDate)
+          .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+          .toISOString(true),
+        endDate: moment(endDate)
+          .set({ hour: 23, minute: 59, second: 59, millisecond: 999 })
+          .toISOString(true)
       };
 
-      console.log("filter", filter);
-
       const result = await filterWashes(filter);
-      setLoading(false);
 
-      if (result == undefined) {
-        setSnackbar('Algo deu errado, verifique sua conexão com a internet.');
+      if (result === undefined) {
+        setSnackbar("Algo deu errado, verifique sua conexão com a internet.");
       }
 
       if (result.length == 0) {
@@ -148,6 +143,8 @@ export const SheetFilterScreen = props => {
           period: { startDate, endDate },
         });
       }
+
+      setLoading(false);
     } else {
       setError(true);
     }
@@ -342,7 +339,7 @@ export const SheetFilterScreen = props => {
             mode="contained"
             style={{ marginVertical: 20, marginHorizontal: 25 }}
             loading={loading}
-            onPress={() => validateRequest()}
+            onPress={() => getData()}
             label="GERAR"
           />
         </Card>

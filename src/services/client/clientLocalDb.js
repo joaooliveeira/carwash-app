@@ -43,7 +43,7 @@ export const updateClientLocal = async client => {
   });
 };
 
-export const getClient = async filter => {
+const getClient = async filter => {
   let client;
   return await Realm.open({ schema: [ClientSchema] }).then(realm => {
     try {
@@ -69,7 +69,7 @@ export const getClient = async filter => {
   });
 };
 
-export const findClient = async filter => {
+const find = async filter => {
   return await Realm.open({ schema: [ClientSchema] }).then(realm => {
     try {
       const result = realm
@@ -134,8 +134,8 @@ export const getClientByEmail = async email => {
   return getClient(`email == "${email}"`);
 };
 
-export const findClientByNameOrPhoneOrEmail = async (term, limit) => {
-  return findClient(
+export const findClient = async (term, limit) => {
+  return find(
     `name CONTAINS[c] "${term}" OR phone CONTAINS "${term}" OR email BEGINSWITH "${term}" ${
       limit ? limit : ''
     }`

@@ -1,5 +1,5 @@
 import uuid from "uuid";
-import { formatNumber } from "../../utils/formatter";
+import { clearNumber } from "../../utils/formatter";
 import { createCarDb } from "./carWs";
 import { createCarLocal, updateCarLocal } from "./carLocalDb";
 
@@ -8,13 +8,11 @@ export const createCar = async car => {
     id: car.id ? car.id : uuid.v1(),
     model: car.model,
     licensePlate: car.licensePlate,
-    cardNumber: formatNumber(car.cardNumber),
+    cardNumber: clearNumber(car.cardNumber),
     lastUpdate: null
   };
 
   const carFromDb = await createCarDb(newCar);
-
-  console.log(carFromDb);
 
   if (car.id) {
     if (carFromDb) {

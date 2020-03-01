@@ -13,7 +13,7 @@ export const createWash = async wash => {
     washType: wash.washType,
     value: wash.value,
     status: 'RUNNING',
-    created: new Date(moment().format("YYYY-MM-DD")),
+    created: new Date(moment().toISOString(true)),
     lastUpdate: null
   };
 

@@ -9,7 +9,7 @@ export const formatValue = value => {
   );
 };
 
-export const formatNumber = text => {
+export const clearNumber = text => {
   const formatedPhone = text.match(/\d+/g);
   let response = '';
 
@@ -34,6 +34,17 @@ export const formatCardNumber = text => {
     ' ' +
     text.slice(12)
   );
+};
+
+export const formatPhoneNumber = text => {
+  let textFormated = "(" + text.slice(0, 2) + ") ";
+  if (text.length == 11) {
+    textFormated = textFormated + text.slice(2, 7) + '-' + text.slice(7, 12);
+  } else {
+    textFormated =
+      textFormated + text.slice(2, 6) + "-" + text.slice(6, 11) + "  ";
+  }
+  return textFormated;
 };
 
 export const formatDate = date => {

@@ -1,4 +1,4 @@
-const URL = "http://192.168.0.9:8080/";
+import { API_URL } from 'react-native-dotenv';
 
 export const createWashDb = async newWash => {
   let request = {
@@ -7,7 +7,7 @@ export const createWashDb = async newWash => {
     body: JSON.stringify(newWash)
   };
 
-  return await fetch(URL + "wash/create", request)
+  return await fetch(API_URL + "wash/create", request)
     .then(response => response.json())
     .catch(err => console.log(err));
 };
@@ -18,7 +18,7 @@ export const filterWashes = async filter => {
   };
 
   return await fetch(
-    URL + `wash/filter/?${filter.id}&fromDate=${filter.startDate}&toDate=${filter.endDate}`, request)
+    API_URL + `wash/filter/?${filter.id}&fromDate=${filter.startDate}&toDate=${filter.endDate}`, request)
     .then(response => response.json())
     .catch(err => console.log(err));
 };

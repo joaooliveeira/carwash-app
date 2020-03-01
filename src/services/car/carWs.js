@@ -1,4 +1,4 @@
-const URL = "http://192.168.0.9:8080/";
+import { API_URL } from 'react-native-dotenv';
 
 export const createCarDb = async newCar => {
   let request = {
@@ -6,13 +6,13 @@ export const createCarDb = async newCar => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(newCar)
   };
-  return await fetch(URL + 'car/create', request)
+  return await fetch(API_URL + 'car/create', request)
     .then(response => response.json())
     .catch(e => console.log(e));
 };
 
 export const findCarByLicensePlateDb = async licensePlate => {
-  return await fetch(URL + `car/?licensePlate=${licensePlate}`, {
+  return await fetch(API_URL + `car/?licensePlate=${licensePlate}`, {
     method: 'GET'
   })
     .then(response => response.json())
@@ -20,7 +20,7 @@ export const findCarByLicensePlateDb = async licensePlate => {
 };
 
 export const findCarById = async id => {
-  return await fetch(URL + `car/${id}`, {
+  return await fetch(API_URL + `car/${id}`, {
     method: 'GET'
   })
     .then(response => response.json())

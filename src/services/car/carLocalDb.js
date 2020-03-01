@@ -1,3 +1,5 @@
+import { clearNumber } from "../../utils/formatter";
+
 const Realm = require("realm");
 
 const CarSchema = {
@@ -31,7 +33,7 @@ export const updateCarLocal = async car => {
   return Realm.open({ schema: [CarSchema] }).then(realm => {
     try {
       realm.write(() => {
-        realm.create("Car", car, 'modified');
+        realm.create("Car", car, "modified");
       });
       realm.close();
       return true;
@@ -42,7 +44,7 @@ export const updateCarLocal = async car => {
   });
 };
 
-export const getCar = async filter => {
+const getCar = async filter => {
   let car;
   return await Realm.open({ schema: [CarSchema] }).then(realm => {
     try {
@@ -67,7 +69,7 @@ export const getCar = async filter => {
   });
 };
 
-export const findCar = async filter => {
+const find = async filter => {
   return Realm.open({ schema: [CarSchema] }).then(realm => {
     try {
       const result = realm
@@ -105,11 +107,11 @@ export const getCarByLicensePlate = async licensePlate => {
 };
 
 export const getCarByCardNumber = async cardNumber => {
-  return getCar(`cardNumber == "${cardNumber}"`);
+  return getCar(`cardNumber == "${clearNumber(cardNumber)}"`);
 };
 
-export const findCarByLicensePlateOrCardNumber = async (term, limit) => {
-  return findCar(
-    `licensePlate CONTAINS[c] "${term}" OR cardNumber CONTAINS "${term}" ${limit ? limit : ''}`
+export const findCar = async (term, limit) => {
+  return find(
+    `licensePlate CONTAINS[c] "${term}" OR cardNumber CONTAINS "${term}" OR model CONTAINS[c] "${term}" ${limit ? limit : ""}`
   );
 };

@@ -1,4 +1,4 @@
-const URL = "http://192.168.0.9:8080/";
+import { API_URL } from 'react-native-dotenv';
 
 export const createClientDb = async newClient => {
   let request = {
@@ -7,19 +7,19 @@ export const createClientDb = async newClient => {
     body: JSON.stringify(newClient)
   };
 
-  return await fetch(URL + "client/create", request)
+  return await fetch(API_URL + "client/create", request)
     .then(response => response.json())
     .catch(e => console.log(e));
 };
 
 export const findClient = async term => {
-  return await fetch(URL + "client/find/" + term, { method: 'GET' })
+  return await fetch(API_URL + "client/find/" + term, { method: 'GET' })
     .then(response => response.json())
     .catch(err => console.log(err));
 };
 
 export const deleteClient = async id => {
-  return await fetch(URL + `client/delete/${id}`, { method: 'DELETE' })
+  return await fetch(API_URL + `client/delete/${id}`, { method: 'DELETE' })
     .then(response => response.json())
     .catch(err => console.log(err));
 };

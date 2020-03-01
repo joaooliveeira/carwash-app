@@ -30,14 +30,14 @@ import TextInputSuggestion from "../../components/TextInputSuggestion";
 import { themes } from "../../assets/themes";
 import { styles } from "./styles";
 import { Colors } from "../../styles";
-import { FONT_REGULAR, FONT_TITLE_BOLD, FONT_TITLE, FONT_BOLD } from "../../styles/typography";
+import { FONT_REGULAR, FONT_BOLD } from "../../styles/typography";
 
-import { findClientByNameOrPhoneOrEmail } from "../../services/client/clientLocalDb";
-import ClientForm from "../../components/clientForm";
+import { findClient } from "../../services/client/clientLocalDb";
+import ClientForm from "../../components/form/ClientForm";
 import { getCarByLicensePlate } from "../../services/car/carLocalDb";
 import { createCar } from "../../services/car/carService";
 import { createWash } from "../../services/wash/washService";
-import { formatNumber } from "../../utils/formatter";
+import { clearNumber } from "../../utils/formatter";
 
 const washTypesData = [
   { label: "Ducha", value: '20,00' },
@@ -85,11 +85,10 @@ export default function ServiceScree(props) {
   const [newClientForm, setNewClientForm] = useState(false);
 
   const getClientSuggestions = async text => {
-    console.log(new Date().toString());
     setClient({ id: '', name: text, phone: '', email: '' });
 
     text.length > 0
-      ? setClientSuggestions(await findClientByNameOrPhoneOrEmail(text, 'LIMIT(5)'))
+      ? setClientSuggestions(await findClient(text, 'LIMIT(5)'))
       : setClientSuggestions([]);
   };
 
@@ -166,7 +165,7 @@ export default function ServiceScree(props) {
   };
 
   const validateCardNumber = () => {
-    return car.cardNumber.length != 0 && formatNumber(car.cardNumber).length != 16
+    return car.cardNumber.length != 0 && clear(car.cardNumber).length != 16
       ? "Número do cartão inválido."
       : false;
   };
@@ -187,11 +186,10 @@ export default function ServiceScree(props) {
       carId: newCar.id,
       kilometrage,
       washType,
-      value: formatNumber(value)
+      value: clearNumber(value)
     };
 
     const newWash = await createWash(wash);
-    console.log("retorno do servico createWash", newWash);
 
     setSnackbar(
       newWash.id

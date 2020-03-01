@@ -4,7 +4,7 @@ import { AppStatusBar } from '../components/AppStatusBar';
 import { Header } from '../components/Header';
 import { Colors } from '../styles';
 import ServiceScreen from '../screens/Service/index';
-import SearchScreen from '../screens/Search/index';
+import SearchScreen from '../screens/search/Search';
 import { SheetFilterScreen } from '../screens/SheetFilter/index';
 import { ReportScreen } from '../screens/Report';
 
