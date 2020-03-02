@@ -14,15 +14,12 @@ import {
   Searchbar,
   Appbar,
   Button,
-  ActivityIndicator,
+  ActivityIndicator
 } from "react-native-paper";
 import { findCar } from "../../services/car/carLocalDb";
 import CarCard from "../../components/info/CarCard";
-import CarForm from "../../components/form/CarForm";
-import Modal from "react-native-modal";
 import { findClient } from "../../services/client/clientLocalDb";
 import ClientCard from "../../components/info/ClientCard";
-import ClientForm from "../../components/form/ClientForm";
 
 if (
   Platform.OS === "android" &&
@@ -35,7 +32,6 @@ export default function SearchScreen(props) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("car");
   const [data, setData] = useState([]);
-  const [editCar, setEditCar] = useState(false);
   const [animating, setAnimating] = useState(false);
 
   const getData = async (term, type) => {
@@ -78,10 +74,10 @@ export default function SearchScreen(props) {
     <SafeAreaView>
       <Appbar.Header
         style={{
-          width: '100%',
+          width: "100%",
           height: "auto",
-          backgroundColor: 'white',
-          flexDirection: 'column'
+          backgroundColor: "white",
+          flexDirection: "column"
         }}
       >
         <Searchbar
@@ -97,10 +93,10 @@ export default function SearchScreen(props) {
 
         <View
           style={{
-            width: '100%',
+            width: "100%",
             marginVertical: 7,
-            flexDirection: 'row',
-            justifyContent: 'space-around'
+            flexDirection: "row",
+            justifyContent: "space-around"
           }}
         >
           <Button
@@ -108,7 +104,7 @@ export default function SearchScreen(props) {
               setData([]);
               getData(query, "car");
             }}
-            color={filter == 'car' ? Colors.PRIMARY : 'rgba(0, 0, 0, 0.54)'}
+            color={filter == "car" ? Colors.PRIMARY : "rgba(0, 0, 0, 0.54)"}
             icon="car-hatchback"
             labelStyle={FONT_REGULAR}
             uppercase={false}
@@ -120,7 +116,7 @@ export default function SearchScreen(props) {
               setData([]);
               getData(query, "client");
             }}
-            color={filter == 'client' ? Colors.PRIMARY : 'rgba(0, 0, 0, 0.54)'}
+            color={filter == "client" ? Colors.PRIMARY : "rgba(0, 0, 0, 0.54)"}
             icon="account"
             labelStyle={FONT_REGULAR}
             uppercase={false}
@@ -133,9 +129,9 @@ export default function SearchScreen(props) {
       {query.length !== 0 && data.length === 0 && !animating && (
         <Text
           style={{
-            alignSelf: 'center',
-            fontWeight: 'bold',
-            color: '#99999B',
+            alignSelf: "center",
+            fontWeight: "bold",
+            color: "#99999B",
             marginTop: 30
           }}
         >
@@ -146,23 +142,18 @@ export default function SearchScreen(props) {
       <ActivityIndicator
         animating={animating}
         color={Colors.PRIMARY}
-        style={{ position: "absolute", top: 165, left: 0, right: 0 }}
+        style={{ position: "absolute", top: 145, left: 0, right: 0 }}
       />
 
       <FlatList
         data={data}
+        keyboardShouldPersistTaps="handled"
         renderItem={({ item, index }) => {
           showAnimation();
-          return filter === 'car' ? (
-            <CarCard
-              car={item}
-              onMenuPress={isVisible => setEditCar(isVisible)}
-            />
+          return filter === "car" ? (
+            <CarCard car={item} onUpdate={() => getData(query, filter)} />
           ) : (
-            <ClientCard
-              client={item}
-              onMenuPress={isVisible => setEditCar(isVisible)}
-            />
+            <ClientCard client={item} onUpdate={() => getData(query, filter)} />
           );
         }}
         keyExtractor={item => item.id}
@@ -170,25 +161,6 @@ export default function SearchScreen(props) {
         ListHeaderComponent={<View style={{ margin: 3 }} />}
         ListFooterComponent={<View style={{ margin: 5 }} />}
       />
-
-      <Modal
-        isVisible={editCar}
-        useNativeDriver={true}
-        onBackButtonPress={() => setEditCar(false)}
-        onBackdropPress={() => setEditCar(false)}
-        deviceHeight={require("react-native-extra-dimensions-android").get(
-          'REAL_WINDOW_HEIGHT'
-        )}
-      >
-        <CarForm
-          dismissModal={() => {
-            setEditCar(false);
-            getData(query, filter);
-          }}
-          car={editCar}
-        />
-        {/* <ClientForm client={editCar} /> */}
-      </Modal>
     </SafeAreaView>
   );
 }

@@ -1,26 +1,14 @@
 import React, { useState } from "react";
-import { View } from "react-native";
-import { Card, Menu, IconButton } from "react-native-paper";
+import { View, Keyboard } from "react-native";
 import InfoText from "../InfoText";
+import CarForm from "../form/CarForm";
+import Modal from "react-native-modal";
+import { Card, Menu, IconButton } from "react-native-paper";
 import { formatCardNumber, formatLicensePlate } from "../../utils/formatter";
 
 export default function CarCard(props) {
-  const [isVisible, setMenuIsVisible] = useState(false);
-
-  const styles = {
-    card: {
-      marginTop: 6,
-      marginHorizontal: 10,
-      borderRadius: 5
-    },
-    cardContainer: {
-      marginHorizontal: 5,
-      flexDirection: "row"
-    },
-    checkbox: {
-      marginTop: 6
-    }
-  };
+  const [menuIsVisible, setMenuIsVisible] = useState(false);
+  const [editCar, setEditCar] = useState(false);
 
   return (
     <Card style={styles.card}>
@@ -38,11 +26,8 @@ export default function CarCard(props) {
             />
 
             <Menu
-              visible={isVisible}
-              onDismiss={() => {
-                setMenuIsVisible(false);
-                props.onMenuPress(false);
-              }}
+              visible={menuIsVisible}
+              onDismiss={() => setMenuIsVisible(false)}
               anchor={
                 <IconButton
                   icon="dots-vertical"
@@ -55,8 +40,9 @@ export default function CarCard(props) {
             >
               <Menu.Item
                 onPress={() => {
-                  props.onMenuPress(props.car);
+                  Keyboard.dismiss();
                   setMenuIsVisible(false);
+                  setEditCar(props.car);
                 }}
                 icon="pencil"
                 title="Editar"
@@ -75,6 +61,38 @@ export default function CarCard(props) {
           viewStyle={{ marginTop: 5 }}
         />
       </View>
+
+      <Modal
+        isVisible={editCar}
+        useNativeDriver={true}
+        avoidKeyboard={true}
+        onBackButtonPress={() => setEditCar(false)}
+        onBackdropPress={() => setEditCar(false)}
+        deviceHeight={require("react-native-extra-dimensions-android").get(
+          "REAL_WINDOW_HEIGHT"
+        )}
+      >
+        <CarForm
+          dismissModal={() => setEditCar(false)}
+          onUpdate={props.onUpdate}
+          car={props.car}
+        />
+      </Modal>
     </Card>
   );
 }
+
+const styles = {
+  card: {
+    marginTop: 6,
+    marginHorizontal: 10,
+    borderRadius: 5
+  },
+  cardContainer: {
+    marginHorizontal: 5,
+    flexDirection: "row"
+  },
+  checkbox: {
+    marginTop: 6
+  }
+};

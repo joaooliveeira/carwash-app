@@ -1,12 +1,13 @@
 import uuid from "uuid";
 import { createClientDb } from "./clientWs";
 import { updateClientLocal, createClientLocal } from "./clientLocalDb";
+import { clearNumber } from "../../utils/formatter";
 
 export const createClient = async client => {
   let newClient = {
     id: client.id ? client.id : uuid.v1(),
     name: client.name,
-    phone: client.phone,
+    phone: clearNumber(client.phone),
     email: client.email,
     status: 'ACTIVE',
     lastUpdate: null

@@ -1,3 +1,5 @@
+import { clearNumber } from '../../utils/formatter';
+
 const Realm = require('realm');
 
 const ClientSchema = {
@@ -127,7 +129,7 @@ export const getClientById = async id => {
 };
 
 export const getClientByPhone = async phone => {
-  return getClient(`phone == "${phone}"`);
+  return getClient(`phone == "${clearNumber(phone)}"`);
 };
 
 export const getClientByEmail = async email => {

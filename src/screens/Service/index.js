@@ -165,7 +165,7 @@ export default function ServiceScree(props) {
   };
 
   const validateCardNumber = () => {
-    return car.cardNumber.length != 0 && clear(car.cardNumber).length != 16
+    return car.cardNumber.length != 0 && clearNumber(car.cardNumber).length != 16
       ? "Número do cartão inválido."
       : false;
   };
@@ -244,7 +244,10 @@ export default function ServiceScree(props) {
 
           <Divider style={styles.divider} />
 
-          <Card.Title title="Dados do cliente" titleStyle={[FONT_BOLD, { fontSize: 17 }]} />
+          <Card.Title
+            title="Dados do cliente"
+            titleStyle={[FONT_BOLD, { fontSize: 17 }]}
+          />
 
           <View style={{ height: 64 }}>
             <TextInputSuggestion
@@ -295,6 +298,7 @@ export default function ServiceScree(props) {
             )}
           >
             <ClientForm
+              client={{ id: '', name: '', phone: '', email: '' }}
               hideForm={() => setNewClientForm(false)}
               onFinished={newClient => {
                 setNewClientForm(false);

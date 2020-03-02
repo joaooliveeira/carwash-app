@@ -1,9 +1,9 @@
-import { API_URL } from 'react-native-dotenv';
+import { API_URL } from "react-native-dotenv";
 
 export const createWashDb = async newWash => {
   let request = {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(newWash)
   };
 
@@ -14,11 +14,26 @@ export const createWashDb = async newWash => {
 
 export const filterWashes = async filter => {
   let request = {
-    method: 'GET'
+    method: "GET"
   };
 
   return await fetch(
-    API_URL + `wash/filter/?${filter.id}&fromDate=${filter.startDate}&toDate=${filter.endDate}`, request)
+    API_URL +
+      `wash/filter/?${filter.id}&fromDate=${filter.startDate}&toDate=${
+        filter.endDate
+      }`,
+    request
+  )
+    .then(response => response.json())
+    .catch(err => console.log(err));
+};
+
+export const getRunningWashes = async () => {
+  let request = {
+    method: "GET"
+  };
+
+  return await fetch(API_URL + "wash/running", { method: "GET" })
     .then(response => response.json())
     .catch(err => console.log(err));
 };

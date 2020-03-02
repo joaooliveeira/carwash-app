@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import { Card, Menu, IconButton } from "react-native-paper";
 import InfoText from "../InfoText";
+import Modal from "react-native-modal";
+import { Card, Menu, IconButton } from "react-native-paper";
 import { formatPhoneNumber } from "../../utils/formatter";
+import ClientForm from "../form/ClientForm";
 
 export default function ClientCard(props) {
-  const [isVisible, setMenuIsVisible] = useState(false);
+  const [menuIsVisible, setMenuIsVisible] = useState(false);
+  const [editClient, setEditClient] = useState(false);
 
   const styles = {
     card: {
@@ -21,8 +24,6 @@ export default function ClientCard(props) {
       marginTop: 6
     }
   };
-
-  console.log("props do cliente", props)
 
   return (
     <Card style={styles.card}>
@@ -40,11 +41,8 @@ export default function ClientCard(props) {
             />
 
             <Menu
-              visible={isVisible}
-              onDismiss={() => {
-                setMenuIsVisible(false);
-                props.onMenuPress(false);
-              }}
+              visible={menuIsVisible}
+              onDismiss={() => setMenuIsVisible(false)}
               anchor={
                 <IconButton
                   icon="dots-vertical"
@@ -57,8 +55,8 @@ export default function ClientCard(props) {
             >
               <Menu.Item
                 onPress={() => {
-                  props.onMenuPress(props.client);
                   setMenuIsVisible(false);
+                  setEditClient(props.client);
                 }}
                 icon="pencil"
                 title="Editar"
@@ -69,10 +67,27 @@ export default function ClientCard(props) {
 
         <InfoText
           label="E-mail"
-          text={props.client.email}
+          text={props.client.email || " - "}
           viewStyle={{ marginTop: 5 }}
         />
       </View>
+
+      <Modal
+        isVisible={editClient}
+        useNativeDriver={true}
+        hideModalContentWhileAnimating={true}
+        onBackButtonPress={() => setEditClient(false)}
+        onBackdropPress={() => setEditClient(false)}
+        deviceHeight={require("react-native-extra-dimensions-android").get(
+          "REAL_WINDOW_HEIGHT"
+        )}
+      >
+        <ClientForm
+          hideForm={() => setEditClient(false)}
+          onFinished={props.onUpdate}
+          client={props.client}
+        />
+      </Modal>
     </Card>
   );
 }

@@ -13,9 +13,8 @@ import { clearNumber } from "../../utils/formatter";
 import { FONT_FAMILY_REGULAR } from "../../styles/typography";
 
 export default function ClientForm(props) {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
+  const [client, setClient] = useState(props.client);
+  const [clientHasBeenChanged, setClientHasBeenChanged] = useState(false);
 
   const [error, setError] = useState({
     name: false,
@@ -26,15 +25,31 @@ export default function ClientForm(props) {
   const [loading, setLoading] = useState(false);
 
   const createNewClient = async () => {
-    Keyboard.dismiss();
     setLoading(true);
+
+    if (clientHasBeenChanged) {
+      if (await validateData()) {
+        Keyboard.dismiss();
+        const newClient = await createClient(client);
+        props.onFinished(
+          props.client.id ? "Cliente alterado com sucesso." : newClient
+        );
+        props.hideForm();
+      }
+    } else if (props.client.id) {
+      Keyboard.dismiss();
+      props.hideForm();
+    }
+
     validateData();
+
+    setLoading(false);
   };
 
   const validateData = async () => {
     const nameError = validateName();
-    const phoneError = await validatePhone(phone);
-    const emailError = await validateEmail(email);
+    const phoneError = await validatePhone(client.phone);
+    const emailError = await validateEmail(client.email);
 
     setError({
       name: nameError,
@@ -42,29 +57,22 @@ export default function ClientForm(props) {
       email: emailError
     });
 
-    if (!(nameError || phoneError || emailError)) {
-      const newClient = await createClient({
-        name,
-        phone: clearNumber(phone),
-        email
-      });
-
-      props.onFinished(newClient);
-    }
-
-    setLoading(false);
+    return !(nameError || phoneError || emailError);
   };
 
   const validateName = () => {
-    return name.length <= 1;
+    return client.name.length <= 1;
   };
 
   const validatePhone = async text => {
-    if (text.length < 14) {
-      return "Número de telefone inválido."
+    if (clearNumber(text).length < 11) {
+      return "Número de telefone inválido.";
     }
 
-    if (await getClientByPhone(clearNumber(text))) {
+    if (
+      clearNumber(client.phone) !== props.client.phone &&
+      (await getClientByPhone(text))
+    ) {
       return "Número de telefone já cadastrado.";
     }
 
@@ -72,11 +80,14 @@ export default function ClientForm(props) {
   };
 
   const validateEmail = async text => {
-    if (text.length != 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) {
+    if (text.length !== 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) {
       return "Insira um email válido.";
     }
 
-    if (text.length != 0 && (await getClientByEmail(text))) {
+    if (
+      text.length !== 0 &&
+      (client.email !== props.client.email && (await getClientByEmail(text)))
+    ) {
       return "Email já cadastrado";
     }
 
@@ -96,9 +107,10 @@ export default function ClientForm(props) {
           style={styles.input}
           error={error.name}
           autoCapitalize="words"
-          value={name}
+          value={client.name || ""}
           onChangeText={text => {
-            setName(text);
+            setClientHasBeenChanged(true);
+            setClient({ ...client, name: text });
             if (error.name) {
               setError({ ...error, name: text.length <= 1 });
             }
@@ -117,11 +129,11 @@ export default function ClientForm(props) {
           label="Telefone *"
           theme={themes.input}
           style={styles.input}
-          value={phone}
+          value={client.phone || ""}
           error={error.phone}
-          render={props => (
+          render={_props => (
             <TextInputMask
-              {...props}
+              {..._props}
               type={"cel-phone"}
               options={{
                 maskType: "BRL",
@@ -129,10 +141,12 @@ export default function ClientForm(props) {
                 dddMask: "(99) "
               }}
               onChangeText={async text => {
-                setPhone(text);
-
-                if (text.length >= 14) {
+                setClientHasBeenChanged(true);
+                setClient({ ...client, phone: text });
+                if (text.length === 15) {
                   setError({ ...error, phone: await validatePhone(text) });
+                } else {
+                  setError({ ...error, phone: false });
                 }
               }}
             />
@@ -154,11 +168,15 @@ export default function ClientForm(props) {
           error={error.email}
           autoCapitalize="none"
           keyboardType="email-address"
-          value={email}
+          value={client.email || ""}
           onChangeText={async text => {
-            setEmail(text);
+            setClientHasBeenChanged(true);
+            setClient({ ...client, email: text });
 
-            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) {
+            if (
+              /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text) &&
+              text !== props.client.email
+            ) {
               setError({ ...error, email: await validateEmail(text) });
             }
           }}

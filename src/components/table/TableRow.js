@@ -32,9 +32,9 @@ export const TableRow = React.memo(props => {
           <Text style={FONT_SMALL_TEXT}>{item.car.licensePlate}</Text>
         </DataTable.Cell>
 
-        <DataTable.Cell style={middleColumnStyle}>
+        {/* <DataTable.Cell style={middleColumnStyle}>
           <Text style={FONT_SMALL_TEXT}>{item.client.name}</Text>
-        </DataTable.Cell>
+        </DataTable.Cell> */}
 
         <DataTable.Cell numeric>
           <Text style={FONT_SMALL_TEXT}>{value}</Text>

@@ -16,7 +16,7 @@ export const Header = props => {
             color='rgba(0, 0, 0, 0.54)'
             animated={true}
             size={32}
-            onPress={() => props.navigation.navigate("RunningServices")}
+            onPress={() => props.navigation.navigate("RunningServicesScreen")}
           />
           <Badge
             style={{ position: "absolute", top: 17, right: 20 }}

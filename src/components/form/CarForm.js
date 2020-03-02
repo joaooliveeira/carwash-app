@@ -29,6 +29,7 @@ export default function CarForm(props) {
       if (carIsValid()) {
         Keyboard.dismiss();
         await createCar(car);
+        props.onUpdate("Veículo alterado com sucesso.");
         props.dismissModal();
       }
     } else {
@@ -193,7 +194,10 @@ export default function CarForm(props) {
           label="CANCELAR"
           mode="text"
           style={{ flexGrow: 1, marginHorizontal: 15 }}
-          onPress={props.dismissModal}
+          onPress={() => {
+            Keyboard.dismiss();
+            props.dismissModal();
+          }}
         />
 
         <ButtonCustom
