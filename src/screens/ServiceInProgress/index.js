@@ -3,9 +3,9 @@ import { View, RefreshControl, ScrollView } from "react-native";
 import { Header } from "../../components/Header";
 import { FlatList } from "react-native-gesture-handler";
 import ServiceCard from "../../components/info/ServiceCard";
-import { getRunningWashes } from "../../services/wash/washWs";
-import { getClientById } from "../../services/client/clientLocalDb";
-import { getCarById } from "../../services/car/carLocalDb";
+import { getRunningWashes } from "../../services/requests";
+import { getClientById } from "../../services/client/clientRealm";
+import { getCarById } from "../../services/car/carRealm";
 
 export default function ServiceInProgress(props) {
   const [services, setServices] = useState([]);
@@ -37,10 +37,13 @@ export default function ServiceInProgress(props) {
     });
   }
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
 
-    wait(2000).then(() => setRefreshing(false));
+    const services = await getRunningWashes();
+    setServices(services);
+
+    setRefreshing(false);
   }, []);
 
   return (

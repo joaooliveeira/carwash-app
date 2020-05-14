@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "react-native-paper";
 import { View, UIManager, LayoutAnimation, Platform, TextInput } from "react-native";
 import InfoText from "../InfoText";
 import { formatValue } from "../../utils/formatter";
 import moment from "moment";
-import { themes } from "../../assets/themes";
+import { getCarById } from "../../services/car/carRealm";
+import { getClientById } from "../../services/client/clientRealm";
 
 if (
   Platform.OS === 'android' &&
@@ -14,8 +15,19 @@ if (
 }
 
 export default function ServiceCard(props) {
+  const [car, setCar] = useState(null);
+  const [client, setClient] = useState(null);
   const [cardExpanded, setCardExpanded] = useState(false);
   const [authorization, setAuthorization] = useState("");
+
+  useEffect(() => {
+    async function getClientAndCar() {
+      const car = await getCarById(props.item.carId);
+      setCar(car);;
+      const client = await getClientById(props.item.clientId);
+      setClient(client);
+    }
+  },  []);
 
   const showAnimation = () => {
     setCardExpanded(!cardExpanded);
@@ -46,16 +58,16 @@ export default function ServiceCard(props) {
     <Card style={styles.card} onPress={showAnimation}>
       <View style={styles.cardContainer}>
         <View style={{ flexDirection: 'row', justifyContent: "space-between" }}>
-          <InfoText label="Modelo" text={props.item.car.model} />
+          <InfoText label="Modelo" text={car ? car.model : "-"} />
           <InfoText
             label="Placa"
-            text={props.item.car.licensePlate}
+            text={false ? car.licensePlate : "-"}
             viewStyle={{ width: 120 }}
           />
         </View>
 
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <InfoText label="Cliente" text={props.item.client.name} />
+          <InfoText label="Cliente" text={client ? client.name : "-"} />
           <InfoText
             label="Valor"
             text={formatValue(props.item.value.toString())}

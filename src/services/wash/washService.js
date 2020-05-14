@@ -1,6 +1,6 @@
 import uuid from "uuid";
-import { createWashDb } from "./washWs";
-import { createWashLocal, updataWashLocal } from "./washLocalDb";
+import { createWashDb } from "../requests";
+import { createWashLocal, updataWashLocal } from "./washRealm";
 import moment from "moment";
 
 export const createWash = async wash => {

@@ -1,7 +1,7 @@
 import uuid from "uuid";
+import { createCarDb } from "../requests";
 import { clearNumber } from "../../utils/formatter";
-import { createCarDb } from "./carWs";
-import { createCarLocal, updateCarLocal } from "./carLocalDb";
+import { createCarLocal, updateCarLocal } from "./carRealm";
 
 export const createCar = async car => {
   let newCar = {

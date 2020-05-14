@@ -36,7 +36,6 @@ export const updateCarLocal = async car => {
         realm.create("Car", car, "modified");
       });
       realm.close();
-      return true;
     } catch (error) {
       console.log(error);
       return false;

@@ -27,9 +27,9 @@ import moment from "moment";
 import { Colors } from "../../styles";
 import Autocomplete from "react-native-autocomplete-input";
 import InfoText from "../../components/InfoText";
-import { getCarById, findCar } from "../../services/car/carLocalDb";
-import { findClient, getClientById } from "../../services/client/clientLocalDb";
-import { filterWashes } from "../../services/wash/washWs";
+import { getCarById, findCar } from "../../services/car/carRealm";
+import { findClient, getClientById } from "../../services/client/clientRealm";
+import { filterWashes } from "../../services/requests";
 
 if (
   Platform.OS === "android" &&

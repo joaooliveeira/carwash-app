@@ -8,7 +8,7 @@ import { themes } from "../../assets/themes";
 import {
   getClientByPhone,
   getClientByEmail
-} from "../../services/client/clientLocalDb";
+} from "../../services/client/clientRealm";
 import { clearNumber } from "../../utils/formatter";
 import { FONT_FAMILY_REGULAR } from "../../styles/typography";
 

@@ -1,7 +1,7 @@
 import uuid from "uuid";
-import { createClientDb } from "./clientWs";
-import { updateClientLocal, createClientLocal } from "./clientLocalDb";
+import { createClientDb } from "../requests";
 import { clearNumber } from "../../utils/formatter";
+import { updateClientLocal, createClientLocal } from "./clientRealm";
 
 export const createClient = async client => {
   let newClient = {

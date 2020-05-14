@@ -32,9 +32,8 @@ import { styles } from "./styles";
 import { Colors } from "../../styles";
 import { FONT_REGULAR, FONT_BOLD } from "../../styles/typography";
 
-import { findClient } from "../../services/client/clientLocalDb";
 import ClientForm from "../../components/form/ClientForm";
-import { getCarByLicensePlate } from "../../services/car/carLocalDb";
+import { getCarByLicensePlate } from "../../services/car/carRealm";
 import { createCar } from "../../services/car/carService";
 import { createWash } from "../../services/wash/washService";
 import { clearNumber } from "../../utils/formatter";
