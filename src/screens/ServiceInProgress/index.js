@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, RefreshControl, ScrollView } from "react-native";
 import { Header } from "../../components/Header";
 import { FlatList } from "react-native-gesture-handler";
@@ -6,11 +6,41 @@ import ServiceCard from "../../components/info/ServiceCard";
 import { getRunningWashes } from "../../services/requests";
 import { getClientById } from "../../services/client/clientRealm";
 import { getCarById } from "../../services/car/carRealm";
+import { useSelector } from "react-redux";
 
 export default function ServiceInProgress(props) {
-  const [services, setServices] = useState([]);
+  const runningWashes = useSelector(state => state.runningWashes.washes);
+
+  const [services, setServices] = useState();
   const [refreshing, setRefreshing] = useState(false);
   const [finishedServices, setFinishedServces] = useState([]);
+
+  useEffect(() => {
+    loadWashInformation();
+  },[]);
+
+  const loadWashInformation = async () => {
+    let updatedServices = [];
+
+    runningWashes.forEach(async wash => {
+      const client = await getClientById(wash.clientId);
+      const car = await getCarById(wash.carId);
+      updatedServices.push({
+        id: wash.id,
+        client,
+        clientRegister: wash.clientRegister,
+        car,
+        kilometrage: wash.kilometrage,
+        washType: wash.washType,
+        value: wash.value,
+        status: wash.status,
+        created: wash.created,
+        lastUpdate: wash.lastUpdate
+      });
+    });
+
+    setServices(updatedServices);
+  }
 
   function wait(timeout) {
     return new Promise(async () => {
@@ -40,8 +70,7 @@ export default function ServiceInProgress(props) {
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
 
-    const services = await getRunningWashes();
-    setServices(services);
+    getRunningWashes().then(services => loadWashInformation(services));
 
     setRefreshing(false);
   }, []);

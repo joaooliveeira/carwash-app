@@ -1,10 +1,12 @@
 import React from "react";
-import { Appbar, Badge, Searchbar } from "react-native-paper";
-import { Colors } from "../styles";
-import { FONT_TITLE, FONT_TITLE_BOLD } from "../styles/typography";
 import { View } from "react-native";
+import { Appbar, Badge } from "react-native-paper";
+import { FONT_TITLE } from "../styles/typography";
+import { useSelector } from "react-redux";
 
 export const Header = props => {
+  const runningWashes = useSelector(state => state.runningWashes.washes);
+  
   return (
     <Appbar.Header style={{ backgroundColor: "white" }}>
       {props.goBack && <Appbar.BackAction onPress={props.goBack} />}
@@ -18,10 +20,13 @@ export const Header = props => {
             size={32}
             onPress={() => props.navigation.navigate("RunningServicesScreen")}
           />
-          <Badge
-            style={{ position: "absolute", top: 17, right: 20 }}
-            size={9}
-          />
+
+          {runningWashes.length != 0 ?
+            <Badge
+              style={{ position: "absolute", top: 17, right: 20 }}
+              size={9}
+            /> : <View/>
+          }
         </View>
       )}
       {props.share && (

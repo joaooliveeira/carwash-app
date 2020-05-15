@@ -14,6 +14,7 @@ export const createClient = async client => {
   };
 
   const clientFromDb = await createClientDb(newClient);
+  console.log(clientFromDb);
 
   if (client.id) {
     if (clientFromDb) {
