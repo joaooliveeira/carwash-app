@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Card, Button, IconButton} from "react-native-paper";
+import React, { useState } from "react";
+import { Card, Divider} from "react-native-paper";
 import { View, UIManager, LayoutAnimation, Platform, TextInput, Text } from "react-native";
 import InfoText from "../InfoText";
 import { formatValue, formatCardNumber, formatLicensePlate, formatPhoneNumber } from "../../utils/formatter";
-import moment from "moment";
-import { getCarById } from "../../services/car/carRealm";
-import { getClientById } from "../../services/client/clientRealm";
-import { FONT_SIZE_SMALL_TEXT, FONT_FAMILY_REGULAR } from "../../styles/typography";
+import { FONT_FAMILY_REGULAR } from "../../styles/typography";
+import ButtonCustom from "../ButtonCustom";
 
 if (
   Platform.OS === 'android' &&
@@ -16,27 +14,13 @@ if (
 }
 
 export default function ServiceCard(props) {
-  const [car, setCar] = useState(null);
-  const [client, setClient] = useState(null);
-  const [cardExpanded, setCardExpanded] = useState(false);
-  const [authorization, setAuthorization] = useState("");
-
-  console.log(props.item)
-
-  useEffect(() => {
-    async function getClientAndCar() {
-      const car = await getCarById(props.item.carId);
-      setCar(car);;
-      const client = await getClientById(props.item.clientId);
-      setClient(client);
-    }
-    getClientAndCar();
-  },  []);
+  const [authorization, setAuthorization] = useState({ code: "", setted: false });
+  const [finishingWash, setFinishingWash] = useState(false);
+  const [wahseDone, setWashDone] = useState(false);
 
   const showAnimation = () => {
-    setCardExpanded(!cardExpanded);
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(250, 'easeInEaseOut', 'opacity')
+      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity')
     );
   };
 
@@ -49,16 +33,11 @@ export default function ServiceCard(props) {
       backgroundColor: 'white'
     },
     cardContainer: {
-      marginHorizontal: 5,
-      paddingLeft: 5,
       paddingBottom: 5,
       justifyContent: "space-around"
     },
-    checkbox: {
-      marginTop: 6,
-    },
     row:{
-      flexDirection: 'row', justifyContent: "space-between"
+      flexDirection: 'row', justifyContent: "space-between", paddingLeft: 10,
     },
     authorizationTitle: {
       fontFamily: FONT_FAMILY_REGULAR,
@@ -67,95 +46,120 @@ export default function ServiceCard(props) {
       textAlignVertical: "top",
       textAlign: "left",
       marginTop: 2,
-      height: 21
+      height: 21,
+      marginLeft: 50
     },
     authorizationInput: {
       flex: 1,
       color: "black",
       borderBottomWidth: 0.5,
-      fontSize: FONT_SIZE_SMALL_TEXT,
+      fontSize: 16,
       height: 30,
-      marginRight: 30,
+      marginRight: 10,
       padding: 0,
       marginTop: 0,
-      marginLeft: 3
+      marginLeft: 55
     },
     saveButton: {
-      position: "absolute", right: 25, top: 18
+      position: "absolute", right: 0, top: 18
     }
   };
 
   return (
-    <Card style={styles.card} onPress={showAnimation}>
-      <View style={styles.cardContainer}>
-        <View style={styles.row}>
-          <InfoText label="Modelo" text={car ? car.model : "-"} />
-          <InfoText
-            label="Placa"
-            text={car ? formatLicensePlate(car.licensePlate) : "-"}
-            viewStyle={{ width: 120 }}
-          />
-        </View>
-
-        <View style={styles.row}>
-          <InfoText label="Cliente" text={client ? client.name : "-"} />
-          <InfoText
-            label="Valor"
-            text={formatValue(props.item.value.toString())}
-            viewStyle={{ width: 120 }}
-          />
-        </View>
-        {cardExpanded && (
+    <Card style={wahseDone ? { height: 0 } : styles.card}>
+      {!wahseDone && (
           <View>
-            <View
-              style={styles.row}
-            >
-              <InfoText label="Telefone" text={client ? formatPhoneNumber(client.phone) : "-"} />
-              
-              <InfoText
-                label="Lavagem"
-                text={props.item.washType}
-                viewStyle={{ width: 120 }}
-              />
-            </View>
+            <View style={styles.cardContainer}>
+              <View style={styles.row}>
+                <InfoText label="Modelo" text={props.item.car.model} />
 
-            <View style={styles.row}>
-              <InfoText label="Cartão" text={car ? formatCardNumber(car.cardNumber) : "-" } />
-
-              <InfoText
-                label="Km"
-                text={props.item.kilometrage} 
-                viewStyle={{ width: 120 }}
-              />
-            </View>
-
-            <View style={styles.row}>
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={styles.authorizationTitle}>
-                    Autorização
-                </Text>
-
-                <TextInput
-                  placeholder=""
-                  style={styles.authorizationInput}
-                  keyboardType="number-pad"
-                  value={authorization}
-                  onChangeText={text => setAuthorization(text)}
+                <InfoText
+                  label="Placa"
+                  text={formatLicensePlate(props.item.car.licensePlate)}
+                  viewStyle={{ width: 120 }}
                 />
-
-                <IconButton icon="check" disabled={!authorization} size={20} style={styles.saveButton} onPress={() => console.log('Pressed')} />
               </View>
 
-              <InfoText
-                label="Data"
-                text={moment(props.item.created).format('DD/MM/YY')}
-                viewStyle={{ width: 120 }}
-              />
+              <Divider style={{ marginVertical: 10 }}/>
+
+              <View style={styles.row}>
+                <InfoText label="Cliente" text={props.item.client.name} viewStyle={{ flex: 1, marginRight: 5 }}/>
+
+                <InfoText label="Telefone" text={formatPhoneNumber(props.item.client.phone)} viewStyle={{ flex: 1 }}/>
+              </View>
+
+              <Divider style={{ marginVertical: 10 }}/>
+
+              <View style={styles.row}>
+                <InfoText label="Lavagem" text={props.item.washType} />
+
+                <InfoText
+                  label="Valor"
+                  text={formatValue(props.item.value.toString())}
+                  viewStyle={{ width: 120 }}
+                />
+              </View>
+
+              <Divider style={{ marginVertical: 10 }}/>
+
+              <View style={styles.row}>
+                <InfoText label="Cartão" text={props.item.car.cardNumber ? formatCardNumber(props.item.car.cardNumber) : "  -"} />
+
+                <InfoText
+                  label="Km"
+                  text={props.item.kilometrage || "  -"} 
+                  viewStyle={{ width: 120 }}
+                />
+              </View>
+
+              <View style={styles.row}>
+                <InfoText
+                  label="Matrícula"
+                  text={props.item.clientRegister || "  -"}
+                  viewStyle={{ width: 120 }}
+                />
+                <View style={{ flex: 1, marginLeft: 20 }}>
+                  <Text
+                    style={styles.authorizationTitle}>
+                      Autorização
+                  </Text>
+
+                  <TextInput
+                    placeholder=""
+                    style={styles.authorizationInput}
+                    keyboardType="number-pad"
+                    value={authorization.code}
+                    onChangeText={text => setAuthorization({ code: text, setted: false })}
+                  />
+                </View>
+              </View>
             </View>
-          </View>    
-        )}
-      </View>
+
+            <Divider style={{ marginTop: 15 }}/>
+            
+            <ButtonCustom
+              mode="text"
+              loading={finishingWash}
+              onPress={async () => {
+                setFinishingWash(true);
+                if (await props.refreshServices({
+                  ...props.item,
+                  status: "DONE",
+                  authorization: authorization.code,
+                  clientId: props.item.client.id,
+                  carId: props.item.car.id
+                })) {
+                  showAnimation();
+                  setWashDone(true);
+                } else {
+                  setFinishingWash(false);
+                }
+              }}
+              label="RECEBER"
+              style={{ flexGrow: 1, marginTop: 10 }}
+            />
+        </View>
+      )}
     </Card>
   );
 }

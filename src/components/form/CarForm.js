@@ -8,7 +8,7 @@ import { clearNumber } from "../../utils/formatter";
 import {
   getCarByLicensePlate,
   getCarByCardNumber
-} from "../../services/car/carRealm";
+} from "../../services/client/realm";
 import { createCar } from "../../services/car/carService";
 import { FONT_FAMILY_REGULAR } from "../../styles/typography";
 

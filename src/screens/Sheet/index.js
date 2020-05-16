@@ -7,26 +7,31 @@ import { FONT_REGULAR } from '../../styles/typography';
 import { createPdfFile } from '../../utils/createPdfFile';
 import RNFetchBlob from 'rn-fetch-blob';
 import { Colors } from '../../styles';
+import moment from "moment";
 
 export default function SheetScreen(props) {
   const [pdfFile, setPdfFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
 
+  console.log("é aqui que eu quero", props)
   const createPdf = async () => {
-    setLoading(true);
-
-    const { period, data } = props.navigation.state.params;
-    const pdfFile = await createPdfFile(data, period);
-
     if (pdfFile) {
-      setPdfFile(pdfFile);
-      setSnackbar('PDF criado com sucesso');
+      openPdf();
     } else {
-      setSnackbar('Erro ao criar PDF');
+      setLoading(true);
+      const { period, data } = props.route.params;
+      const pdfFile = await createPdfFile(data, period);
+  
+      if (pdfFile) {
+        setPdfFile(pdfFile);
+        const openPdf = RNFetchBlob.android;
+        openPdf.actionViewIntent(pdfFile.filePath, "application/pdf");
+      } else {
+        setSnackbar('Erro ao criar PDF');
+      }
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const openPdf = () => {
@@ -34,25 +39,25 @@ export default function SheetScreen(props) {
     openPdf.actionViewIntent(pdfFile.filePath, "application/pdf");
   };
 
+  console.log(props.route.params)
+
   return (
     <View style={{ flex: 1 }}>
       <Header
-        title="Resultado da busca"
+        title={`Resultado de ${moment(props.route.params.period.startDate).format("DD/MM")} até ${moment(props.route.params.period.endDate).format("DD/MM")}`}
         goBack={() => props.navigation.goBack()}
         share={pdfFile == null ? false : true}
         onPress={openPdf}
       />
 
-      <Table data={props.navigation.state.params.data} />
+      <Table data={props.route.params.data} />
 
-      {!pdfFile && (
-        <FAB
-          style={styles.fabStyle}
-          icon="file-pdf"
-          loading={loading}
-          onPress={createPdf}
-        />
-      )}
+      <FAB
+        style={styles.fabStyle}
+        icon="file-pdf"
+        loading={loading}
+        onPress={createPdf}
+      />
 
       <Snackbar
         visible={snackbar}
@@ -84,6 +89,6 @@ const styles = {
     margin: 16,
     right: 0,
     bottom: 0,
-    backgroundColor: Colors.PRIMARY
+    backgroundColor: "#D21E27"
   }
 };

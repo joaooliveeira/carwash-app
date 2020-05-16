@@ -1,7 +1,7 @@
 import uuid from "uuid";
 import { createCarDb } from "../requests";
 import { clearNumber } from "../../utils/formatter";
-import { createCarLocal, updateCarLocal } from "./carRealm";
+import { createCarLocal, updateCarLocal, saveObjectToRealm } from "../client/realm";
 
 export const createCar = async car => {
   let newCar = {
@@ -16,18 +16,18 @@ export const createCar = async car => {
 
   if (car.id) {
     if (carFromDb) {
-      updateCarLocal(carFromDb);
+      saveObjectToRealm("Car", carFromDb, "modified");
       return carFromDb;
     } else {
-      updateCarLocal(newCar);
+      saveObjectToRealm("Car", newCar, "modified");
       return newCar;
     }
   } else {
     if (carFromDb) {
-      createCarLocal(carFromDb);
+      saveObjectToRealm("Car", carFromDb, false);
       return carFromDb;
     } else {
-      createCarLocal(newCar);
+      saveObjectToRealm("Car", newCar, false);
       return newCar;
     }
   }

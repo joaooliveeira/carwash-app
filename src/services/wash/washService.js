@@ -1,7 +1,9 @@
 import uuid from "uuid";
-import { createWashDb } from "../requests";
-import { createWashLocal, updataWashLocal } from "./washRealm";
+import { saveWashDb, getRunningWashes } from "../requests";
+import { saveObjectToRealm, getClientById, getCarById } from "../client/realm";
 import moment from "moment";
+import { setRunningWashes } from "../../redux/actions/runningWashesActions";
+import { store } from "../../navigations/AppStackNavigator";
 
 export const createWash = async wash => {
   let newWash = {
@@ -17,23 +19,56 @@ export const createWash = async wash => {
     lastUpdate: null
   };
 
-  const washFromDb = await createWashDb(newWash);
+  const washFromDb = await saveWashDb(newWash);
 
   if (wash.id) {
     if (washFromDb) {
-      updataWashLocal(washFromDb);
+      saveObjectToRealm("Wash", washFromDb, "modified");
       return washFromDb;
     } else {
-      updataWashLocal(newWash);
+      saveObjectToRealm("Wash", newWash, "modified");
       return newWash;
     }
   } else {
     if (washFromDb) {
-      createWashLocal(washFromDb);
+      saveObjectToRealm("Wash", washFromDb, false);
       return washFromDb;
     } else {
-      createWashLocal(newWash);
+      saveObjectToRealm("Wash", newWash, false);
+
       return newWash;
     }
   }
 };
+
+export const refreshRunningWashes = () => {
+  return new Promise(function(resolve, reject) {
+    getRunningWashes()
+      .then(washes => {
+        if (washes.length) {
+          const updatedWashes = [];
+
+          washes.forEach(wash => {
+            const client = getClientById(wash.clientId);
+            const car = getCarById(wash.carId);
+            updatedWashes.push({
+              id: wash.id,
+              client,
+              clientRegister: wash.clientRegister,
+              car,
+              kilometrage: wash.kilometrage,
+              washType: wash.washType,
+              value: wash.value,
+              status: wash.status,
+              created: wash.created,
+              lastUpdate: wash.lastUpdate
+            });
+          })
+
+          store.dispatch(setRunningWashes(updatedWashes))
+        }
+        resolve("done");
+      })
+      .catch(error => reject(error));
+  })
+}

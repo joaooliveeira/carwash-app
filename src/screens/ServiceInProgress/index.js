@@ -1,79 +1,41 @@
-import React, { useState, useEffect } from "react";
-import { View, RefreshControl, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { View, RefreshControl, Text } from "react-native";
 import { Header } from "../../components/Header";
 import { FlatList } from "react-native-gesture-handler";
 import ServiceCard from "../../components/info/ServiceCard";
-import { getRunningWashes } from "../../services/requests";
-import { getClientById } from "../../services/client/clientRealm";
-import { getCarById } from "../../services/car/carRealm";
+import { saveWashDb } from "../../services/requests";
 import { useSelector } from "react-redux";
+import { store } from "../../navigations/AppStackNavigator";
+import { setRunningWashes } from "../../redux/actions/runningWashesActions";
+import { refreshRunningWashes } from "../../services/wash/washService";
+import { Snackbar } from "react-native-paper";
+import { FONT_REGULAR } from "../../styles/typography";
 
 export default function ServiceInProgress(props) {
   const runningWashes = useSelector(state => state.runningWashes.washes);
-
-  const [services, setServices] = useState();
   const [refreshing, setRefreshing] = useState(false);
-  const [finishedServices, setFinishedServces] = useState([]);
+  const [snackbar, setSnackbar] = useState("");
 
-  useEffect(() => {
-    loadWashInformation();
-  },[]);
-
-  const loadWashInformation = async () => {
-    let updatedServices = [];
-
-    runningWashes.forEach(async wash => {
-      const client = await getClientById(wash.clientId);
-      const car = await getCarById(wash.carId);
-      updatedServices.push({
-        id: wash.id,
-        client,
-        clientRegister: wash.clientRegister,
-        car,
-        kilometrage: wash.kilometrage,
-        washType: wash.washType,
-        value: wash.value,
-        status: wash.status,
-        created: wash.created,
-        lastUpdate: wash.lastUpdate
-      });
-    });
-
-    setServices(updatedServices);
-  }
-
-  function wait(timeout) {
-    return new Promise(async () => {
-      let updatedServices = [];
-      const runningWashes = await getRunningWashes();
-      runningWashes.forEach(async wash => {
-        const client = await getClientById(wash.clientId);
-        const car = await getCarById(wash.carId);
-        updatedServices.push({
-          id: wash.id,
-          client,
-          clientRegister: wash.clientRegister,
-          car,
-          kilometrage: wash.kilometrage,
-          washType: wash.washType,
-          value: wash.value,
-          status: wash.status,
-          created: wash.created,
-          lastUpdate: wash.lastUpdate
-        });
-      });
-      setServices(updatedServices);
-      setRefreshing(false);
-    });
-  }
-
-  const onRefresh = React.useCallback(async () => {
+  const onRefresh = () => {
     setRefreshing(true);
+    refreshRunningWashes()
+    .catch(error => setSnackbar("Error ao obter os dados, verifique sua conexão com a internet"))
+    .finally(() => setRefreshing(false))
+  };
 
-    getRunningWashes().then(services => loadWashInformation(services));
-
-    setRefreshing(false);
-  }, []);
+  const refreshServices = async wash => {
+    return saveWashDb(wash)
+      .then(response => {
+        setSnackbar("Serviço finalizado com sucesso");
+        const updatedWashes = runningWashes.filter(function(element, index, arr){ return element.id !== wash.id;});
+        store.dispatch(setRunningWashes(updatedWashes));
+        return true;
+      })
+      .catch(error => {
+        setSnackbar("Erro ao finalizar o serviço");
+        return false;
+      })
+  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -82,18 +44,45 @@ export default function ServiceInProgress(props) {
         goBack={() => props.navigation.goBack()}
       />
 
+      {runningWashes.length == 0 &&
+        <Text
+          style={{
+            alignSelf: "center",
+            position: "absolute",
+            fontWeight: "bold",
+            color: "#99999B",
+            top: 85
+          }}>
+            Nenhum serviço em andamento
+          </Text>
+      }
       <FlatList
-        data={services}
+        keyboardShouldPersistTaps="always"
+        data={runningWashes}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        extraData={services}
+        extraData={runningWashes}
         renderItem={({ item, index }) => (
-          <ServiceCard item={item} index={index} checked={false} />
+          <ServiceCard item={item} refreshServices={washId => refreshServices(washId)} />
         )}
         keyExtractor={item => item.id}
         initialNumToRender={15}
+        ListFooterComponent={<View style={{ marginTop: 10 }} />}
+        ListHeaderComponent={<View style={{ marginTop: 4 }} />}
       />
+
+      <Snackbar
+        visible={snackbar}
+        duration={4000}
+        onDismiss={() => setSnackbar(false)}
+        action={{
+          label: 'OK',
+          onPress: () => setSnackbar(false)
+        }}
+      >
+        <Text style={FONT_REGULAR}>{snackbar}</Text>
+      </Snackbar>
     </View>
   );
 }

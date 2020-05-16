@@ -3,20 +3,14 @@ import { View } from "react-native";
 import { AppStatusBar } from "../../components/AppStatusBar";
 import LottieView from "lottie-react-native";
 import { Colors } from "../../styles";
-import { useDispatch } from "react-redux";
-import { setRunningWashes } from "../../redux/actions/runningWashesActions";
-import { getRunningWashes } from "../../services/requests";
+import { refreshRunningWashes } from "../../services/wash/washService";
 
 export default function Splash(props) {
-  const dispatch = useDispatch();
 
   useEffect(() => {
-    getRunningWashes().then(response => {
-      if (response.length) {
-        dispatch(setRunningWashes(response))
-      }
+    refreshRunningWashes().finally(() => {
+      props.navigation.replace("AppTabNavigator");
     })
-    .finally(() => props.navigation.replace("AppTabNavigator"))
   });
 
   return (

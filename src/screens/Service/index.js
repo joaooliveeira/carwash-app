@@ -33,10 +33,11 @@ import { Colors } from "../../styles";
 import { FONT_REGULAR, FONT_BOLD } from "../../styles/typography";
 
 import ClientForm from "../../components/form/ClientForm";
-import { getCarByLicensePlate } from "../../services/car/carRealm";
+import { getCarByLicensePlate } from "../../services/client/realm";
 import { createCar } from "../../services/car/carService";
 import { createWash } from "../../services/wash/washService";
 import { clearNumber } from "../../utils/formatter";
+import { findClient } from "../../services/client/realm";
 
 const washTypesData = [
   { label: "Ducha", value: '20,00' },
@@ -610,6 +611,10 @@ export default function ServiceScree(props) {
         visible={snackbar}
         duration={4000}
         onDismiss={() => setSnackbar(false)}
+        action={{
+          label: 'OK',
+          onPress: () => setSnackbar(false)
+        }}
       >
         <Text style={FONT_REGULAR}>{snackbar}</Text>
       </Snackbar>

@@ -27,8 +27,8 @@ import moment from "moment";
 import { Colors } from "../../styles";
 import Autocomplete from "react-native-autocomplete-input";
 import InfoText from "../../components/InfoText";
-import { getCarById, findCar } from "../../services/car/carRealm";
-import { findClient, getClientById } from "../../services/client/clientRealm";
+import { getCarById, findCar } from "../../services/client/realm";
+import { findClient, getClientById } from "../../services/client/realm";
 import { filterWashes } from "../../services/requests";
 
 if (
@@ -232,7 +232,7 @@ export const SheetFilterScreen = props => {
                 filterType == 'client' ? Colors.PRIMARY : 'rgba(0, 0, 0, 0.54)'
               }
               onPress={() => {
-                setFilterType("client");
+                setFilterType("client"); 
                 setFilterTypeId("");
                 getParamSuggestions(suggestionParam, "client");
               }}

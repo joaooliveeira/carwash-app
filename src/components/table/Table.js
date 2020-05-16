@@ -11,7 +11,7 @@ export const Table = React.memo(props => {
   const [columnHeaders, setColumnHeaders] = useState([
     { key: "car.model", label: "Modelo", orientation: null },
     { key: "car.licensePlate", label: "Placa", orientation: null },
-    // { key: "client.name", label: "Cliente", orientation: null },
+    { key: "client.name", label: "Data", orientation: null },
     { key: "value", label: "Valor", orientation: null }
   ]);
 

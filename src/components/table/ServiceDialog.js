@@ -81,7 +81,7 @@ export const ServiceDialog = props => {
 
         <InfoText
           label="Valor"
-          text={formatValue(serviceDetails.value)}
+          text={formatValue(serviceDetails.value.toString())}
           viewStyle={[styles.info, { width: "28%" }]}
         />
       </View>

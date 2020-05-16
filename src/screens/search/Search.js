@@ -16,9 +16,9 @@ import {
   Button,
   ActivityIndicator
 } from "react-native-paper";
-import { findCar } from "../../services/car/carRealm";
+import { findCar } from "../../services/client/realm";
 import CarCard from "../../components/info/CarCard";
-import { findClient } from "../../services/client/clientRealm";
+import { findClient } from "../../services/client/realm";
 import ClientCard from "../../components/info/ClientCard";
 
 if (

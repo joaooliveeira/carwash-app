@@ -12,7 +12,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 
 const Stack = createStackNavigator();
 
-const store = createStore(rootReducer, composeWithDevTools());
+export const store = createStore(rootReducer, composeWithDevTools());
 
 function App() {
   return (

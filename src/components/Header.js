@@ -29,15 +29,6 @@ export const Header = props => {
           }
         </View>
       )}
-      {props.share && (
-        <Appbar.Action
-          icon="share-variant"
-          color='rgba(0, 0, 0, 0.54)'
-          animated={true}
-          onPress={() => props.onPress()}
-        />
-      )}
-
       {props.done && (
         <Appbar.Action
           icon="check"

@@ -1,7 +1,7 @@
 import uuid from "uuid";
 import { createClientDb } from "../requests";
 import { clearNumber } from "../../utils/formatter";
-import { updateClientLocal, createClientLocal } from "./clientRealm";
+import { updateClientLocal, createClientLocal, saveObjectToRealm } from "./realm";
 
 export const createClient = async client => {
   let newClient = {
@@ -18,18 +18,18 @@ export const createClient = async client => {
 
   if (client.id) {
     if (clientFromDb) {
-      updateClientLocal(clientFromDb);
+      saveObjectToRealm("Client", clientFromDb, "modified");
       return clientFromDb;
     } else {
-      updateClientLocal(newClient);
+      saveObjectToRealm("Client", newClient, "modified");
       return newClient;
     }
   } else {
     if (clientFromDb) {
-      createClientLocal(clientFromDb);
+      saveObjectToRealm("Client", clientFromDb, false);
       return clientFromDb;
     } else {
-      createClientLocal(newClient);
+      saveObjectToRealm("Client", newClient, false);
       return newClient;
     }
   }

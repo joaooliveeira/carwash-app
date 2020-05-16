@@ -7,6 +7,10 @@ const axiosInstance = axios.create({
     headers: {'Content-Type': 'application/json'}
 });
 
+axiosInstance.interceptors.response.use(null, error => {
+  throw error;
+});
+
 export const createClientDb = async body => {
     return axiosInstance.put("client/save", body)
       .then(response => response.data)
@@ -43,7 +47,7 @@ export const syncCar = async date => {
       .then(response => response.data)
 };
 
-export const createWashDb = async body => {
+export const saveWashDb = async body => {
     return axiosInstance.put("wash/save", body)
       .then(response => response.data)
 };

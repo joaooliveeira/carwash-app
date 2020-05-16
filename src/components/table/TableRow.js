@@ -4,7 +4,8 @@ import { DataTable } from "react-native-paper";
 import { MaterialDialog } from "react-native-material-dialog";
 import { ServiceDialog } from "./ServiceDialog";
 import { FONT_SMALL_TEXT } from "../../styles/typography";
-import { formatValue } from "../../utils/formatter";
+import { formatValue, formatLicensePlate } from "../../utils/formatter";
+import moment from "moment";
 
 export const TableRow = React.memo(props => {
   const [rowInfoDialog, setRowInfoDialog] = useState(false);
@@ -17,7 +18,6 @@ export const TableRow = React.memo(props => {
   };
 
   const item = props.item;
-  const value = formatValue(item.value);
 
   return (
     <>
@@ -29,15 +29,15 @@ export const TableRow = React.memo(props => {
         </DataTable.Cell>
 
         <DataTable.Cell style={middleColumnStyle}>
-          <Text style={FONT_SMALL_TEXT}>{item.car.licensePlate}</Text>
+          <Text style={FONT_SMALL_TEXT}>{formatLicensePlate(item.car.licensePlate)}</Text>
         </DataTable.Cell>
 
-        {/* <DataTable.Cell style={middleColumnStyle}>
-          <Text style={FONT_SMALL_TEXT}>{item.client.name}</Text>
-        </DataTable.Cell> */}
+        <DataTable.Cell style={middleColumnStyle}>
+          <Text style={FONT_SMALL_TEXT}>{moment(item.created).format('DD/MM')}</Text>
+        </DataTable.Cell>
 
         <DataTable.Cell numeric>
-          <Text style={FONT_SMALL_TEXT}>{value}</Text>
+          <Text style={FONT_SMALL_TEXT}>{formatValue(item.value.toString())}</Text>
         </DataTable.Cell>
       </DataTable.Row>
 
