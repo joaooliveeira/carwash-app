@@ -9,6 +9,7 @@ import { Provider} from 'react-redux'
 import { rootReducer } from '../redux/reducers/index';
 import { createStore } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
+import RegisterNewClient from '../screens/Client/RegisterNewClient';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ function App() {
           <Stack.Screen name="AppTabNavigator" component={AppTabNavigator} />
           <Stack.Screen name="SheetScreen" component={SheetScreen} />
           <Stack.Screen name="RunningServicesScreen" component={RunningServicesScreen} />
+          <Stack.Screen name="RegisterNewClient" component={RegisterNewClient} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

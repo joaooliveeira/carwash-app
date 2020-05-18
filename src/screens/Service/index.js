@@ -32,12 +32,10 @@ import { styles } from "./styles";
 import { Colors } from "../../styles";
 import { FONT_REGULAR, FONT_BOLD } from "../../styles/typography";
 
-import ClientForm from "../../components/form/ClientForm";
-import { getCarByLicensePlate } from "../../services/client/realm";
 import { createCar } from "../../services/car/carService";
 import { createWash } from "../../services/wash/washService";
 import { clearNumber } from "../../utils/formatter";
-import { findClient } from "../../services/client/realm";
+import { findClient, getCarByLicensePlate, findCarByLicensePlate } from "../../services/requests";
 
 const washTypesData = [
   { label: "Ducha", value: '20,00' },
@@ -63,6 +61,7 @@ export default function ServiceScree(props) {
     licensePlate: "",
     cardNumber: ""
   });
+  const [carSuggestions, setCarSuggestions] = useState([]);
 
   const [kilometrage, setKilometrage] = useState("");
   const [washType, setWashType] = useState("");
@@ -82,13 +81,19 @@ export default function ServiceScree(props) {
 
   const [loading, setLoading] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
-  const [newClientForm, setNewClientForm] = useState(false);
 
   const getClientSuggestions = async text => {
     setClient({ id: '', name: text, phone: '', email: '' });
 
-    text.length > 0
-      ? setClientSuggestions(await findClient(text, 'LIMIT(5)'))
+    text.length > 1
+      ? setClientSuggestions(await findClient(text))
+      : setClientSuggestions([]);
+  };
+
+  const getCarSuggestions = async text => {
+    setCar({ id: "", model: "", licensePlate: "", cardNumber: "" });
+    text.length > 1
+      ? setCarSuggestions(await findCarByLicensePlate(text))
       : setClientSuggestions([]);
   };
 
@@ -233,9 +238,16 @@ export default function ServiceScree(props) {
     }
   };
 
+  const _onFinished = newClient => {
+    setTimeout(() => {
+      setClient(newClient);
+      setSnackbar('Cliente cadastrado com sucesso');
+    }, 150);
+  };
+
   return (
     <SafeAreaView>
-      <ScrollView keyboardShouldPersistTaps="always">
+      <ScrollView keyboardShouldPersistTaps="handled">
         <Card style={styles.card}>
           <Card.Title
             title="Criar novo serviço"
@@ -246,7 +258,7 @@ export default function ServiceScree(props) {
 
           <Card.Title
             title="Dados do cliente"
-            titleStyle={[FONT_BOLD, { fontSize: 17 }]}
+            titleStyle={[FONT_BOLD, { fontSize: 16 }]}
           />
 
           <View style={{ height: 64 }}>
@@ -275,8 +287,8 @@ export default function ServiceScree(props) {
               color="rgba(0, 0, 0, 0.54)"
               size={25}
               onPress={() => {
+                props.navigation.navigate("RegisterNewClient", { onFinished: _onFinished })
                 setClientSuggestions([]);
-                setNewClientForm(true);
               }}
             />
           </View>
@@ -289,26 +301,6 @@ export default function ServiceScree(props) {
           >
             {dataError.client}
           </HelperText>
-
-          <Modal
-            isVisible={newClientForm}
-            useNativeDriver={true}
-            deviceHeight={require("react-native-extra-dimensions-android").get(
-              'REAL_WINDOW_HEIGHT'
-            )}
-          >
-            <ClientForm
-              client={{ id: '', name: '', phone: '', email: '' }}
-              hideForm={() => setNewClientForm(false)}
-              onFinished={newClient => {
-                setNewClientForm(false);
-                setTimeout(() => {
-                  setClient(newClient);
-                  setSnackbar('Cliente cadastrado com sucesso');
-                }, 150);
-              }}
-            />
-          </Modal>
 
           <TextInput
             label="Matrícula"
@@ -330,6 +322,24 @@ export default function ServiceScree(props) {
           />
 
           <View>
+            {/* <TextInputSuggestion
+              data={carSuggestions}
+              label="Placa *"
+              value={car.name}
+              theme={themes.input}
+              style={styles.input}
+              autoCapitalize="characters"
+              error={dataError.licensePlate.type == 'error'}
+              onChangeText={text => getCarSuggestions(text)}
+              selectClient={car => {
+                setCar(car);
+                setCarSuggestions([]);
+                setDataError({
+                  ...dataError,
+                  car: false
+                });
+              }}
+            /> */}
             <TextInput
               label="Placa *"
               theme={themes.input}

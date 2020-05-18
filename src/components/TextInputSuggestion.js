@@ -32,8 +32,9 @@ export default function TextInputSuggestion(props) {
       hideResults={hideResults}
       containerStyle={styles.containerStyle}
       inputContainerStyle={styles.inputContainerStyle}
-      listStyle={styles.listStyle}
+      listStyle={[styles.listStyle, { height: props.data.length > 5 ? 317 : props.data.length * 63.3 }]}
       keyboardShouldPersistTaps="always"
+      flatListProps={{nestedScrollEnabled: true}}
       renderItem={({ item, i }) => {
         showAnimation();
         if (props.data[0] == "NOT_FOUND") {
@@ -93,7 +94,7 @@ const styles = {
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
     elevation: 4,
-    borderWidth: 0.3,
+    borderWidth: 0.3
   },
   inputContainerStyle: {
     borderWidth: 0,

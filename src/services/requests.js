@@ -1,5 +1,7 @@
+import uuid from "uuid";
 import axios from "axios";
 import { API_URL } from 'react-native-dotenv';
+import { clearNumber } from "../utils/formatter";
 
 const axiosInstance = axios.create({
     baseURL: API_URL,
@@ -11,9 +13,17 @@ axiosInstance.interceptors.response.use(null, error => {
   throw error;
 });
 
-export const createClientDb = async body => {
-    return axiosInstance.put("client/save", body)
-      .then(response => response.data)
+export const createClient = async client => {
+  let body = {
+    id: client.id ? client.id : uuid.v1(),
+    name: client.name,
+    phone: clearNumber(client.phone),
+    email: client.email,
+    status: 'ACTIVE',
+  };
+
+  return axiosInstance.put("client/save", body)
+    .then(response => response.data)
 };
 
 export const findClient = async term => {
@@ -21,12 +31,14 @@ export const findClient = async term => {
       .then(response => response.data)
 };
 
-/*
- * date format: 2020-02-29T20:47:10.000-03:00
- */
-export const syncClient = async date => {
-    return axiosInstance.get(`client/sync/${date}`)
-      .then(response => response.data)
+export const getClientByPhone = async phone => {
+  return axiosInstance.get(`client/getByPhone/${phone}`)
+    .then(response => response.data)
+};
+
+export const getClientByEmail = async email => {
+  return axiosInstance.get(`client/getByEmail/${email}`)
+    .then(response => response.data)
 };
 
 export const createCarDb = async body => {
@@ -37,6 +49,16 @@ export const createCarDb = async body => {
 export const findCar = async term => {
     return axiosInstance.get(`car/find/${term}`)
       .then(response => response.data)
+};
+
+export const findCarByLicensePlate = async licensePlate => {
+  return axiosInstance.get(`car/ffind/?licensePlate=${licensePlate}`)
+    .then(response => response.data)
+};
+
+export const getCarByLicensePlate = async licensePlate => {
+  return axiosInstance.get(`car/getByLicensePlate/${licensePlate}`)
+    .then(response => response.data)
 };
 
 /*

@@ -1,20 +1,17 @@
 import React, { useState } from "react";
-import { View, Keyboard, StyleSheet } from "react-native";
-import { TextInput, Card, HelperText, Divider } from "react-native-paper";
-import { TextInputMask } from "react-native-masked-text";
 import ButtonCustom from "../ButtonCustom";
-import { createClient } from "../../services/client/clientService";
 import { themes } from "../../assets/themes";
-import {
-  getClientByPhone,
-  getClientByEmail
-} from "../../services/client/realm";
 import { clearNumber } from "../../utils/formatter";
+import { TextInputMask } from "react-native-masked-text";
+import { View, Keyboard, StyleSheet } from "react-native";
 import { FONT_FAMILY_REGULAR } from "../../styles/typography";
+import { TextInput, Card, HelperText, Divider } from "react-native-paper";
+import { getClientByPhone, getClientByEmail, createClient } from "../../services/requests";
 
 export default function ClientForm(props) {
   const [client, setClient] = useState(props.client);
   const [clientHasBeenChanged, setClientHasBeenChanged] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [error, setError] = useState({
     name: false,
@@ -22,7 +19,6 @@ export default function ClientForm(props) {
     email: false
   });
 
-  const [loading, setLoading] = useState(false);
 
   const createNewClient = async () => {
     setLoading(true);
@@ -34,15 +30,15 @@ export default function ClientForm(props) {
         props.onFinished(
           props.client.id ? "Cliente alterado com sucesso." : newClient
         );
-        props.hideForm();
+        props.goBack();
       }
     } else if (props.client.id) {
       Keyboard.dismiss();
-      props.hideForm();
+      props.onFinished("Nenhuma informação foi alterada.")
+      props.goBack();
     }
 
     validateData();
-
     setLoading(false);
   };
 
@@ -71,7 +67,7 @@ export default function ClientForm(props) {
 
     if (
       clearNumber(client.phone) !== props.client.phone &&
-      (await getClientByPhone(text))
+      (await getClientByPhone(clearNumber(text)))
     ) {
       return "Número de telefone já cadastrado.";
     }
@@ -195,10 +191,10 @@ export default function ClientForm(props) {
 
       <View style={styles.buttonsContainer}>
         <ButtonCustom
-          label="CANCELAR"
+          label="LIMPAR"
           mode="text"
           style={{ flexGrow: 1, marginHorizontal: 15 }}
-          onPress={props.hideForm}
+          onPress={() => setClient({ id: "", name: "", phone: "", email: ""})}
         />
 
         <ButtonCustom
@@ -216,7 +212,7 @@ export default function ClientForm(props) {
 
 const styles = StyleSheet.create({
   card: {
-    margin: 2,
+    margin: 10,
     borderRadius: 8
   },
   helperText: {
