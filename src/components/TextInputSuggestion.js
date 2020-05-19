@@ -26,9 +26,37 @@ export default function TextInputSuggestion(props) {
     );
   };
 
+  const renderSuggestion = item => {
+    const { id, licensePlate, model, name, phone } = item;
+    showAnimation();
+      return (
+        <>
+          <TouchableOpacity
+            onPress={() => {
+            }}
+            style={styles.item}
+          >
+            <InfoText
+              label={filterType == "car" ? "Placa" : "Nome"}
+              text={licensePlate || name}
+              styleView={{ width: '50%' }}
+            />
+            <InfoText
+              label={filterType == "car" ? "Modelo" : "Telefone"}
+              text={model || phone}
+              phoneType={phone && true}
+              styleView={{ width: '50%' }}
+            />
+          </TouchableOpacity>
+          <Divider />
+        </>
+      );
+  };
+
   return (
     <Autocomplete
       data={props.data}
+      autoCapitalize={props.autoCapitalize}
       hideResults={hideResults}
       containerStyle={styles.containerStyle}
       inputContainerStyle={styles.inputContainerStyle}
@@ -37,26 +65,27 @@ export default function TextInputSuggestion(props) {
       flatListProps={{nestedScrollEnabled: true}}
       renderItem={({ item, i }) => {
         showAnimation();
-        if (props.data[0] == "NOT_FOUND") {
+        if (props.data[0] == "NOT_FOUND" && props.type === "client") {
           return (
             <Text style={styles.notFoundText}>Nenhum cliente encontrado.</Text>
           );
         } else {
+          const { licensePlate, model, name, phone } = item;
           return (
             <>
               <TouchableOpacity
-                onPress={() => props.selectClient(item)}
+                onPress={() => props.selectItem(item)}
                 style={styles.item}
               >
                 <InfoText
-                  label="Nome"
-                  text={item.name}
+                  label={props.type == "car" ? "Placa" : "Nome"}
+                  text={licensePlate || name}
                   styleView={{ width: '50%' }}
                 />
                 <InfoText
-                  label="Telefone"
-                  text={item.phone}
-                  phoneType
+                  label={props.type == "car" ? "Modelo" : "Telefone"}
+                  text={model || phone}
+                  phoneType={phone && true}
                   styleView={{ width: '50%' }}
                 />
               </TouchableOpacity>

@@ -52,7 +52,7 @@ export const findCar = async term => {
 };
 
 export const findCarByLicensePlate = async licensePlate => {
-  return axiosInstance.get(`car/ffind/?licensePlate=${licensePlate}`)
+  return axiosInstance.get(`car/find/?licensePlate=${licensePlate}`)
     .then(response => response.data)
 };
 

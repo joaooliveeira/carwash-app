@@ -8,8 +8,8 @@ import { refreshRunningWashes } from "../../services/wash/washService";
 export default function Splash(props) {
 
   useEffect(() => {
+    props.navigation.replace("AppTabNavigator");
     refreshRunningWashes().finally(() => {
-      props.navigation.replace("AppTabNavigator");
     })
   });
 
