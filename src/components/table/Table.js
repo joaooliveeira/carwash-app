@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { DataTable } from "react-native-paper";
 import { Text, FlatList } from "react-native";
-import { FONT_REGULAR } from "../../styles/typography";
+import { FONT_TEXT } from "../../styles/typography";
 import { TableRow } from "./TableRow";
 
 export const Table = React.memo(props => {
@@ -93,7 +93,7 @@ export const Table = React.memo(props => {
             numeric={index == columnHeaders.length - 1 ? true : false}
             // sortDirection={header.orientation}
           >
-            <Text style={FONT_REGULAR}>{header.label}</Text>
+            <Text style={FONT_TEXT}>{header.label}</Text>
           </DataTable.Title>
         ))}
       </DataTable.Header>
