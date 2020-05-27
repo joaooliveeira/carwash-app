@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Text } from "react-native";
 import { DataTable } from "react-native-paper";
 import { MaterialDialog } from "react-native-material-dialog";
-import { ServiceDialog } from "./ServiceDialog";
+import { ServiceDialog } from "../info/ServiceDialog";
 import { FONT_SMALL_TEXT } from "../../styles/typography";
 import { formatValue, formatLicensePlate } from "../../utils/formatter";
 import moment from "moment";

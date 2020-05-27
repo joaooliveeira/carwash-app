@@ -1,11 +1,11 @@
-import InfoText from "../InfoText";
+import InfoText from "../info/InfoText";
 import React, { useState } from "react";
-import ButtonCustom from "../ButtonCustom";
+import ButtonCustom from "../other/ButtonCustom";
 import { Card, Divider} from "react-native-paper";
 import { View, UIManager, LayoutAnimation, Platform, TextInput, Text } from "react-native";
 import { formatValue, formatCardNumber, formatLicensePlate, formatPhoneNumber } from "../../utils/formatter";
 import { FONT_FAMILY_REGULAR } from "../../styles/typography";
-import { saveWash, finishWash } from "../../services/requests";
+import { finishWash } from "../../services/requests";
 import ToastMessage from "./Toast";
 
 if (

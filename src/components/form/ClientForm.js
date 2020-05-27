@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import ButtonCustom from "../ButtonCustom";
-import { themes } from "../../assets/themes";
+import ButtonCustom from "../other/ButtonCustom";
+import { themes } from "../../styles/themes";
 import { clearNumber } from "../../utils/formatter";
 import { TextInputMask } from "react-native-masked-text";
 import { View, Keyboard, StyleSheet } from "react-native";
-import { FONT_FAMILY_REGULAR, FONT_BOLD } from "../../styles/typography";
+import { FONT_FAMILY_REGULAR, FONT_SUBTITLE } from "../../styles/typography";
 import { TextInput, Card, HelperText, Divider } from "react-native-paper";
 import { getClientByPhone, getClientByEmail, saveClient } from "../../services/requests";
 import ToastMessage from "../info/Toast";
@@ -91,7 +91,7 @@ export default function ClientForm(props) {
     <Card style={styles.card}>
       <Card.Title
         title={props.client.id ? "Alterar dados" : "Cadastrar cliente"}
-        titleStyle={[FONT_BOLD, { fontSize: 20 }]} />
+        titleStyle={[FONT_SUBTITLE]} />
 
       <Divider style={{ marginVertical: 5 }}/>
 

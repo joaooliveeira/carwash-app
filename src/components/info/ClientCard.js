@@ -1,4 +1,4 @@
-import InfoText from "../InfoText";
+import InfoText from "../info/InfoText";
 import { View } from "react-native";
 import React, { useState } from "react";
 import { Card, Menu } from "react-native-paper";

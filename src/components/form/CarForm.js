@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { View, Keyboard, StyleSheet } from "react-native";
 import { TextInput, Card, HelperText, Divider } from "react-native-paper";
 import { TextInputMask } from "react-native-masked-text";
-import ButtonCustom from "../ButtonCustom";
-import { themes } from "../../assets/themes";
+import ButtonCustom from "../other/ButtonCustom";
+import { themes } from "../../styles/themes";
 import { clearNumber } from "../../utils/formatter";
-import { FONT_FAMILY_REGULAR } from "../../styles/typography";
+import { FONT_FAMILY_REGULAR, FONT_SUBTITLE } from "../../styles/typography";
 import { getCarByLicensePlate, saveCar, getCarByCardNumber } from "../../services/requests";
 import ToastMessage from "../info/Toast";
 
@@ -87,7 +87,7 @@ export default function CarForm(props) {
 
   return (
     <Card style={styles.card}>
-      <Card.Title title="Alterar dados" />
+      <Card.Title title="Alterar dados" titleStyle={[FONT_SUBTITLE]}/>
 
       <Divider style={{ marginVertical: 5 }}/>
 

@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { BottomNavigation, Provider, PaperProvider } from 'react-native-paper';
-import { AppStatusBar } from '../components/AppStatusBar';
-import { Header } from '../components/Header';
+import { BottomNavigation, Provider } from 'react-native-paper';
+import { AppStatusBar } from '../components/other/AppStatusBar';
+import { Header } from '../components/other/Header';
 import { Colors } from '../styles';
-import ServiceScreen from '../screens/Service/index';
-import SearchScreen from '../screens/search/Search';
-import { SheetFilterScreen } from '../screens/SheetFilter/index';
-import { ReportScreen } from '../screens/Report';
+import ServiceScreen from '../screens/service/index';
+import SearchScreen from '../screens/search';
+import { SheetFilterScreen } from '../screens/sheet-filter/index';
+import { ReportScreen } from '../screens/report';
 
 export default class AppTabNavigator extends Component {
   state = {
@@ -69,7 +69,7 @@ export default class AppTabNavigator extends Component {
           renderScene={this._renderScene}
           shifting={false}
           activeColor={Colors.PRIMARY}
-          barStyle={{ backgroundColor: 'white', paddingVertical: 5, elevation: 8, borderTopWidth: 0.3, borderColor: "#EEEEEE" }}
+          barStyle={{ backgroundColor: 'white', paddingBottom: 5, elevation: 8, borderTopWidth: 0.3, borderColor: "#EEEEEE" }}
           sceneAnimationEnabled={false}
         />
       </Provider>
