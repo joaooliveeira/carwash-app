@@ -12,9 +12,7 @@ import moment from "moment";
 export default function SheetScreen(props) {
   const [pdfFile, setPdfFile] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [snackbar, setSnackbar] = useState(false);
 
-  console.log("é aqui que eu quero", props)
   const createPdf = async () => {
     if (pdfFile) {
       openPdf();
@@ -39,12 +37,10 @@ export default function SheetScreen(props) {
     openPdf.actionViewIntent(pdfFile.filePath, "application/pdf");
   };
 
-  console.log(props.route.params)
-
   return (
     <View style={{ flex: 1 }}>
       <Header
-        title={`Resultado de ${moment(props.route.params.period.startDate).format("DD/MM")} até ${moment(props.route.params.period.endDate).format("DD/MM")}`}
+        title={`Relatório ${moment(props.route.params.period.startDate).format("DD/MM")} - ${moment(props.route.params.period.endDate).format("DD/MM")}`}
         goBack={() => props.navigation.goBack()}
         share={pdfFile == null ? false : true}
         onPress={openPdf}
@@ -58,21 +54,6 @@ export default function SheetScreen(props) {
         loading={loading}
         onPress={createPdf}
       />
-
-      <Snackbar
-        visible={snackbar}
-        onDismiss={() => setSnackbar(false)}
-        action={
-          pdfFile
-            ? {
-                label: "ABRIR",
-                onPress: () => openPdf(),
-              }
-            : { label: "OK", onPress: () => setSnackbar(false) }
-        }
-      >
-        <Text style={FONT_REGULAR}>{snackbar}</Text>
-      </Snackbar>
     </View>
   );
 }

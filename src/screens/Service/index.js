@@ -21,25 +21,23 @@ import { themes } from "../../assets/themes";
 import { clearNumber } from "../../utils/formatter";
 import { TextInputMask } from "react-native-masked-text";
 import ButtonCustom from "../../components/ButtonCustom";
-import { createCar } from "../../services/car/carService";
-import { createWash } from "../../services/wash/washService";
-import { FONT_REGULAR, FONT_BOLD } from "../../styles/typography";
+import { FONT_BOLD } from "../../styles/typography";
 import TextInputSuggestion from "../../components/TextInputSuggestion";
 import { SinglePickerMaterialDialog } from "react-native-material-dialog";
-import { findClient, getCarByLicensePlate, findCarByLicensePlate } from "../../services/requests";
-import { ToastMessage } from "../../components/info/Toast";
+import { findClient, getCarByLicensePlate, findCarByLicensePlate, createCarDb, saveWash, refreshRunningWashes, saveCar } from "../../services/requests";
+import ToastMessage from "../../components/info/Toast";
 
 const washTypesData = [
-  { label: "Ducha", value: '20,00' },
-  { label: "Simples", value: '40,00' },
-  { label: "Completa", value: "60,00" },
-  { label: "Enceramento", value: "70,00" },
-  { label: "Polimento", value: "150,00" },
-  { label: "Higienização", value: "200,00" }
+  { label: "Ducha", value: '2000' },
+  { label: "Simples", value: '4000' },
+  { label: "Completa", value: "6000" },
+  { label: "Enceramento", value: "7000" },
+  { label: "Polimento", value: "15000" },
+  { label: "Higienização", value: "20000" }
 ];
 
 export default function ServiceScree(props) {
-  const [client, setClient] = useState({ id: "", name: "", phone: "" });
+  const [client, setClient] = useState({ id: "", name: "", phone: "", email: "" });
   const [clientSuggestions, setClientSuggestions] = useState([]);
   const [register, setRegister] = useState("");
 
@@ -163,41 +161,46 @@ export default function ServiceScree(props) {
   };
 
   const createNewWash = async () => {
-    let newCar = await createCar(car);
-    const wash = {
-      clientId: client.id,
-      clientRegister: register,
-      carId: newCar.id,
-      kilometrage,
-      washType,
-      value: clearNumber(value)
-    };
+    let carFromDb = await saveCar(car);
 
-    const newWash = await createWash(wash);
+    if (carFromDb) {
+      const wash = {
+        client: client,
+        clientRegister: register,
+        car: carFromDb,
+        kilometrage,
+        washType,
+        value: clearNumber(value)
+      };
+  
+      await saveWash(wash).then(newWash => {
+        refreshRunningWashes();
+        clearAllInputs();
+        ToastMessage.success("Lavagem registrada com sucesso")
+      });
+    }
 
-    clearAllInputs();
     setLoading(false);
   };
 
   const clearAllInputs = async () => {
-    ToastMessage({ message: "teste dot teste "});
-    // Keyboard.dismiss();
-    // setClient({ id: "", name: "", phone: "", email: "" });
-    // setRegister("");
-    // setCar({ licensePlate: "", model: "", cardNumber: "" });
-    // setKilometrage("");
-    // setWashType("");
-    // setValue("");
-    // setDataError({
-    //   client: false,
-    //   register: false,
-    //   licensePlate: { message: "" },
-    //   model: false,
-    //   cardNumber: false,
-    //   kilometrage: false,
-    //   washType: false,
-    //   value: false
-    // });
+    Keyboard.dismiss();
+    setClient({ id: "", name: "", phone: "", email: "" });
+    setRegister("");
+    setCar({ licensePlate: "", model: "", cardNumber: "" });
+    setKilometrage("");
+    setWashType("");
+    setValue("");
+    setDataError({
+      client: false,
+      register: false,
+      licensePlate: { message: "" },
+      model: false,
+      cardNumber: false,
+      kilometrage: false,
+      washType: false,
+      value: false
+    });
   };
 
   const onFinishRegisteringTheClient = newClient => {
@@ -247,7 +250,7 @@ export default function ServiceScree(props) {
               color="rgba(0, 0, 0, 0.54)"
               size={25}
               onPress={() => {
-                props.navigation.navigate("RegisterNewClient", { onFinished: onFinishRegisteringTheClient })
+                props.navigation.navigate("ClientRegistration", { onFinished: onFinishRegisteringTheClient, client })
                 setClientSuggestions([]);
               }}
             />
@@ -297,6 +300,7 @@ export default function ServiceScree(props) {
                   const carFromDb = await getCarByLicensePlate(text);
                   if (carFromDb) {
                     setCar(carFromDb);
+                    setCarSuggestions([]);
                     setDataError({
                       ...dataError,
                       licensePlate: { type: "info", message: "Veículo já cadastrado." }
@@ -324,13 +328,14 @@ export default function ServiceScree(props) {
                 setCar(car);
                 setDataError({
                   ...dataError,
-                  licensePlate: { type: "info", message: "Veículo já cadastrado." },
+                  licensePlate: { type: "info", message: "" },
                   model: false
                 });
                 setCarSuggestions([]);
               }}
             />
           </View>
+
           <HelperText
             type={dataError.licensePlate.type}
             visible={dataError.licensePlate.message}
@@ -478,6 +483,7 @@ export default function ServiceScree(props) {
 
           <SinglePickerMaterialDialog
             title={"Selecione uma opção"}
+            addPadding={false}
             items={washTypesData.map((row, index) => ({
               value: index,
               label: row.label,

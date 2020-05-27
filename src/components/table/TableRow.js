@@ -6,6 +6,7 @@ import { ServiceDialog } from "./ServiceDialog";
 import { FONT_SMALL_TEXT } from "../../styles/typography";
 import { formatValue, formatLicensePlate } from "../../utils/formatter";
 import moment from "moment";
+import Modal from 'react-native-modal';
 
 export const TableRow = React.memo(props => {
   const [rowInfoDialog, setRowInfoDialog] = useState(false);
@@ -41,15 +42,13 @@ export const TableRow = React.memo(props => {
         </DataTable.Cell>
       </DataTable.Row>
 
-      <MaterialDialog
-        visible={rowInfoDialog}
-        addPadding={false}
-        okLabel=""
-        cancelLabel=""
-        onCancel={() => setRowInfoDialog(false)}
-      >
-        <ServiceDialog serviceDetails={item} />
-      </MaterialDialog>
+      <Modal
+        isVisible={rowInfoDialog}
+        onBackButtonPress={() => setRowInfoDialog(false)}
+        onBackdropPress={() => setRowInfoDialog(false)}
+        useNativeDriver={true}>
+        <ServiceDialog item={item} />
+      </Modal>
     </>
   );
 });

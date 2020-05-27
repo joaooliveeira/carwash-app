@@ -4,9 +4,10 @@ import { themes } from "../../assets/themes";
 import { clearNumber } from "../../utils/formatter";
 import { TextInputMask } from "react-native-masked-text";
 import { View, Keyboard, StyleSheet } from "react-native";
-import { FONT_FAMILY_REGULAR } from "../../styles/typography";
+import { FONT_FAMILY_REGULAR, FONT_BOLD } from "../../styles/typography";
 import { TextInput, Card, HelperText, Divider } from "react-native-paper";
-import { getClientByPhone, getClientByEmail, createClient } from "../../services/requests";
+import { getClientByPhone, getClientByEmail, saveClient } from "../../services/requests";
+import ToastMessage from "../info/Toast";
 
 export default function ClientForm(props) {
   const [client, setClient] = useState(props.client);
@@ -19,22 +20,24 @@ export default function ClientForm(props) {
     email: false
   });
 
-
   const createNewClient = async () => {
     setLoading(true);
 
     if (clientHasBeenChanged) {
       if (await validateData()) {
         Keyboard.dismiss();
-        const newClient = await createClient(client);
-        props.onFinished(
-          props.client.id ? "Cliente alterado com sucesso." : newClient
-        );
-        props.goBack();
+        saveClient(client).then(newClient => {
+          if (props.client.id) {
+            ToastMessage.success("Cliente alterado com sucesso.");
+          } else {
+            ToastMessage.success("Cliente criado com sucesso.");
+          }
+          props.onFinished(newClient);
+        }).finally(() => props.goBack())
       }
     } else if (props.client.id) {
       Keyboard.dismiss();
-      props.onFinished("Nenhuma informação foi alterada.")
+      ToastMessage.warning("Nenhuma informação foi alterada")
       props.goBack();
     }
 
@@ -63,38 +66,34 @@ export default function ClientForm(props) {
   const validatePhone = async text => {
     if (clearNumber(text).length < 11) {
       return "Número de telefone inválido.";
+    } else {
+      const clientFromDb = await getClientByPhone(clearNumber(text));
+      if (clientFromDb && clientFromDb.id != props.client.id) {
+        return "Número de telefone já cadastrado.";
+      }
     }
-
-    if (
-      clearNumber(client.phone) !== props.client.phone &&
-      (await getClientByPhone(clearNumber(text)))
-    ) {
-      return "Número de telefone já cadastrado.";
-    }
-
     return false;
   };
 
   const validateEmail = async text => {
     if (text.length !== 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text)) {
-      return "Insira um email válido.";
+      return "Email inválido.";
+    } else if (text.length !== 0) {
+      const clientFromDb = await getClientByEmail(text);
+      if (clientFromDb && clientFromDb.id !== props.client.id) {
+        return "Email já cadastrado";
+      }
     }
-
-    if (
-      text.length !== 0 &&
-      (client.email !== props.client.email && (await getClientByEmail(text)))
-    ) {
-      return "Email já cadastrado";
-    }
-
     return false;
   };
 
   return (
     <Card style={styles.card}>
-      <Card.Title title="Cadastrar novo cliente" />
+      <Card.Title
+        title={props.client.id ? "Alterar dados" : "Cadastrar cliente"}
+        titleStyle={[FONT_BOLD, { fontSize: 20 }]} />
 
-      <Divider />
+      <Divider style={{ marginVertical: 5 }}/>
 
       <Card.Content>
         <TextInput
@@ -194,12 +193,15 @@ export default function ClientForm(props) {
           label="LIMPAR"
           mode="text"
           style={{ flexGrow: 1, marginHorizontal: 15 }}
-          onPress={() => setClient({ id: "", name: "", phone: "", email: ""})}
+          onPress={() => {
+            setClient({ ...client, name: '', phone: '', email: '' });
+            setClientHasBeenChanged(true);
+          }}
         />
 
         <ButtonCustom
-          label="CADASTRAR"
-          icon="account-plus"
+          label="SALVAR"
+          icon="content-save"
           mode="contained"
           style={{ flexGrow: 1, marginRight: 15 }}
           loading={loading}

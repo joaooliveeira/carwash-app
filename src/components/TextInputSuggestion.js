@@ -19,7 +19,8 @@ if (
 }
 
 export default function TextInputSuggestion(props) {
-  const [hideResults, setHideResults] = useState(false);
+  const [hideResults, setHideResults] = useState(true);
+  
   const showAnimation = () => {
     LayoutAnimation.configureNext(
       LayoutAnimation.create(200, "easeInEaseOut", "opacity")
@@ -27,22 +28,26 @@ export default function TextInputSuggestion(props) {
   };
 
   const renderSuggestion = item => {
-    const { id, licensePlate, model, name, phone } = item;
     showAnimation();
+    if (props.data[0] == "NOT_FOUND" && props.type === "client") {
+      return (
+        <Text style={styles.notFoundText}>Nenhum cliente encontrado.</Text>
+      );
+    } else {
+      const { licensePlate, model, name, phone } = item;
       return (
         <>
           <TouchableOpacity
-            onPress={() => {
-            }}
+            onPress={() => props.selectItem(item)}
             style={styles.item}
           >
             <InfoText
-              label={filterType == "car" ? "Placa" : "Nome"}
+              label={props.type == "car" ? "Placa" : "Nome"}
               text={licensePlate || name}
               styleView={{ width: '50%' }}
             />
             <InfoText
-              label={filterType == "car" ? "Modelo" : "Telefone"}
+              label={props.type == "car" ? "Modelo" : "Telefone"}
               text={model || phone}
               phoneType={phone && true}
               styleView={{ width: '50%' }}
@@ -51,6 +56,7 @@ export default function TextInputSuggestion(props) {
           <Divider />
         </>
       );
+    }
   };
 
   return (
@@ -58,42 +64,12 @@ export default function TextInputSuggestion(props) {
       data={props.data}
       autoCapitalize={props.autoCapitalize}
       hideResults={hideResults}
-      containerStyle={styles.containerStyle}
+      containerStyle={hideResults ? { position: "relative" } : [styles.containerStyle, {}]}
       inputContainerStyle={styles.inputContainerStyle}
-      listStyle={[styles.listStyle, { height: props.data.length > 5 ? 317 : props.data.length * 63.3 }]}
+      listStyle={[styles.listStyle, { height: props.data.length > 5 ? 316.25 : props.data.length * 63.25 }]}
       keyboardShouldPersistTaps="always"
       flatListProps={{nestedScrollEnabled: true}}
-      renderItem={({ item, i }) => {
-        showAnimation();
-        if (props.data[0] == "NOT_FOUND" && props.type === "client") {
-          return (
-            <Text style={styles.notFoundText}>Nenhum cliente encontrado.</Text>
-          );
-        } else {
-          const { licensePlate, model, name, phone } = item;
-          return (
-            <>
-              <TouchableOpacity
-                onPress={() => props.selectItem(item)}
-                style={styles.item}
-              >
-                <InfoText
-                  label={props.type == "car" ? "Placa" : "Nome"}
-                  text={licensePlate || name}
-                  styleView={{ width: '50%' }}
-                />
-                <InfoText
-                  label={props.type == "car" ? "Modelo" : "Telefone"}
-                  text={model || phone}
-                  phoneType={phone && true}
-                  styleView={{ width: '50%' }}
-                />
-              </TouchableOpacity>
-              <Divider />
-            </>
-          );
-        }
-      }}
+      renderItem={({ item, i }) => renderSuggestion(item)}
       renderTextInput={() => (
         <TextInput
           {...props}

@@ -4,7 +4,6 @@ import {
   Divider,
   Button,
   HelperText,
-  Snackbar
 } from "react-native-paper";
 import {
   View,
@@ -27,9 +26,8 @@ import moment from "moment";
 import { Colors } from "../../styles";
 import Autocomplete from "react-native-autocomplete-input";
 import InfoText from "../../components/InfoText";
-import { getCarById, findCar } from "../../services/client/realm";
-import { findClient, getClientById } from "../../services/client/realm";
-import { filterWashes } from "../../services/requests";
+import { findClient, getClientById, filterWashes, getCarById, findCar } from "../../services/requests";
+import ToastMessage from "../../components/info/Toast";
 
 if (
   Platform.OS === "android" &&
@@ -53,7 +51,6 @@ export const SheetFilterScreen = props => {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  const [snackbar, setSnackbar] = useState(false);
 
   const showAnimation = hidden => {
     LayoutAnimation.configureNext(
@@ -114,32 +111,13 @@ export const SheetFilterScreen = props => {
 
       const result = await filterWashes(filter);
 
-      if (result === undefined) {
-        setSnackbar("Algo deu errado, verifique sua conexão com a internet.");
-      }
-
-      if (result.length == 0) {
-        setSnackbar("Nenhum resultado encontrado.");
+      if (result.length === 0) {
+        ToastMessage.warning(`Nenhuma lavagem encontrada para esse ${filter === 'car' ? "veículo" : "cliente"}`);
       }
 
       if (result.length !== 0) {
-        let data = [];
-        await result.forEach(async item => {
-          data.push({
-            id: item.id,
-            client: await getClientById(item.clientId),
-            car: await getCarById(item.carId),
-            clientRegister: item.clientRegister,
-            kilometrage: item.kilometrage,
-            washType: item.washType,
-            value: item.value,
-            status: item.status,
-            created: item.created,
-            lastUpdate: item.lastUpdate
-          });
-        });
         props.navigation.navigate("SheetScreen", {
-          data,
+          data: result,
           period: { startDate, endDate },
         });
       }
@@ -307,7 +285,7 @@ export const SheetFilterScreen = props => {
               color={"#EEEEEE"}
               onPress={() => showPicker("startDate")}
             >
-              {startDate == "" ? "Início" : moment(startDate).format("MMM D ")}
+              {startDate == "" ? "Início" : moment(startDate).format("DD/MM/YY")}
             </Button>
 
             <Button
@@ -320,7 +298,7 @@ export const SheetFilterScreen = props => {
               color={"#EEEEEE"}
               onPress={() => showPicker("endDate")}
             >
-              {endDate == "" ? "Fim   " : moment(endDate).format("MMM D")}
+              {endDate == "" ? "Fim   " : moment(endDate).format("DD/MM/YY")}
             </Button>
           </View>
 
@@ -344,18 +322,6 @@ export const SheetFilterScreen = props => {
           />
         </Card>
       </ScrollView>
-
-      <Snackbar
-        visible={snackbar}
-        duration={5000}
-        onDismiss={() => setSnackbar(false)}
-        action={{
-          label: 'OK',
-          onPress: () => setSnackbar(false)
-        }}
-      >
-        <Text style={FONT_REGULAR}>{snackbar}</Text>
-      </Snackbar>
     </SafeAreaView>
   );
 };

@@ -2,6 +2,10 @@ import uuid from "uuid";
 import axios from "axios";
 import { API_URL } from 'react-native-dotenv';
 import { clearNumber } from "../utils/formatter";
+import ToastMessage from "../components/info/Toast";
+import { store } from "../navigations/AppStackNavigator";
+import { setRunningWashes } from "../redux/actions/runningWashesActions";
+import moment from "moment";
 
 const axiosInstance = axios.create({
     baseURL: API_URL,
@@ -10,16 +14,20 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.response.use(null, error => {
+  ToastMessage.danger("Algo deu errado, verifique sua conexão com a internet")
   throw error;
 });
 
-export const createClient = async client => {
+/*
+ * Client requests.
+ */
+
+export const saveClient = async client => {
   let body = {
     id: client.id ? client.id : uuid.v1(),
     name: client.name,
     phone: clearNumber(client.phone),
     email: client.email,
-    status: 'ACTIVE',
   };
 
   return axiosInstance.put("client/save", body)
@@ -27,28 +35,44 @@ export const createClient = async client => {
 };
 
 export const findClient = async term => {
-    return axiosInstance.get(`client/find/${term}`)
-      .then(response => response.data)
+  return axiosInstance.get(`client/find/${term}`)
+    .then(response => response.data)
+};
+
+export const getClientById = async id => {
+  return axiosInstance.get(`client/get/?id=${id}`)
+    .then(response => response.data)
 };
 
 export const getClientByPhone = async phone => {
-  return axiosInstance.get(`client/getByPhone/${phone}`)
+  return axiosInstance.get(`client/get/?phone=${phone}`)
     .then(response => response.data)
 };
 
 export const getClientByEmail = async email => {
-  return axiosInstance.get(`client/getByEmail/${email}`)
+  return axiosInstance.get(`client/get/?email=${email}`)
     .then(response => response.data)
 };
 
-export const createCarDb = async body => {
-    return axiosInstance.put("car/save", body)
-      .then(response => response.data)
+/*
+ * Car requests.
+ */
+
+export const saveCar = async car => {
+  let body = {
+    id: car.id ? car.id : uuid.v1(),
+    model: car.model,
+    licensePlate: car.licensePlate,
+    cardNumber: clearNumber(car.cardNumber),
+  };
+
+  return axiosInstance.put("car/save", body)
+    .then(response => response.data)
 };
 
 export const findCar = async term => {
-    return axiosInstance.get(`car/find/${term}`)
-      .then(response => response.data)
+  return axiosInstance.get(`car/find/${term}`)
+    .then(response => response.data)
 };
 
 export const findCarByLicensePlate = async licensePlate => {
@@ -56,22 +80,45 @@ export const findCarByLicensePlate = async licensePlate => {
     .then(response => response.data)
 };
 
+export const getCarById = async id => {
+  return axiosInstance.get(`car/get/?id=${id}`)
+    .then(response => response.data)
+};
+
 export const getCarByLicensePlate = async licensePlate => {
-  return axiosInstance.get(`car/getByLicensePlate/${licensePlate}`)
+  return axiosInstance.get(`car/get/?licensePlate=${licensePlate}`)
+    .then(response => response.data)
+};
+
+export const getCarByCardNumber = async cardNumber => {
+  return axiosInstance.get(`car/get/?cardNumber=${cardNumber}`)
     .then(response => response.data)
 };
 
 /*
- * date format: 2020-02-29T20:47:10.000-03:00
+ * Wash requests.
  */
-export const syncCar = async date => {
-    return axiosInstance.get(`car/sync/${date}`)
-      .then(response => response.data)
+
+export const saveWash = async wash => {
+  let body = {
+    id: wash.id ? wash.id : uuid.v1(),
+    client: wash.client,
+    clientRegister: wash.clientRegister,
+    car: wash.car,
+    kilometrage: wash.kilometrage,
+    washType: wash.washType,
+    value: wash.value,
+    status: 'RUNNING',
+    created: new Date(moment().toISOString(true)),
+    authorization: ""
+  };
+  return axiosInstance.put("wash/save", body)
+    .then(response => response.data)
 };
 
-export const saveWashDb = async body => {
-    return axiosInstance.put("wash/save", body)
-      .then(response => response.data)
+export const finishWash = async body => {
+  return axiosInstance.put("wash/save", body)
+    .then(response => response.data)
 };
 
 export const filterWashes = async filter => {
@@ -84,10 +131,15 @@ export const getRunningWashes = async () => {
       .then(response => response.data)
 };
 
-/*
- * date format: 2020-02-29T20:47:10.000-03:00
- */
-export const syncWash = async date => {
-    return axiosInstance.get(`car/sync/${date}`)
-      .then(response => response.data)
-};
+export const refreshRunningWashes = () => {
+  return new Promise(function(resolve, reject) {
+    getRunningWashes()
+      .then(washes => {
+        if (washes.length) {
+          store.dispatch(setRunningWashes(washes))
+        }
+        resolve("done");
+      })
+      .catch(error => reject(error));
+  })
+}

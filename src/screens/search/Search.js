@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   View,
-  SafeAreaView,
   FlatList,
   Platform,
   UIManager,
@@ -16,10 +15,9 @@ import {
   Button,
   ActivityIndicator
 } from "react-native-paper";
-import { findCar } from "../../services/client/realm";
 import CarCard from "../../components/info/CarCard";
-import { findClient } from "../../services/client/realm";
 import ClientCard from "../../components/info/ClientCard";
+import { findClient, findCar } from "../../services/requests";
 
 if (
   Platform.OS === "android" &&
@@ -39,17 +37,14 @@ export default function SearchScreen(props) {
     setFilter(type);
 
     if (term.length > 1) {
-      const result = await find(term, type);
-
-      setAnimating(false);
-      showAnimation();
-
-      if (result[0] === "NOT_FOUND") {
-        setData([]);
-      } else {
+      setAnimating(true);
+      find(term, type).then(result => {
+        showAnimation();
         setData(result);
-      }
-    } else {
+        console.log(result);
+        
+      }).finally(() => setAnimating(false))
+    } else if (term.length === 0) {
       setData([]);
     }
   };
@@ -64,6 +59,18 @@ export default function SearchScreen(props) {
     }
   };
 
+  const refreshData = async item => {
+    console.log("refreshItem", item)
+    const updatedData = data.map(element => {
+      if (element.id === item.id) {
+        return item;
+      } else {
+        return element
+      }
+    });
+    setData(updatedData);
+  }
+
   const showAnimation = () => {
     LayoutAnimation.configureNext(
       LayoutAnimation.create(200, "easeInEaseOut", "opacity")
@@ -71,7 +78,7 @@ export default function SearchScreen(props) {
   };
 
   return (
-    <SafeAreaView>
+    <View>
       <Appbar.Header
         style={{
           width: "100%",
@@ -84,11 +91,7 @@ export default function SearchScreen(props) {
           style={{ marginTop: 15, marginHorizontal: 10, borderRadius: 8 }}
           placeholder="Digite para buscar..."
           value={query}
-          onIconPress={() => setData([])}
-          onChangeText={text => {
-            setAnimating(text.length !== 0);
-            getData(text, filter);
-          }}
+          onChangeText={text => getData(text, filter)}
         />
 
         <View
@@ -126,7 +129,7 @@ export default function SearchScreen(props) {
         </View>
       </Appbar.Header>
 
-      {query.length !== 0 && data.length === 0 && !animating && (
+      {query.length > 1 && data.length == 0 && !animating && (
         <Text
           style={{
             alignSelf: "center",
@@ -142,7 +145,7 @@ export default function SearchScreen(props) {
       <ActivityIndicator
         animating={animating}
         color={Colors.PRIMARY}
-        style={{ position: "absolute", top: 145, left: 0, right: 0 }}
+        style={{ position: "absolute", top: 145, left: 0, right: 0, zIndex: 1 }}
       />
 
       <FlatList
@@ -151,16 +154,20 @@ export default function SearchScreen(props) {
         renderItem={({ item, index }) => {
           showAnimation();
           return filter === "car" ? (
-            <CarCard car={item} onUpdate={() => getData(query, filter)} />
+            <CarCard
+              car={item}
+              onPress={() => props.navigation.navigate("CarRegistration", { car: item, onFinished: car => refreshData(car) })}/>
           ) : (
-            <ClientCard client={item} onUpdate={() => getData(query, filter)} />
+            <ClientCard
+              client={item}
+              onPress={() => props.navigation.navigate("ClientRegistration", { client: item, onFinished: client => refreshData(client) })}/>
           );
         }}
         keyExtractor={item => item.id}
         initialNumToRender={15}
         ListHeaderComponent={<View style={{ margin: 3 }} />}
-        ListFooterComponent={<View style={{ margin: 5 }} />}
+        ListFooterComponent={<View style={{ margin: 68 }} />}
       />
-    </SafeAreaView>
+    </View>
   );
 }

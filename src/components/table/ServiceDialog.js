@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Divider } from "react-native-paper";
+import { Divider, Card } from "react-native-paper";
 import { View } from "react-native";
 import InfoText from "../InfoText";
 import { WINDOW_WIDTH } from "../../styles/mixins";
@@ -7,92 +7,118 @@ import {
   formatValue,
   formatLicensePlate,
   formatCardNumber,
-  formatDate,
+  formatPhoneNumber,
 } from "../../utils/formatter";
+import { FONT_FAMILY_REGULAR, FONT_BOLD } from "../../styles/typography";
 
 const styles = {
-  dialog: {
-    width: WINDOW_WIDTH * 0.85,
-    justifyContent: "space-around"
+  cardContainer: {
+    width: WINDOW_WIDTH * 0.95,
+    justifyContent: "space-around",
+    backgroundColor: "white",
+    borderRadius: 5,
+    margin: 2,
+    paddingVertical: 5,
+    paddingBottom: 10,
+    alignSelf: "center"
   },
-  rowContent: {
-    flexDirection: "row",
-    justifyContent: "space-between"
+  row:{
+    flexDirection: 'row',
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
   },
-  info: {
-    marginHorizontal: 25,
-    marginVertical: 10
+  authorizationTitle: {
+    fontFamily: FONT_FAMILY_REGULAR,
+    fontSize: 12,
+    color: "rgba(0, 0, 0, 0.54)",
+    textAlignVertical: "top",
+    textAlign: "left",
+    marginTop: 3,
+    height: 21,
+    marginLeft: 50
+  },
+  authorizationInput: {
+    flex: 1,
+    color: "black",
+    borderBottomWidth: 0.5,
+    fontSize: 16,
+    height: 30,
+    marginRight: 20,
+    padding: 0,
+    marginTop: 0,
+    marginLeft: 55
+  },
+  saveButton: {
+    position: "absolute",
+    right: 0,
+    top: 18
   }
 };
 
 export const ServiceDialog = props => {
-  const { serviceDetails } = props;
-
   return (
-    <View style={styles.dialog}>
-      <View style={styles.rowContent}>
-        <InfoText
-          label="Cliente"
-          text={serviceDetails.client.name}
-          viewStyle={styles.info}
-        />
+    <Card style={styles.cardContainer}>
+      <Card.Title
+        title="Detalhes da lavagem"
+        titleStyle={[FONT_BOLD, { fontSize: 17 }]}
+      />
 
-        {serviceDetails.clientRegister != "" && (
-          <InfoText
-            label="Matrícula"
-            text={serviceDetails.clientRegister}
-            viewStyle={[styles.info, { width: "28%" }]}
-          />
-        )}
-      </View>
+      <Divider style={{ marginVertical: 5 }}/>
 
-      <Divider />
-
-      <View style={styles.rowContent}>
-        <InfoText
-          label="Modelo"
-          text={serviceDetails.car.model}
-          viewStyle={styles.info}
-        />
+      <View style={styles.row}>
+        <InfoText label="Modelo" text={props.item.car.model} />
 
         <InfoText
           label="Placa"
-          text={formatLicensePlate(serviceDetails.car.licensePlate)}
-          viewStyle={[styles.info, { width: "28%" }]}
+          text={formatLicensePlate(props.item.car.licensePlate)}
+          viewStyle={{ width: 120 }}
         />
       </View>
 
-      {serviceDetails.car.cardNumber != "" && (
-        <InfoText
-          label="Número do cartão"
-          text={formatCardNumber(serviceDetails.car.cardNumber)}
-          viewStyle={styles.info}
-        />
-      )}
+      <Divider style={{ marginVertical: 10 }}/>
 
-      <Divider />
+      <View style={styles.row}>
+        <InfoText label="Cliente" text={props.item.client.name} viewStyle={{ flex: 1, marginRight: 5 }}/>
 
-      <View style={styles.rowContent}>
-        <InfoText
-          label="Tipo de lavagem"
-          text={serviceDetails.washType}
-          viewStyle={styles.info}
-        />
+        <InfoText label="Telefone" text={formatPhoneNumber(props.item.client.phone)} viewStyle={{ flex: 1 }}/>
+      </View>
+
+      <Divider style={{ marginVertical: 10 }}/>
+
+      <View style={styles.row}>
+        <InfoText label="Lavagem" text={props.item.washType} />
 
         <InfoText
           label="Valor"
-          text={formatValue(serviceDetails.value.toString())}
-          viewStyle={[styles.info, { width: "28%" }]}
+          text={formatValue(props.item.value.toString())}
+          viewStyle={{ width: 120 }}
         />
       </View>
 
-      <Divider />
+      <Divider style={{ marginVertical: 10 }}/>
 
-      <InfoText
-        label="Data"
-        text={formatDate(serviceDetails.created)}
-        viewStyle={styles.info}
-      />
-    </View>
+      <View style={styles.row}>
+        <InfoText label="Cartão" text={props.item.car.cardNumber ? formatCardNumber(props.item.car.cardNumber) : " -"} />
+
+        <InfoText
+          label="Km"
+          text={props.item.kilometrage || " -"} 
+          viewStyle={{ width: 120 }}
+        />
+      </View>
+
+      <View style={[styles.row, { marginTop: 15 }]}>
+        <InfoText
+          label="Matrícula"
+          text={props.item.clientRegister || " -"}
+          viewStyle={{ width: 120 }}
+        />
+        <InfoText
+          label="Autorização"
+          text={props.item.authorization || " -"}
+          viewStyle={{ width: 120 }}
+        />
+      </View>
+    </Card>
   );
 };

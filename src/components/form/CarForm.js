@@ -5,12 +5,9 @@ import { TextInputMask } from "react-native-masked-text";
 import ButtonCustom from "../ButtonCustom";
 import { themes } from "../../assets/themes";
 import { clearNumber } from "../../utils/formatter";
-import {
-  getCarByLicensePlate,
-  getCarByCardNumber
-} from "../../services/client/realm";
-import { createCar } from "../../services/car/carService";
 import { FONT_FAMILY_REGULAR } from "../../styles/typography";
+import { getCarByLicensePlate, saveCar, getCarByCardNumber } from "../../services/requests";
+import ToastMessage from "../info/Toast";
 
 export default function CarForm(props) {
   const [car, setCar] = useState(props.car);
@@ -26,33 +23,26 @@ export default function CarForm(props) {
     setLoading(true);
 
     if (carHasBeenChanged) {
-      if (carIsValid()) {
+      if (await validateData()) {
         Keyboard.dismiss();
-        await createCar(car);
-        props.onUpdate("Veículo alterado com sucesso.");
-        props.dismissModal();
+        saveCar(car).then(response => {
+          ToastMessage.success("Veículo alterado com sucesso");
+          props.onFinished(response);
+          props.goBack();
+        }).finally(() => setLoading(false))
+      } else {
+        setLoading(false);
       }
     } else {
-      Keyboard.dismiss();
-      props.dismissModal();
+      ToastMessage.warning("Nenhuma informação foi alterada")
+      props.goBack();
     }
-
-    setLoading(false);
   };
 
-  const carIsValid = () => {
-    const modelError =
-      car.model.length >= 2
-        ? false
-        : "O modelo deve conter pelo menos dois caracteres.";
-
-    const licensePlateError =
-      car.licensePlate.length == 7 ? false : "Placa inválida.";
-
-    const cardNumberError =
-      car.cardNumber.length !== 0 && clearNumber(car.cardNumber).length !== 16
-        ? "Número do cartão inválido."
-        : false;
+  const validateData = async () => {
+    const modelError = validateModel();
+    const licensePlateError = await validateLicensePlate();
+    const cardNumberError = await validateCardNumber();
 
     setError({
       model: modelError,
@@ -63,11 +53,43 @@ export default function CarForm(props) {
     return !(modelError || licensePlateError || cardNumberError);
   };
 
+  const validateModel = () => {
+    return car.model.length >= 2 ? false : "O modelo deve conter pelo menos dois caracteres.";
+  }
+
+  const validateLicensePlate = async () => {
+    if (car.licensePlate.length == 7) {
+      const carFromDb = await getCarByLicensePlate(car.licensePlate);
+      if (carFromDb && carFromDb.id !== props.car.id) {
+        return "Placa já cadastrada."
+      } else {
+        return false;
+      }
+    } else {
+      return "Placa inválida.";
+    }
+  }
+
+  const validateCardNumber = async () => {
+    if (clearNumber(car.cardNumber).length === 16) {
+      const carFromDb = await getCarByCardNumber(clearNumber(car.cardNumber));
+      if (carFromDb && carFromDb.id != props.car.id) {
+        return "Cartão já cadastrado."
+      } else {
+        return false
+      }
+    } else if (car.cardNumber.length === 0) {
+      return false;
+    } else {
+      return "Cartão inválido."
+    }
+  }
+
   return (
     <Card style={styles.card}>
-      <Card.Title title="Editar veículo" />
+      <Card.Title title="Alterar dados" />
 
-      <Divider />
+      <Divider style={{ marginVertical: 5 }}/>
 
       <Card.Content>
         <TextInput
@@ -92,7 +114,7 @@ export default function CarForm(props) {
           padding="none"
           style={styles.helperText}
         >
-          O modelo deve conter pelo menos dois caracteres.
+          Insira pelo menos dois caracteres para modelo.
         </HelperText>
 
         <TextInput
@@ -107,8 +129,8 @@ export default function CarForm(props) {
             setCarHasBeenChanged(true);
 
             if (text.length === 7) {
-              const carFromStorage = await getCarByLicensePlate(text);
-              if (carFromStorage && text !== props.car.licensePlate) {
+              const carFromDb = await getCarByLicensePlate(text);
+              if (carFromDb && carFromDb.id != props.car.id) {
                 setError({
                   ...error,
                   licensePlate: "Placa já cadastrada."
@@ -153,8 +175,8 @@ export default function CarForm(props) {
             setCarHasBeenChanged(true);
 
             if (text.length === 19) {
-              const carFromStorage = await getCarByCardNumber(text);
-              if (carFromStorage && text !== props.car.cardNumber) {
+              const carFromDb = await getCarByCardNumber(clearNumber(text));
+              if (carFromDb && carFromDb.id !== props.car.id) {
                 setError({
                   ...error,
                   cardNumber: "Número de cartão já cadastrado."
@@ -191,18 +213,18 @@ export default function CarForm(props) {
 
       <View style={styles.buttonsContainer}>
         <ButtonCustom
-          label="CANCELAR"
+          label="LIMPAR"
           mode="text"
           style={{ flexGrow: 1, marginHorizontal: 15 }}
           onPress={() => {
-            Keyboard.dismiss();
-            props.dismissModal();
+            setCar({...car, model: '', licensePlate: '', cardNumber: '' });
+            setCarHasBeenChanged(true);
           }}
         />
 
         <ButtonCustom
-          label="CADASTRAR"
-          icon="account-plus"
+          label="SALVAR"
+          icon="content-save"
           mode="contained"
           style={{ flexGrow: 1, marginRight: 15 }}
           loading={loading}
@@ -215,7 +237,7 @@ export default function CarForm(props) {
 
 const styles = StyleSheet.create({
   card: {
-    margin: 2,
+    margin: 10,
     borderRadius: 8
   },
   helperText: {

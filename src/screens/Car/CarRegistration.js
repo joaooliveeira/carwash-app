@@ -1,9 +1,9 @@
 import React from "react";
 import { View, ScrollView } from "react-native";
 import { Header } from "../../components/Header";
-import ClientForm from "../../components/form/ClientForm";
+import CarForm from "../../components/form/CarForm";
 
-export default function RegisterNewClient(props) {
+export default function CarRegistration(props) {
   return (
     <View style={{ flex: 1 }}>
       <Header
@@ -11,11 +11,9 @@ export default function RegisterNewClient(props) {
         goBack={() => props.navigation.goBack()}
       />
       <ScrollView keyboardShouldPersistTaps="handled">
-        <ClientForm
-            client={{ id: '', name: '', phone: '', email: '' }}
-            onFinished={newClient => {
-                props.route.params.onFinished(newClient);
-            }}
+        <CarForm 
+            car={props.route.params.car}
+            onFinished={car => props.route.params.onFinished(car)}
             goBack={props.navigation.goBack}
         />
       </ScrollView>

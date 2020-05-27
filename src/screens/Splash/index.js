@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { AppStatusBar } from "../../components/AppStatusBar";
 import LottieView from "lottie-react-native";
 import { Colors } from "../../styles";
-import { refreshRunningWashes } from "../../services/wash/washService";
+import { refreshRunningWashes } from "../../services/requests";
 
 export default function Splash(props) {
 

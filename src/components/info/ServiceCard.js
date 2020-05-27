@@ -1,10 +1,12 @@
+import InfoText from "../InfoText";
 import React, { useState } from "react";
+import ButtonCustom from "../ButtonCustom";
 import { Card, Divider} from "react-native-paper";
 import { View, UIManager, LayoutAnimation, Platform, TextInput, Text } from "react-native";
-import InfoText from "../InfoText";
 import { formatValue, formatCardNumber, formatLicensePlate, formatPhoneNumber } from "../../utils/formatter";
 import { FONT_FAMILY_REGULAR } from "../../styles/typography";
-import ButtonCustom from "../ButtonCustom";
+import { saveWash, finishWash } from "../../services/requests";
+import ToastMessage from "./Toast";
 
 if (
   Platform.OS === 'android' &&
@@ -14,9 +16,9 @@ if (
 }
 
 export default function ServiceCard(props) {
-  const [authorization, setAuthorization] = useState({ code: "", setted: false });
+  const [authorization, setAuthorization] = useState("");
   const [finishingWash, setFinishingWash] = useState(false);
-  const [wahseDone, setWashDone] = useState(false);
+  const [washDone, setWashDone] = useState(false);
 
   const showAnimation = () => {
     LayoutAnimation.configureNext(
@@ -24,50 +26,28 @@ export default function ServiceCard(props) {
     );
   };
 
-  const styles = {
-    card: {
-      marginTop: 6,
-      marginHorizontal: 10,
-      paddingVertical: 5,
-      borderRadius: 5,
-      backgroundColor: 'white'
-    },
-    cardContainer: {
-      paddingBottom: 5,
-      justifyContent: "space-around"
-    },
-    row:{
-      flexDirection: 'row', justifyContent: "space-between", paddingLeft: 10,
-    },
-    authorizationTitle: {
-      fontFamily: FONT_FAMILY_REGULAR,
-      fontSize: 12,
-      color: "rgba(0, 0, 0, 0.54)",
-      textAlignVertical: "top",
-      textAlign: "left",
-      marginTop: 2,
-      height: 21,
-      marginLeft: 50
-    },
-    authorizationInput: {
-      flex: 1,
-      color: "black",
-      borderBottomWidth: 0.5,
-      fontSize: 16,
-      height: 30,
-      marginRight: 10,
-      padding: 0,
-      marginTop: 0,
-      marginLeft: 55
-    },
-    saveButton: {
-      position: "absolute", right: 0, top: 18
-    }
-  };
+  const finish = () => {
+    setFinishingWash(true);
+
+    finishWash({
+      ...props.item,
+      status: "DONE",
+      authorization: authorization,
+    }).then(response => {
+      if (response.id) {
+        ToastMessage.success("Serviço finalizado com sucesso.")
+        props.refreshServices(response);
+        showAnimation();
+        setWashDone(true);
+      }
+    }).finally(() => {
+      setFinishingWash(false);
+    })
+  }
 
   return (
-    <Card style={wahseDone ? { height: 0 } : styles.card}>
-      {!wahseDone && (
+    <Card style={washDone ? { height: 0 } : styles.card}>
+      {!washDone && (
           <View>
             <View style={styles.cardContainer}>
               <View style={styles.row}>
@@ -112,7 +92,7 @@ export default function ServiceCard(props) {
                 />
               </View>
 
-              <View style={styles.row}>
+              <View style={[styles.row, { marginTop: 15 }]}>
                 <InfoText
                   label="Matrícula"
                   text={props.item.clientRegister || "  -"}
@@ -128,8 +108,8 @@ export default function ServiceCard(props) {
                     placeholder=""
                     style={styles.authorizationInput}
                     keyboardType="number-pad"
-                    value={authorization.code}
-                    onChangeText={text => setAuthorization({ code: text, setted: false })}
+                    value={authorization}
+                    onChangeText={text => setAuthorization(text)}
                   />
                 </View>
               </View>
@@ -140,21 +120,7 @@ export default function ServiceCard(props) {
             <ButtonCustom
               mode="text"
               loading={finishingWash}
-              onPress={async () => {
-                setFinishingWash(true);
-                if (await props.refreshServices({
-                  ...props.item,
-                  status: "DONE",
-                  authorization: authorization.code,
-                  clientId: props.item.client.id,
-                  carId: props.item.car.id
-                })) {
-                  showAnimation();
-                  setWashDone(true);
-                } else {
-                  setFinishingWash(false);
-                }
-              }}
+              onPress={async () => finish()}
               label="RECEBER"
               style={{ flexGrow: 1, marginTop: 10 }}
             />
@@ -163,3 +129,48 @@ export default function ServiceCard(props) {
     </Card>
   );
 }
+
+const styles = {
+  card: {
+    marginTop: 6,
+    marginHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    backgroundColor: 'white',
+  },
+  cardContainer: {
+    paddingBottom: 5,
+    justifyContent: "space-around"
+  },
+  row:{
+    flexDirection: 'row',
+    justifyContent: "space-between",
+    paddingLeft: 10,
+  },
+  authorizationTitle: {
+    fontFamily: FONT_FAMILY_REGULAR,
+    fontSize: 12,
+    color: "rgba(0, 0, 0, 0.54)",
+    textAlignVertical: "top",
+    textAlign: "left",
+    marginTop: 3,
+    height: 21,
+    marginLeft: 50
+  },
+  authorizationInput: {
+    flex: 1,
+    color: "black",
+    borderBottomWidth: 0.5,
+    fontSize: 16,
+    height: 30,
+    marginRight: 20,
+    padding: 0,
+    marginTop: 0,
+    marginLeft: 55
+  },
+  saveButton: {
+    position: "absolute",
+    right: 0,
+    top: 18
+  }
+};

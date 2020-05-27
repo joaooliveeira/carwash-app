@@ -6,7 +6,7 @@ import { styles } from "../screens/Service/styles";
 import { TextInputMask } from "react-native-masked-text";
 import { MaterialDialog } from "react-native-material-dialog";
 import { Colors } from "../styles";
-import { updateClient } from "../services/client/clientWs";
+import { createCarDb } from "../services/requests";
 
 export const ClientEditDialog = ({ client, onDismiss }) => {
   const [name, setName] = useState(client.name);
@@ -44,7 +44,7 @@ export const ClientEditDialog = ({ client, onDismiss }) => {
       email
     };
 
-    await updateClient(clientUpdated);
+    await createCarDb(clientUpdated);
     onDismiss("Dados atualizados com sucesso");
   };
 
