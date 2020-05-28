@@ -8,7 +8,7 @@ export const themes = {
     },
     fonts: {
       regular: {
-        fontFamily: 'OpenSans-Regular',
+        fontFamily: 'System',
       },
     },
   },

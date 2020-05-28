@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, RefreshControl, Text } from "react-native";
+import { View, RefreshControl, Text, Platform } from "react-native";
 import { Header } from "../../components/other/Header";
 import { FlatList } from "react-native-gesture-handler";
 import ServiceCard from "../../components/info/ServiceCard";
@@ -38,7 +38,7 @@ export default function ServiceInProgress(props) {
             alignSelf: "center",
             position: "absolute",
             color: "#99999B",
-            top: 100
+            top: Platform.OS === "android" ? 100 : 140
            }]}>
             Nenhum serviço em andamento
           </Text>

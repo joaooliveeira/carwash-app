@@ -86,14 +86,14 @@ const styles = {
     position: "absolute",
     left: 0,
     right: 0,
-    zIndex: 1
+    zIndex: 1,
   },
   listStyle: {
     marginHorizontal: 25,
     borderBottomLeftRadius: 5,
     borderBottomRightRadius: 5,
     elevation: 4,
-    borderWidth: 0.3
+    borderWidth: 0.3,
   },
   inputContainerStyle: {
     borderWidth: 0,
@@ -102,6 +102,7 @@ const styles = {
     height: 40,
     textAlignVertical: 'center',
     marginLeft: 10,
+    backgroundColor: "white"
   },
   item: {
     flexDirection: "row",

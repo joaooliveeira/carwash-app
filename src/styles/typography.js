@@ -1,8 +1,8 @@
 import { scaleFont } from "./mixins";
 
 // FONT FAMILY
-export const FONT_FAMILY_REGULAR = "OpenSans-Regular";
-export const FONT_FAMILY_BOLD = "OpenSans-Bold";
+export const FONT_FAMILY_REGULAR = "System";
+export const FONT_FAMILY_BOLD = "System";
 
 // FONT WEIGHT
 export const FONT_WEIGHT_REGULAR = "400";
