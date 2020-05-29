@@ -29,9 +29,9 @@ export default function TextInputSuggestion(props) {
 
   const renderSuggestion = item => {
     showAnimation();
-    if (props.data[0] == "NOT_FOUND" && props.type === "client") {
+    if (props.data[0] === "NOT_FOUND" && props.value.length > 1) {
       return (
-        <Text style={styles.notFoundText}>Nenhum cliente encontrado.</Text>
+        <Text style={styles.notFoundText}>{`Nenhum ${props.type === "client" ? "cliente" : "veículo"} encontrado.`}</Text>
       );
     } else {
       const { licensePlate, model, name, phone } = item;
@@ -66,7 +66,7 @@ export default function TextInputSuggestion(props) {
       hideResults={hideResults}
       containerStyle={hideResults ? [styles.containerStyle, { position: "relative", zIndex: 0 }] : styles.containerStyle}
       inputContainerStyle={styles.inputContainerStyle}
-      listStyle={[styles.listStyle, { height: props.data.length > 5 ? 316.25 : props.data.length * 63.25 }]}
+      listStyle={[styles.listStyle, { height: props.data && props.data.length < 5 ? props.data.length * 63.25 : 316.25 }]}
       keyboardShouldPersistTaps="always"
       flatListProps={{nestedScrollEnabled: true}}
       renderItem={({ item, i }) => renderSuggestion(item)}
@@ -99,10 +99,10 @@ const styles = {
     borderWidth: 0,
   },
   notFoundText: {
-    height: 40,
+    height: 60,
     textAlignVertical: 'center',
-    marginLeft: 10,
-    backgroundColor: "white"
+    marginLeft: 15,
+    color: "#9e9e9e"
   },
   item: {
     flexDirection: "row",

@@ -13,7 +13,7 @@ export default function CarCard(props) {
         visible={menuIsVisible}
         onDismiss={() => setMenuIsVisible(false)}
         anchor={
-          <View style={{ padding: 5, paddingLeft: 15 }}>
+          <View style={{ padding: 5, paddingLeft: 15, margin: 3 }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <InfoText label="Modelo" text={props.car.model} />
 

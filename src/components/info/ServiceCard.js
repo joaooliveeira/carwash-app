@@ -6,7 +6,6 @@ import { View, UIManager, LayoutAnimation, Platform, TextInput, Text } from "rea
 import { formatValue, formatCardNumber, formatLicensePlate, formatPhoneNumber } from "../../utils/formatter";
 import { FONT_FAMILY_REGULAR } from "../../styles/typography";
 import { finishWash } from "../../services/requests";
-import ToastMessage from "./Toast";
 
 if (
   Platform.OS === 'android' &&
@@ -35,12 +34,13 @@ export default function ServiceCard(props) {
       authorization: authorization,
     }).then(response => {
       if (response.id) {
-        ToastMessage.success("Serviço finalizado com sucesso.")
-        props.refreshServices(response);
         showAnimation();
         setWashDone(true);
+        setTimeout(() => {
+          props.refreshServices(response);
+        }, 100);
       }
-    }).finally(() => {
+    }).catch(() => {
       setFinishingWash(false);
     })
   }
@@ -109,7 +109,7 @@ export default function ServiceCard(props) {
                     style={styles.authorizationInput}
                     keyboardType="number-pad"
                     value={authorization}
-                    onChangeText={text => setAuthorization(text)}
+                    onChangeText={text => setAuthorization(text.replace( /^\D+/g, ''))}
                   />
                 </View>
               </View>
@@ -165,8 +165,9 @@ const styles = {
     height: 30,
     marginRight: 20,
     padding: 0,
+    paddingLeft: 5,
     marginTop: 0,
-    marginLeft: 55
+    marginLeft: 52
   },
   saveButton: {
     position: "absolute",

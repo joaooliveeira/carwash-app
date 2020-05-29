@@ -26,7 +26,7 @@ export default function CarForm(props) {
       if (await validateData()) {
         Keyboard.dismiss();
         saveCar(car).then(response => {
-          ToastMessage.success("Veículo alterado com sucesso");
+          ToastMessage.success("Veículo alterado com sucesso.");
           props.onFinished(response);
           props.goBack();
         }).finally(() => setLoading(false))
@@ -34,7 +34,7 @@ export default function CarForm(props) {
         setLoading(false);
       }
     } else {
-      ToastMessage.warning("Nenhuma informação foi alterada")
+      ToastMessage.warning("Nenhuma informação foi alterada.")
       props.goBack();
     }
   };
@@ -100,11 +100,13 @@ export default function CarForm(props) {
           autoCapitalize="words"
           value={car.model}
           onChangeText={text => {
-            setCar({ ...car, model: text });
-            setCarHasBeenChanged(true);
+            if (text !== " ") {
+              setCar({ ...car, model: text });
+              setCarHasBeenChanged(true);
 
-            if (error.model) {
-              setError({ ...error, model: text.length <= 1 });
+              if (error.model) {
+                setError({ ...error, model: text.length <= 1 });
+              }
             }
           }}
         />
@@ -125,32 +127,34 @@ export default function CarForm(props) {
           value={car.licensePlate}
           autoCapitalize="characters"
           onChangeText={async text => {
-            setCar({ ...car, licensePlate: text });
-            setCarHasBeenChanged(true);
+            if (text !== " ") {
+              setCar({ ...car, licensePlate: text });
+              setCarHasBeenChanged(true);
 
-            if (text.length === 7) {
-              const carFromDb = await getCarByLicensePlate(text);
-              if (carFromDb && carFromDb.id != props.car.id) {
+              if (text.length === 7) {
+                const carFromDb = await getCarByLicensePlate(text);
+                if (carFromDb && carFromDb.id != props.car.id) {
+                  setError({
+                    ...error,
+                    licensePlate: "Placa já cadastrada."
+                  });
+                } else if (error.licensePlate) {
+                  setError({
+                    ...error,
+                    licensePlate: false
+                  });
+                }
+              } else if (text.length > 7) {
                 setError({
                   ...error,
-                  licensePlate: "Placa já cadastrada."
+                  licensePlate: "Placa inválida."
                 });
-              } else if (error.licensePlate) {
+              } else if (text.length < 7) {
                 setError({
                   ...error,
                   licensePlate: false
                 });
               }
-            } else if (text.length > 7) {
-              setError({
-                ...error,
-                licensePlate: "Placa inválida."
-              });
-            } else if (text.length < 7) {
-              setError({
-                ...error,
-                licensePlate: false
-              });
             }
           }}
         />

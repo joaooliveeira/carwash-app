@@ -127,7 +127,7 @@ export const ReportScreen = () => {
 
   const processData = data => {
     if (data.length === 0) {
-      ToastMessage.warning("Nenhuma lavagem encontrada")
+      ToastMessage.warning("Nenhum serviço encontrado para o período indicado.")
     } else {
       setTotalWashes(data.length);
 
@@ -252,14 +252,14 @@ export const ReportScreen = () => {
       <Card style={[styles.card, { marginBottom: 0 }]}>
         <Card.Title title="Período" titleStyle={styles.title} />
         
-        <View style={styles.radioButtonView}>
+        <View style={[styles.radioButtonView, { marginTop: 10 }]}>
           <RadioButton
             value="this_month"
             color={Colors.PRIMARY}
             status={period == 'this_month' ? 'checked' : 'unchecked'}
             onPress={() => setPeriod('this_month')}
           />
-          <Text style={styles.radioButonText}>Este mês</Text>
+          <Text onPress={() => setPeriod('this_month')} style={styles.radioButonText}>Este mês</Text>
         </View>
 
         <View style={styles.radioButtonView}>
@@ -269,7 +269,7 @@ export const ReportScreen = () => {
             status={period == 'last_month' ? 'checked' : 'unchecked'}
             onPress={() => setPeriod('last_month')}
           />
-          <Text style={styles.radioButonText}>Último mês</Text>
+          <Text onPress={() => setPeriod('last_month')} style={styles.radioButonText}>Último mês</Text>
         </View>
 
         <View style={styles.radioButtonView}>
@@ -279,7 +279,7 @@ export const ReportScreen = () => {
             status={period == 'last_six_months' ? 'checked' : 'unchecked'}
             onPress={() => setPeriod('last_six_months')}
           />
-          <Text style={styles.radioButonText}>Últimos seis meses</Text>
+          <Text onPress={() => setPeriod('last_six_months')} style={styles.radioButonText}>Últimos seis meses</Text>
         </View>
 
         <View style={styles.radioButtonView}>
@@ -289,12 +289,12 @@ export const ReportScreen = () => {
             status={period == 'last_year' ? 'checked' : 'unchecked'}
             onPress={() => setPeriod('last_year')}
           />
-          <Text style={styles.radioButonText}>Último ano</Text>
+          <Text onPress={() => setPeriod('last_year')} style={styles.radioButonText}>Último ano</Text>
         </View>
 
           <ButtonCustom
             mode="contained"
-            style={{ marginVertical: 20, marginHorizontal: 30 }}
+            style={{ marginVertical: 30, marginHorizontal: 30 }}
             loading={loading}
             onPress={getData}
             label="GERAR"
@@ -346,7 +346,7 @@ export const ReportScreen = () => {
           <Card.Title title="Tipos de lavagem %" titleStyle={styles.title}/>
           <PieChart
             data={pieChart}
-            width={Dimensions.get('window').width - 35}
+            width={Dimensions.get('window').width - 20}
             height={220}
             fromZero={true}
             chartConfig={{

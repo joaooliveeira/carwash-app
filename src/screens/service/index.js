@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   ScrollView,
   View,
   TouchableOpacity,
   Keyboard,
-  Text,
   SafeAreaView,
   Alert,
 } from "react-native";
@@ -24,7 +23,7 @@ import ButtonCustom from "../../components/other/ButtonCustom";
 import { FONT_SUBTITLE } from "../../styles/typography";
 import TextInputSuggestion from "../../components/other/TextInputSuggestion";
 import { SinglePickerMaterialDialog } from "react-native-material-dialog";
-import { findClient, getCarByLicensePlate, findCarByLicensePlate, createCarDb, saveWash, refreshRunningWashes, saveCar } from "../../services/requests";
+import { findClient, getCarByLicensePlate, findCarByLicensePlate, saveWash, refreshRunningWashes, saveCar } from "../../services/requests";
 import ToastMessage from "../../components/info/Toast";
 
 const washTypesData = [
@@ -62,24 +61,29 @@ export default function ServiceScree(props) {
 
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    refreshRunningWashes();
+  },[])
+
   const getClientSuggestions = async text => {
     if (text.length > 1) {
-      const clientSuggestions = await findClient(text);
+      let clientSuggestions = await findClient(text);
       if (clientSuggestions.length === 0) {
-        clientSuggestions.push("NOT_FOUND")
+        clientSuggestions.push("NOT_FOUND");
       }
       setClientSuggestions(clientSuggestions);
     } else {
-      setClientSuggestions([]);
+      setClientSuggestions([])
     }
   };
 
   const getCarSuggestions = async text => {
     if (text.length > 1) {
-      const carSuggestions = await findCarByLicensePlate(text);
+      let carSuggestions = await findCarByLicensePlate(text);
+      if (carSuggestions.length === 0) {
+        carSuggestions.push("NOT_FOUND");
+      }
       setCarSuggestions(carSuggestions);
-    } else {
-      setClientSuggestions([]);
     }
   };
 
@@ -101,6 +105,7 @@ export default function ServiceScree(props) {
   };
 
   const validateData = async () => {
+    console.log(value)
     setLoading(true);
     Keyboard.dismiss();
 
@@ -131,7 +136,7 @@ export default function ServiceScree(props) {
   const validateClient = () => {
     return client.id
       ? false
-      : "Selecione uma das sugestões ou cadastre um novo cliente.";
+      : "Digite e selecione uma das sugestões.";
   };
 
   const validateLicensePlate = () => {
@@ -176,7 +181,7 @@ export default function ServiceScree(props) {
       await saveWash(wash).then(newWash => {
         refreshRunningWashes();
         clearAllInputs();
-        ToastMessage.success("Lavagem registrada com sucesso")
+        ToastMessage.success("Serviço registrado com sucesso.")
       });
     }
 
@@ -234,8 +239,10 @@ export default function ServiceScree(props) {
               autoCapitalize="words"
               error={dataError.client}
               onChangeText={text => {
-                setClient({ id: '', name: text, phone: '', email: '' });
-                getClientSuggestions(text);
+                if (text !== " ") {
+                  setClient({ id: '', name: text, phone: '', email: '' })
+                  getClientSuggestions(text);
+                }
               }}
               selectItem={client => {
                 setClient(client);
@@ -295,33 +302,37 @@ export default function ServiceScree(props) {
               autoCapitalize="characters"
               error={dataError.licensePlate.type == 'error'}
               onChangeText={async text => {
-                setCar({ ...car, licensePlate: text });
-                if (text.length == 7) {
-                  const carFromDb = await getCarByLicensePlate(text);
-                  if (carFromDb) {
-                    setCar(carFromDb);
-                    setCarSuggestions([]);
+                if (text !== " ") {
+                  setCar({ ...car, licensePlate: text });
+                  if (text.length == 7) {
+                    const carFromDb = await getCarByLicensePlate(text);
+                    if (carFromDb) {
+                      setCar(carFromDb);
+                      setCarSuggestions([]);
+                      setDataError({
+                        ...dataError,
+                        licensePlate: { type: "info", message: "Veículo já cadastrado." }
+                      });
+                    } else if (dataError.licensePlate.type == 'error') {
+                      setDataError({
+                        ...dataError,
+                        licensePlate: { type: "", message: "" }
+                      });
+                    }
+                  } else if (text.length > 7) {
                     setDataError({
                       ...dataError,
-                      licensePlate: { type: "info", message: "Veículo já cadastrado." }
+                      licensePlate: { type: "error", message: "Placa inválida." }
                     });
-                  } else if (dataError.licensePlate.type == 'error') {
+                  } else if (text.length < 7 && text.length > 1) {
                     setDataError({
                       ...dataError,
                       licensePlate: { type: "", message: "" }
                     });
+                    getCarSuggestions(text);
+                  } else {
+                    setCarSuggestions([]);
                   }
-                } else if (text.length > 7) {
-                  setDataError({
-                    ...dataError,
-                    licensePlate: { type: "error", message: "Placa inválida." }
-                  });
-                } else if (text.length < 7) {
-                  setDataError({
-                    ...dataError,
-                    licensePlate: { type: "", message: "" }
-                  });
-                  getCarSuggestions(text)
                 }
               }}
               selectItem={car => {
@@ -386,7 +397,7 @@ export default function ServiceScree(props) {
             padding="none"
             style={{ marginHorizontal: 25 }}
           >
-            Insira pelo menos dois caracteres para modelo.
+            Insira pelo menos dois caracteres.
           </HelperText>
 
           <TextInput
@@ -478,7 +489,7 @@ export default function ServiceScree(props) {
             padding="none"
             style={{ marginHorizontal: 25 }}
           >
-            Selecione um tipo de lavagem
+            Selecione um tipo de lavagem.
           </HelperText>
 
           <SinglePickerMaterialDialog
@@ -503,7 +514,7 @@ export default function ServiceScree(props) {
             style={styles.input}
             error={dataError.value}
             value={value.length == 2 ? value + ",00" : value}
-            onChangeText={text => setValue(text)}
+            onChangeText={text => setValue(text.length == 2 ? text + "00" : text)}
             render={props => (
               <TextInputMask
                 {...props}
@@ -526,7 +537,7 @@ export default function ServiceScree(props) {
             padding="none"
             style={{ marginHorizontal: 25 }}
           >
-            Insira o valor do serviço
+            Insira o valor do serviço.
           </HelperText>
 
           <Divider style={{ marginTop: 35 }} />

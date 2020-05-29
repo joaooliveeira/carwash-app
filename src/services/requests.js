@@ -14,7 +14,7 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.response.use(null, error => {
-  ToastMessage.danger("Algo deu errado, verifique sua conexão com a internet")
+  ToastMessage.danger("Algo deu errado, verifique sua conexão com a internet.")
   throw error;
 });
 
@@ -25,9 +25,9 @@ axiosInstance.interceptors.response.use(null, error => {
 export const saveClient = async client => {
   let body = {
     id: client.id ? client.id : uuid.v1(),
-    name: client.name,
+    name: client.name.trim(),
     phone: clearNumber(client.phone),
-    email: client.email,
+    email: client.email.trim(),
   };
 
   return axiosInstance.put("client/save", body)
@@ -35,7 +35,7 @@ export const saveClient = async client => {
 };
 
 export const findClient = async term => {
-  return axiosInstance.get(`client/find/${term}`)
+  return axiosInstance.get(`client/find/${term.trim()}`)
     .then(response => response.data)
 };
 
@@ -50,7 +50,7 @@ export const getClientByPhone = async phone => {
 };
 
 export const getClientByEmail = async email => {
-  return axiosInstance.get(`client/get/?email=${email}`)
+  return axiosInstance.get(`client/get/?email=${email.trim()}`)
     .then(response => response.data)
 };
 
@@ -61,7 +61,7 @@ export const getClientByEmail = async email => {
 export const saveCar = async car => {
   let body = {
     id: car.id ? car.id : uuid.v1(),
-    model: car.model,
+    model: car.model.trim(),
     licensePlate: car.licensePlate,
     cardNumber: clearNumber(car.cardNumber),
   };
@@ -71,12 +71,12 @@ export const saveCar = async car => {
 };
 
 export const findCar = async term => {
-  return axiosInstance.get(`car/find/${term}`)
+  return axiosInstance.get(`car/find/${term.trim()}`)
     .then(response => response.data)
 };
 
 export const findCarByLicensePlate = async licensePlate => {
-  return axiosInstance.get(`car/find/?licensePlate=${licensePlate}`)
+  return axiosInstance.get(`car/find/?licensePlate=${licensePlate.trim()}`)
     .then(response => response.data)
 };
 
@@ -133,13 +133,11 @@ export const getRunningWashes = async () => {
 
 export const refreshRunningWashes = () => {
   return new Promise(function(resolve, reject) {
-    getRunningWashes()
-      .then(washes => {
-        if (washes.length) {
-          store.dispatch(setRunningWashes(washes))
-        }
-        resolve("done");
-      })
-      .catch(error => reject(error));
+    getRunningWashes().then(washes => {
+      if (washes.length) {
+        store.dispatch(setRunningWashes(washes))
+      }
+      resolve(true);
+    }).catch(error => reject(error));
   })
 }

@@ -86,10 +86,10 @@ export default function SearchScreen(props) {
       >
         <Searchbar
           style={{ marginTop: 15, marginHorizontal: 10, borderRadius: 8 }}
-          inputStyle={FONT_SUBTITLE}
+          inputStyle={FONT_TEXT}
           placeholder="Digite para buscar..."
           value={query}
-          onChangeText={text => getData(text, filter)}
+          onChangeText={text => text !== " " && getData( text, filter)}
         />
 
         <View
@@ -127,7 +127,7 @@ export default function SearchScreen(props) {
         </View>
       </Appbar.Header>
 
-      {query.length > 1 && data.length == 0 && !animating && (
+      {query.length > 1 && data && data.length == 0 && !animating && (
         <Text
           style={[
             {

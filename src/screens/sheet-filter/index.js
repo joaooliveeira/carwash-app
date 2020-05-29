@@ -83,11 +83,17 @@ export const SheetFilterScreen = props => {
     setSuggestionParam(text);
 
     if (text.length > 1) {
-      setSuggestions(
-        searchFilter == 'client'
-          ? await findClient(text, 'LIMIT(5)')
-          : await findCar(text, 'LIMIT(5)')
-      );
+      let newSuggestions = [];
+
+      if (searchFilter === 'client')
+        newSuggestions = await findClient(text);
+      else 
+        newSuggestions = await findCar(text);
+
+      if (newSuggestions.length === 0) {
+        newSuggestions.push("NOT_FOUND");
+      }
+      setSuggestions(newSuggestions);
     } else {
       setSuggestions([]);
     }
@@ -112,7 +118,7 @@ export const SheetFilterScreen = props => {
       const result = await filterWashes(filter);
 
       if (result.length === 0) {
-        ToastMessage.warning(`Nenhuma lavagem encontrada para esse ${filter === 'car' ? "veículo" : "cliente"}`);
+        ToastMessage.warning(`Nenhum serviço encontrado para esse ${filter === 'car' ? "veículo" : "cliente"}.`);
       }
 
       if (result.length !== 0) {
@@ -133,9 +139,7 @@ export const SheetFilterScreen = props => {
     showAnimation();
     if (suggestions[0] == "NOT_FOUND") {
       return (
-        <Text style={styles.notFoundText}>{`Nenhum ${
-          filterType == 'car' ? 'carro' : 'cliente'
-        } encontrado.`}</Text>
+        <Text style={styles.notFoundText}>{`Nenhum ${filterType == 'car' ? 'carro' : 'cliente'} encontrado.`}</Text>
       );
     } else {
       return (
@@ -253,7 +257,7 @@ export const SheetFilterScreen = props => {
                 }
                 value={suggestionParam}
                 autoCapitalize={filterType == "car" ? "characters" : "words"}
-                onChangeText={text => getParamSuggestions(text, filterType)}
+                onChangeText={text => text !== " " && getParamSuggestions(text, filterType)}
                 onBlur={() => showAnimation(true)}
                 onFocus={() => showAnimation(false)}
               />

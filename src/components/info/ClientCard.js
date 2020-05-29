@@ -13,7 +13,7 @@ export default function ClientCard(props) {
         visible={menuIsVisible}
         onDismiss={() => setMenuIsVisible(false)}
         anchor={
-          <View style={{ padding: 5, paddingLeft: 15 }}>
+          <View style={{ paddingLeft: 15 }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <InfoText label="Nome" text={props.client.name} />
 
@@ -50,7 +50,8 @@ const styles = {
   card: {
     marginTop: 6,
     marginHorizontal: 10,
-    borderRadius: 5
+    borderRadius: 5,
+    padding: 4
   },
   cardContainer: {
     marginHorizontal: 5,

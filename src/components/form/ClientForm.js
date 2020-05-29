@@ -37,7 +37,7 @@ export default function ClientForm(props) {
       }
     } else if (props.client.id) {
       Keyboard.dismiss();
-      ToastMessage.warning("Nenhuma informação foi alterada")
+      ToastMessage.warning("Nenhuma informação foi alterada.")
       props.goBack();
     }
 
@@ -104,10 +104,12 @@ export default function ClientForm(props) {
           autoCapitalize="words"
           value={client.name || ""}
           onChangeText={text => {
-            setClientHasBeenChanged(true);
-            setClient({ ...client, name: text });
-            if (error.name) {
-              setError({ ...error, name: text.length <= 1 });
+            if (text !== " ") {
+              setClientHasBeenChanged(true);
+              setClient({ ...client, name: text });
+              if (error.name) {
+                setError({ ...error, name: text.length <= 1 });
+              }
             }
           }}
         />
@@ -165,14 +167,16 @@ export default function ClientForm(props) {
           keyboardType="email-address"
           value={client.email || ""}
           onChangeText={async text => {
-            setClientHasBeenChanged(true);
-            setClient({ ...client, email: text });
+            if (text !== " ") {
+              setClientHasBeenChanged(true);
+              setClient({ ...client, email: text });
 
-            if (
-              /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text) &&
-              text !== props.client.email
-            ) {
-              setError({ ...error, email: await validateEmail(text) });
+              if (
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(text) &&
+                text !== props.client.email
+              ) {
+                setError({ ...error, email: await validateEmail(text) });
+              }
             }
           }}
         />

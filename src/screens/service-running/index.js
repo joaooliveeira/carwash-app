@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, RefreshControl, Text, Platform } from "react-native";
+import { View, RefreshControl, Text } from "react-native";
 import { Header } from "../../components/other/Header";
 import { FlatList } from "react-native-gesture-handler";
 import ServiceCard from "../../components/info/ServiceCard";
@@ -8,6 +8,7 @@ import { store } from "../../navigations/AppStackNavigator";
 import { setRunningWashes } from "../../redux/actions/runningWashesActions";
 import { refreshRunningWashes } from "../../services/requests";
 import { FONT_BOLD } from "../../styles/typography";
+import ToastMessage from "../../components/info/Toast";
 
 export default function ServiceInProgress(props) {
   const runningWashes = useSelector(state => state.runningWashes.washes);
@@ -21,28 +22,15 @@ export default function ServiceInProgress(props) {
   const refreshServices = async wash => {
     const updatedWashes = runningWashes.filter(function(element, index, arr){ return element.id !== wash.id;});
     store.dispatch(setRunningWashes(updatedWashes));
+    ToastMessage.success("Serviço finalizado com sucesso.");
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, justifyContent: "center" }}>
       <Header
         title="Serviços em execução"
         goBack={() => props.navigation.goBack()}
       />
-
-      {runningWashes.length == 0 &&
-        <Text
-          style={[
-            FONT_BOLD,
-            {
-            alignSelf: "center",
-            position: "absolute",
-            color: "#99999B",
-            top: Platform.OS === "android" ? 100 : 140
-           }]}>
-            Nenhum serviço em andamento
-          </Text>
-      }
 
       <FlatList
         keyboardShouldPersistTaps="always"
@@ -56,8 +44,14 @@ export default function ServiceInProgress(props) {
         )}
         keyExtractor={item => item.id}
         initialNumToRender={15}
+        contentContainerStyle={!runningWashes.length ? { flex: 1, justifyContent: "center" } : {}}
         ListFooterComponent={<View style={{ marginTop: 10 }} />}
         ListHeaderComponent={<View style={{ marginTop: 4 }} />}
+        ListEmptyComponent={
+          <Text style={[FONT_BOLD, { alignSelf: "center", color: "#9e9e9e" }]}>
+            Nenhum serviço em execução.
+          </Text>
+        }
       />
     </View>
   );
