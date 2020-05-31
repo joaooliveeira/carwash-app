@@ -21,28 +21,30 @@ export default function ClientForm(props) {
   });
 
   const createNewClient = async () => {
+    if (!loading) {
+      if (clientHasBeenChanged) {
+        if (await validateData()) {
+          Keyboard.dismiss();
+          saveClient(client).then(newClient => {
+            if (props.client.id) {
+              props.onFinished(newClient, "Cliente alterado com sucesso.");
+            } else {
+              props.onFinished(newClient, "Cliente criado com sucesso.");
+            }
+            props.goBack();
+          }).catch(() => setLoading(false));
+        }
+      } else if (props.client.id) {
+        Keyboard.dismiss();
+        ToastMessage.warning("Nenhuma informação foi alterada.")
+        props.goBack();
+      }
+  
+      validateData();
+      setLoading(false);
+    }
     setLoading(true);
 
-    if (clientHasBeenChanged) {
-      if (await validateData()) {
-        Keyboard.dismiss();
-        saveClient(client).then(newClient => {
-          if (props.client.id) {
-            props.onFinished(newClient, "Cliente alterado com sucesso.");
-          } else {
-            props.onFinished(newClient, "Cliente criado com sucesso.");
-          }
-          props.goBack();
-        }).catch(() => setLoading(false));
-      }
-    } else if (props.client.id) {
-      Keyboard.dismiss();
-      ToastMessage.warning("Nenhuma informação foi alterada.")
-      props.goBack();
-    }
-
-    validateData();
-    setLoading(false);
   };
 
   const validateData = async () => {

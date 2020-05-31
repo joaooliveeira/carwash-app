@@ -1,8 +1,8 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { Appbar, Badge } from "react-native-paper";
 import { useSelector } from "react-redux";
-import { FONT_TITLE } from "../../styles/typography";
+import { FONT_TITLE, FONT_SIZE_SMALL_TEXT } from "../../styles/typography";
 
 export const Header = props => {
   const runningWashes = useSelector(state => state.runningWashes.washes);
@@ -22,12 +22,23 @@ export const Header = props => {
           />
 
           {runningWashes.length != 0 &&
-            <Badge
-              style={{ position: "absolute", top: 12, right: runningWashes.length.toString().length == 1 ? 9 : 5, fontSize: 9}}
-              size={12}
+            <View
+              style={{
+                position: "absolute",
+                top: 12,
+                right: 6,
+                height: 13,
+                width: 13,
+                borderRadius: 6.5,
+                backgroundColor: "#ff1744",
+                justifyContent: "center",
+                alignItems: "center"
+              }}
             >
-              {runningWashes.length}
-            </Badge>
+              <Text style={{ fontSize: 7, color: "white" }}>
+               {runningWashes.length}
+              </Text>
+            </View>
           }
         </View>
       )}

@@ -140,6 +140,10 @@ export const refreshRunningWashes = () => {
   return new Promise(function(resolve, reject) {
     getRunningWashes().then(washes => {
       if (washes.length) {
+        washes.sort(function(a, b) {
+          var dateA = moment(a.created).format("DD/MM/YYYY"), dateB = moment(b.created).format("DD/MM/YYYY");
+          return dateA < dateB ? -1 : dateA > dateB ? 1 : 0
+        });
         store.dispatch(setRunningWashes(washes))
       }
       resolve(true);

@@ -11,12 +11,12 @@ export default function CarCard(props) {
     <Card style={styles.card} onLongPress={() => setMenuIsVisible(true)}>
       <View style={{ padding: 8 }}>
         <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
-          <InfoText label="Modelo" text={props.car.model} viewStyle={{ flex: 2 }}/>
+          <InfoText label="Modelo" text={props.car.model}/>
 
           <InfoText
             label="Placa"
             text={formatLicensePlate(props.car.licensePlate)}
-            viewStyle={{ marginRight: 25 }}
+            viewStyle={{ marginHorizontal: 10 }}
           />
           <Menu
             onDismiss={() => setMenuIsVisible(false)}

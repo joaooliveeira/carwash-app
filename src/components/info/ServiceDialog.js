@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Divider, Card, IconButton } from "react-native-paper";
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import moment from 'moment';
 import InfoText from "../info/InfoText";
 import { WINDOW_WIDTH } from "../../styles/mixins";
@@ -20,7 +20,6 @@ const styles = {
     borderRadius: 5,
     margin: 2,
     paddingVertical: 5,
-    paddingBottom: 10,
     alignSelf: "center"
   },
   row:{
@@ -60,6 +59,7 @@ const styles = {
 export const ServiceDialog = props => {
   return (
     <Card style={styles.cardContainer}>
+      <ScrollView>
         <View style={styles.row}>
           <InfoText
             label="Data e horário"
@@ -74,7 +74,7 @@ export const ServiceDialog = props => {
             style={{ position: "absolute", top: 2, right: 7, margin: 0 }}
             onPress={() =>  {
               props.onIconIsPressed();
-              props.navigation.navigate("EditService", { wash: props.item });
+              props.navigation.navigate("EditService", { wash: props.item, refreshWashes: props.refreshData });
             }}
           />
         </View>
@@ -124,7 +124,7 @@ export const ServiceDialog = props => {
         />
       </View>
 
-      <View style={[styles.row, { marginTop: 15 }]}>
+      <View style={[styles.row, { marginVertical: 10 }]}>
         <InfoText
           label="Matrícula"
           text={props.item.clientRegister || " -"}
@@ -136,6 +136,7 @@ export const ServiceDialog = props => {
           viewStyle={{ width: 120 }}
         />
       </View>
+      </ScrollView>
     </Card>
   );
 };

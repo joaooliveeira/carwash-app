@@ -154,6 +154,11 @@ export const SheetFilterScreen = props => {
         }
 
         if (result.length !== 0) {
+          result.sort(function(a, b) {
+            var dateA = moment(a.created).format("DD/MM/YYYY"), dateB = moment(b.created).format("DD/MM/YYYY");
+            return dateA < dateB ? -1 : dateA > dateB ? 1 : 0
+          });
+
           props.navigation.navigate("SheetScreen", {
             data: result,
             period: { startDate, endDate },
@@ -229,7 +234,7 @@ export const SheetFilterScreen = props => {
               onPress={() => setFilterByType(!filterByType)}
             />
             <TouchableOpacity onPress={() => setFilterByType(!filterByType)} style={{ justifyContent: "center" }}>
-              <Text style={{ fontSize: 20, textAlignVertical: "center" }}>
+              <Text style={[FONT_SUBTITLE, { textAlignVertical: "center" }]}>
                 Filtrar
               </Text>
             </TouchableOpacity>

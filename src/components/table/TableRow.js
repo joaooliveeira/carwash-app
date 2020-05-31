@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Text } from "react-native";
 import { DataTable } from "react-native-paper";
-import { MaterialDialog } from "react-native-material-dialog";
 import { ServiceDialog } from "../info/ServiceDialog";
 import { FONT_SMALL_TEXT } from "../../styles/typography";
 import { formatValue, formatLicensePlate } from "../../utils/formatter";
@@ -46,6 +45,7 @@ export const TableRow = React.memo(props => {
         isVisible={rowInfoDialog}
         onBackButtonPress={() => setRowInfoDialog(false)}
         onBackdropPress={() => setRowInfoDialog(false)}
+        propagateSwipe
         useNativeDriver={true}>
         <ServiceDialog item={item} {...props} onIconIsPressed={() => setRowInfoDialog(false)}/>
       </Modal>

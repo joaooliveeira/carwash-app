@@ -20,7 +20,7 @@ const styles = {
     textAlignVertical: "center",
     textAlign: "left",
     height: 30,
-    marginLeft: 3
+    marginLeft: 3,
   }
 };
 

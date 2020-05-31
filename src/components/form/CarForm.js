@@ -20,21 +20,23 @@ export default function CarForm(props) {
   });
 
   const updateCar = async () => {
-    setLoading(true);
-
-    if (carHasBeenChanged) {
-      if (await validateData()) {
-        Keyboard.dismiss();
-        saveCar(car).then(response => {
-          props.onFinished(response, "Veículo alterado com sucesso.");
-          props.goBack();
-        }).catch(() => setLoading(false))
+    if (!loading) {
+      setLoading(true);
+  
+      if (carHasBeenChanged) {
+        if (await validateData()) {
+          Keyboard.dismiss();
+          saveCar(car).then(response => {
+            props.onFinished(response, "Veículo alterado com sucesso.");
+            props.goBack();
+          }).catch(() => setLoading(false))
+        } else {
+          setLoading(false);
+        }
       } else {
-        setLoading(false);
+        ToastMessage.warning("Nenhuma informação foi alterada.")
+        props.goBack();
       }
-    } else {
-      ToastMessage.warning("Nenhuma informação foi alterada.")
-      props.goBack();
     }
   };
 

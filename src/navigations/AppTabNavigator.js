@@ -69,7 +69,7 @@ export default class AppTabNavigator extends Component {
           renderScene={this._renderScene}
           shifting={false}
           activeColor={Colors.PRIMARY}
-          barStyle={{ backgroundColor: 'white', paddingBottom: 5, elevation: 8, borderTopWidth: 0.3, borderColor: "#EEEEEE" }}
+          barStyle={{ backgroundColor: 'white', elevation: 8, borderTopWidth: 0.3, borderColor: "#EEEEEE" }}
           sceneAnimationEnabled={false}
         />
       </Provider>

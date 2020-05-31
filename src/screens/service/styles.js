@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
   newClientIcon: {
     position: "absolute",
     right: 15,
-    top: 13,
+    top: 19,
     zIndex: 1
   },
   dialog: {

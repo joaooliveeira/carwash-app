@@ -104,32 +104,33 @@ export default function ServiceScree(props) {
   };
 
   const validateData = async () => {
-    console.log(value)
-    setLoading(true);
-    Keyboard.dismiss();
+    if (!loading) {
+      setLoading(true);
+      Keyboard.dismiss();
 
-    const clientError = validateClient();
-    const licensePlateError = validateLicensePlate();
-    const modelError = validateCarModel();
-    const cardNumberError = validateCardNumber();
-    const washTypeError = validateWashType();
-    const valueError = validateValue();
+      const clientError = validateClient();
+      const licensePlateError = validateLicensePlate();
+      const modelError = validateCarModel();
+      const cardNumberError = validateCardNumber();
+      const washTypeError = validateWashType();
+      const valueError = validateValue();
 
-    setDataError({
-      ...dataError,
-      client: clientError,
-      licensePlate: licensePlateError,
-      model: modelError,
-      cardNumber: cardNumberError,
-      washType: washTypeError,
-      value: valueError
-    });
+      setDataError({
+        ...dataError,
+        client: clientError,
+        licensePlate: licensePlateError,
+        model: modelError,
+        cardNumber: cardNumberError,
+        washType: washTypeError,
+        value: valueError
+      });
 
-    if (!(clientError || licensePlateError || modelError || cardNumberError || washTypeError || valueError)) {
-      await createNewWash();
+      if (!(clientError || licensePlateError || modelError || cardNumberError || washTypeError || valueError)) {
+        await createNewWash();
+      }
+
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const validateClient = () => {

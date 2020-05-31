@@ -25,6 +25,16 @@ export default function ServiceInProgress(props) {
     ToastMessage.success("Serviço finalizado com sucesso.");
   }
 
+  const refreshWashes = async wash => {
+    const updatedWashes = runningWashes.map(function(element) {
+      if (element.id == wash.id) {
+        return wash;
+      }
+      return element
+    });
+    store.dispatch(setRunningWashes(updatedWashes));
+  }
+
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
       <Header
@@ -40,7 +50,7 @@ export default function ServiceInProgress(props) {
         }
         extraData={runningWashes}
         renderItem={({ item, index }) => (
-          <ServiceCard {...props} item={item} refreshServices={washId => refreshServices(washId)} />
+          <ServiceCard {...props} item={item} refreshServices={washId => refreshServices(washId)} refreshWashes={wash => refreshWashes(wash)}/>
         )}
         keyExtractor={item => item.id}
         initialNumToRender={15}

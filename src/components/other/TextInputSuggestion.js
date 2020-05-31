@@ -71,6 +71,7 @@ export default function TextInputSuggestion(props) {
       renderTextInput={() => (
         <TextInput
           {...props}
+          style={{ paddingVertical: 0, paddingHorizontal: 5, marginHorizontal: 25, paddingRight: 25, fontFamily: FONT_FAMILY_REGULAR }}
           onBlur={() => setHideResults(true)}
           onFocus={() => setHideResults(false)}
         />

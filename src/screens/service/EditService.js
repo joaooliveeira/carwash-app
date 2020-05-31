@@ -17,7 +17,7 @@ import {
 import { styles } from "./styles";
 import { Colors } from "../../styles";
 import { themes } from "../../styles/themes";
-import { clearNumber } from "../../utils/formatter";
+import { clearNumber, formatValue } from "../../utils/formatter";
 import { TextInputMask } from "react-native-masked-text";
 import ButtonCustom from "../../components/other/ButtonCustom";
 import { FONT_SUBTITLE } from "../../styles/typography";
@@ -38,7 +38,6 @@ const washTypesData = [
 
 export default function EditServiceScree(props) {
   const wash = props.route.params.wash;
-  console.log(wash);
   const [client, setClient] = useState({ ...wash.client });
   const [clientSuggestions, setClientSuggestions] = useState([]);
   const [register, setRegister] = useState(wash.clientRegister);
@@ -49,7 +48,9 @@ export default function EditServiceScree(props) {
 
   const [washType, setWashType] = useState(wash.washType);
   const [washTypesDialog, setWashTypesDialog] = useState(false);
-  const [value, setValue] = useState(wash.value.toString());
+
+  const valueNumber = wash.value.toString();
+  const [value, setValue] = useState(valueNumber.slice(0, valueNumber.length - 2) + "," + valueNumber.slice(valueNumber.length - 2));
   const [authorization, setAuthorization] = useState(wash.authorization);
 
   const [dataError, setDataError] = useState({
@@ -104,31 +105,33 @@ export default function EditServiceScree(props) {
   };
 
   const validateData = async () => {
-    setLoading(true);
-    Keyboard.dismiss();
+    if(!loading) {
+      setLoading(true);
+      Keyboard.dismiss();
 
-    const clientError = validateClient();
-    const licensePlateError = validateLicensePlate();
-    const modelError = validateCarModel();
-    const cardNumberError = validateCardNumber();
-    const washTypeError = validateWashType();
-    const valueError = validateValue();
+      const clientError = validateClient();
+      const licensePlateError = validateLicensePlate();
+      const modelError = validateCarModel();
+      const cardNumberError = validateCardNumber();
+      const washTypeError = validateWashType();
+      const valueError = validateValue();
 
-    setDataError({
-      ...dataError,
-      client: clientError,
-      licensePlate: licensePlateError,
-      model: modelError,
-      cardNumber: cardNumberError,
-      washType: washTypeError,
-      value: valueError
-    });
+      setDataError({
+        ...dataError,
+        client: clientError,
+        licensePlate: licensePlateError,
+        model: modelError,
+        cardNumber: cardNumberError,
+        washType: washTypeError,
+        value: valueError
+      });
 
-    if (!(clientError || licensePlateError || modelError || cardNumberError || washTypeError || valueError)) {
-      await createNewWash();
+      if (!(clientError || licensePlateError || modelError || cardNumberError || washTypeError || valueError)) {
+        await createNewWash();
+      }
+
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   const validateClient = () => {
@@ -176,11 +179,13 @@ export default function EditServiceScree(props) {
         washType,
         value: clearNumber(value),
         authorization,
-        created: props.route.params.wash.created
+        created: props.route.params.wash.created,
+        status:props.route.params.wash.status
       };
   
       await saveWash(wash).then(newWash => {
         ToastMessage.success("Serviço alterado com sucesso.");
+        props.route.params.refreshWashes(newWash);
         props.navigation.goBack();
       });
     }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { DataTable } from "react-native-paper";
-import { Text, FlatList } from "react-native";
+import { Text, FlatList, View } from "react-native";
 import { FONT_TEXT } from "../../styles/typography";
 import { TableRow } from "./TableRow";
 
@@ -79,9 +79,19 @@ export const Table = React.memo(props => {
    * I used it to force the rendering of the screen, because the table
    * as not appearing in the first rendering.
    */
-  setTimeout(() => {
-    setReload(true);
-  }, 100);
+  // setTimeout(() => {
+  //   setReload(true);
+  // }, 100);
+
+  const refreshData = async wash => {
+    const updatedData = data.map(function(element) {
+      if (element.id == wash.id) {
+        return wash;
+      }
+      return element
+    });
+    setData(updatedData)
+  }
 
   return (
     <DataTable>
@@ -100,7 +110,7 @@ export const Table = React.memo(props => {
 
       <FlatList
         data={data}
-        renderItem={({ item }) => <TableRow item={item} {...props}/>}
+        renderItem={({ item }) => <TableRow item={item} {...props} refreshData={wash => refreshData(wash)}/>}
         initialNumToRender={15}
         updateCellsBatchingPeriod={15}
         getItemLayout={(data, index) => ({
@@ -108,6 +118,7 @@ export const Table = React.memo(props => {
           offset: 47.6 * index,
           index
         })}
+        ListFooterComponent={<View style={{ marginTop: 8 }} />}
       />
     </DataTable>
   );

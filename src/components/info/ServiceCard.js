@@ -53,60 +53,64 @@ export default function ServiceCard(props) {
             <View style={styles.cardContainer}>
               <View style={styles.row}>
                 <InfoText
-                    label="Data e horário"
-                    text={moment(props.item.created).format("DD/MM/YYYY - HH:mm")}
-                    viewStyle={{ width: 120 }}
-                  />
+                  label="Data e horário"
+                  text={moment(props.item.created).format("DD/MM/YYYY - HH:mm")}
+                />
                 <IconButton
                   icon="pencil"
                   color="rgba(0, 0, 0, 0.54)"
                   size={20}
                   style={{ position: "absolute", top: 2, right: 7, margin: 0 }}
-                  onPress={() => props.navigation.navigate("EditService", { wash: props.item })}  
+                  onPress={() => props.navigation.navigate("EditService", { wash: props.item, refreshWashes: props.refreshWashes })}  
                 />
               </View>
 
               <Divider style={{ marginVertical: 10 }}/>
 
               <View style={styles.row}>
-                <InfoText label="Modelo" text={props.item.car.model} />
+                <InfoText label="Modelo" text={props.item.car.model}/>
 
                 <InfoText
                   label="Placa"
                   text={formatLicensePlate(props.item.car.licensePlate)}
-                  viewStyle={{ width: 120 }}
+                  viewStyle={{ marginHorizontal: 10 }}
                 />
               </View>
 
               <Divider style={{ marginVertical: 10 }}/>
 
               <View style={styles.row}>
-                <InfoText label="Cliente" text={props.item.client.name} viewStyle={{ flex: 1, marginRight: 5 }}/>
+                <InfoText label="Cliente" text={props.item.client.name}/>
 
-                <InfoText label="Telefone" text={formatPhoneNumber(props.item.client.phone)} viewStyle={{ flex: 1 }}/>
+                <InfoText
+                  label="Telefone"
+                  text={formatPhoneNumber(props.item.client.phone)}
+                  viewStyle={{ marginHorizontal: 10 }}/>
               </View>
 
               <Divider style={{ marginVertical: 10 }}/>
 
               <View style={styles.row}>
-                <InfoText label="Lavagem" text={props.item.washType} />
+                <InfoText label="Lavagem" text={props.item.washType}/>
 
                 <InfoText
                   label="Valor"
                   text={formatValue(props.item.value.toString())}
-                  viewStyle={{ width: 120 }}
+                  viewStyle={{ marginHorizontal: 10 }}
                 />
               </View>
 
               <Divider style={{ marginVertical: 10 }}/>
 
               <View style={styles.row}>
-                <InfoText label="Cartão" text={props.item.car.cardNumber ? formatCardNumber(props.item.car.cardNumber) : "  -"} />
+                <InfoText 
+                  label="Cartão"
+                  text={props.item.car.cardNumber ? formatCardNumber(props.item.car.cardNumber) : "  -"} />
 
                 <InfoText
                   label="Km"
                   text={props.item.kilometrage || "  -"} 
-                  viewStyle={{ width: 120 }}
+                  viewStyle={{ marginHorizontal: 10 }}
                 />
               </View>
 
@@ -114,9 +118,9 @@ export default function ServiceCard(props) {
                 <InfoText
                   label="Matrícula"
                   text={props.item.clientRegister || "  -"}
-                  viewStyle={{ width: 120 }}
+                  viewStyle={{ flexGrow: 2 }}
                 />
-                <View style={{ flex: 1.5 }}>
+                <View style={{ flexGrow: 1, marginHorizontal: 10 }}>
                   <Text
                     style={styles.authorizationTitle}>
                       Autorização
