@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   dateContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 5,
+    marginTop: 10,
     marginBottom: 5
   },
   leftFilter: {

@@ -106,9 +106,7 @@ const generateHtml = (data, period) => {
         <td>${item.car.licensePlate}</td>
         <td>${item.client.name}</td>
         <td>${item.washType}</td>
-        <td>${moment(item.created)
-          .utc()
-          .format("DD/MM/YYYY")}</td>
+        <td>${moment(item.created).format("DD/MM/YY")}</td>
         <td>${formatValue(item.value.toString())}</td>
       </tr>`
     );

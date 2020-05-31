@@ -18,6 +18,7 @@ import {
 import CarCard from "../../components/info/CarCard";
 import ClientCard from "../../components/info/ClientCard";
 import { findClient, findCar } from "../../services/requests";
+import ToastMessage from "../../components/info/Toast";
 
 if (
   Platform.OS === "android" &&
@@ -57,7 +58,7 @@ export default function SearchScreen(props) {
     }
   };
 
-  const refreshData = async item => {
+  const refreshData = async (item, message) => {
     const updatedData = data.map(element => {
       if (element.id === item.id) {
         return item;
@@ -66,6 +67,10 @@ export default function SearchScreen(props) {
       }
     });
     setData(updatedData);
+    
+    setTimeout(() => {
+      ToastMessage.success(message);
+    }, 250);
   }
 
   const showAnimation = () => {
@@ -156,11 +161,11 @@ export default function SearchScreen(props) {
           return filter === "car" ? (
             <CarCard
               car={item}
-              onPress={() => props.navigation.navigate("CarRegistration", { car: item, onFinished: car => refreshData(car) })}/>
+              onPress={() => props.navigation.navigate("CarRegistration", { car: item, onFinished: (car, message) => refreshData(car, message) })}/>
           ) : (
             <ClientCard
               client={item}
-              onPress={() => props.navigation.navigate("ClientRegistration", { client: item, onFinished: client => refreshData(client) })}/>
+              onPress={() => props.navigation.navigate("ClientRegistration", { client: item, onFinished: (client, message) => refreshData(client, message) })}/>
           );
         }}
         keyExtractor={item => item.id}

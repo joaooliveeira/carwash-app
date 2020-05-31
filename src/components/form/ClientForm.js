@@ -28,12 +28,12 @@ export default function ClientForm(props) {
         Keyboard.dismiss();
         saveClient(client).then(newClient => {
           if (props.client.id) {
-            ToastMessage.success("Cliente alterado com sucesso.");
+            props.onFinished(newClient, "Cliente alterado com sucesso.");
           } else {
-            ToastMessage.success("Cliente criado com sucesso.");
+            props.onFinished(newClient, "Cliente criado com sucesso.");
           }
-          props.onFinished(newClient);
-        }).finally(() => props.goBack())
+          props.goBack();
+        }).catch(() => setLoading(false));
       }
     } else if (props.client.id) {
       Keyboard.dismiss();
@@ -47,8 +47,8 @@ export default function ClientForm(props) {
 
   const validateData = async () => {
     const nameError = validateName();
-    const phoneError = await validatePhone(client.phone);
-    const emailError = await validateEmail(client.email);
+    const phoneError = await validatePhone(client.phone).catch(() => setLoading(false))
+    const emailError = await validateEmail(client.email).catch(() => setLoading(false))
 
     setError({
       name: nameError,
@@ -67,7 +67,7 @@ export default function ClientForm(props) {
     if (clearNumber(text).length < 11) {
       return "Número de telefone inválido.";
     } else {
-      const clientFromDb = await getClientByPhone(clearNumber(text));
+      const clientFromDb = await getClientByPhone(clearNumber(text)).catch(() => setLoading(false))
       if (clientFromDb && clientFromDb.id != props.client.id) {
         return "Número de telefone já cadastrado.";
       }

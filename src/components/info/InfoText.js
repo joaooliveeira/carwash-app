@@ -1,11 +1,12 @@
 import React, { useMemo } from "react";
 import { View, Text } from 'react-native';
-import { FONT_FAMILY_REGULAR } from "../../styles/typography";
+import { FONT_FAMILY_REGULAR, FONT_TEXT } from "../../styles/typography";
 
 const styles = {
   container: {
+    flex: 1,
     height: 55,
-    justifyContent: "center"
+    justifyContent: "center",
   },
   topText: {
     fontFamily: FONT_FAMILY_REGULAR,
@@ -15,8 +16,6 @@ const styles = {
     textAlign: "left"
   },
   bottomText: {
-    fontFamily: FONT_FAMILY_REGULAR,
-    fontSize: 16,
     color: '#000000',
     textAlignVertical: "center",
     textAlign: "left",
@@ -42,9 +41,9 @@ export default function InfoText(props) {
       <View style={[styles.container, props.viewStyle]}>
         <Text style={styles.topText}>{props.label}</Text>
         <Text
-          ellipsizeMode={props.phoneType ? 'head' : 'tail'}
+          ellipsizeMode={'tail'}
           numberOfLines={1}
-          style={styles.bottomText}
+          style={[styles.bottomText]}
           selectable={true}
         >
           {props.phoneType ? formatPhoneNumber(props.text) : props.text}

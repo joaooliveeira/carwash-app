@@ -10,6 +10,7 @@ import InfoText from "../info/InfoText";
 import { Divider, TextInput } from "react-native-paper";
 import Autocomplete from "react-native-autocomplete-input";
 import { FONT_FAMILY_REGULAR } from "../../styles/typography";
+import { formatLicensePlate } from "../../utils/formatter";
 
 if (
   Platform.OS === "android" &&
@@ -43,14 +44,11 @@ export default function TextInputSuggestion(props) {
           >
             <InfoText
               label={props.type == "car" ? "Placa" : "Nome"}
-              text={licensePlate || name}
-              styleView={{ width: '50%' }}
+              text={licensePlate ? formatLicensePlate(licensePlate) : name}
             />
             <InfoText
               label={props.type == "car" ? "Modelo" : "Telefone"}
               text={model || phone}
-              phoneType={phone && true}
-              styleView={{ width: '50%' }}
             />
           </TouchableOpacity>
           <Divider />
@@ -108,6 +106,6 @@ const styles = {
     flexDirection: "row",
     justifyContent: 'space-between',
     marginVertical: 4,
-    marginHorizontal: 15,
+    marginHorizontal: 10,
   }
 };

@@ -11,6 +11,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import ClientRegistration from '../screens/client/ClientRegistration';
 import CarRegistration from '../screens/car/CarRegistration';
 import RunningServicesScreen from "../screens/service-running/index";
+import EditServiceScreen from '../screens/service/EditService';
 
 const Stack = createStackNavigator();
 
@@ -27,6 +28,7 @@ function App() {
             <Stack.Screen name="RunningServicesScreen" component={RunningServicesScreen} />
             <Stack.Screen name="ClientRegistration" component={ClientRegistration} />
             <Stack.Screen name="CarRegistration" component={CarRegistration} />
+            <Stack.Screen name="EditService" component={EditServiceScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </Root>

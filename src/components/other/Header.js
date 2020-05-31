@@ -14,21 +14,32 @@ export const Header = props => {
       {props.runningService && (
         <View>
           <Appbar.Action
-            icon="playlist-check"
+            icon="cash-register"
             color='rgba(0, 0, 0, 0.54)'
             animated={true}
-            size={32}
+            size={27}
             onPress={() => props.navigation.navigate("RunningServicesScreen")}
           />
 
-          {runningWashes.length != 0 ?
+          {runningWashes.length != 0 &&
             <Badge
-              style={{ position: "absolute", top: 17, right: 20 }}
-              size={9}
-            /> : <View/>
+              style={{ position: "absolute", top: 12, right: runningWashes.length.toString().length == 1 ? 9 : 5, fontSize: 9}}
+              size={12}
+            >
+              {runningWashes.length}
+            </Badge>
           }
         </View>
       )}
+
+      {props.pdf &&
+        <Appbar.Action
+          icon="file-pdf"
+          color='rgba(0, 0, 0, 0.54)'
+          animated={true}
+          onPress={() => props.onPress()}
+        />
+      }
     </Appbar.Header>
   );
 };

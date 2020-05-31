@@ -93,14 +93,14 @@ export const Table = React.memo(props => {
             numeric={index == columnHeaders.length - 1 ? true : false}
             // sortDirection={header.orientation}
           >
-            <Text style={FONT_TEXT}>{header.label}</Text>
+            <Text style={[FONT_TEXT, {height: 60 }]}>{header.label}</Text>
           </DataTable.Title>
         ))}
       </DataTable.Header>
 
       <FlatList
         data={data}
-        renderItem={({ item }) => <TableRow item={item} />}
+        renderItem={({ item }) => <TableRow item={item} {...props}/>}
         initialNumToRender={15}
         updateCellsBatchingPeriod={15}
         getItemLayout={(data, index) => ({

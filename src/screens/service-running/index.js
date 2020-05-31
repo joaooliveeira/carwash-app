@@ -40,7 +40,7 @@ export default function ServiceInProgress(props) {
         }
         extraData={runningWashes}
         renderItem={({ item, index }) => (
-          <ServiceCard item={item} refreshServices={washId => refreshServices(washId)} />
+          <ServiceCard {...props} item={item} refreshServices={washId => refreshServices(washId)} />
         )}
         keyExtractor={item => item.id}
         initialNumToRender={15}

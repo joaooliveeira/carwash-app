@@ -7,7 +7,7 @@ import ToastMessage from "../../components/info/Toast";
 import ButtonCustom from '../../components/other/ButtonCustom';
 import { FONT_TEXT, FONT_SUBTITLE } from '../../styles/typography';
 import { Card, Divider, RadioButton } from 'react-native-paper';
-import { Dimensions, ScrollView, View, Text } from 'react-native';
+import { Dimensions, ScrollView, View, Text, TouchableOpacity } from 'react-native';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 
 export const ReportScreen = () => {
@@ -259,7 +259,9 @@ export const ReportScreen = () => {
             status={period == 'this_month' ? 'checked' : 'unchecked'}
             onPress={() => setPeriod('this_month')}
           />
-          <Text onPress={() => setPeriod('this_month')} style={styles.radioButonText}>Este mês</Text>
+          <TouchableOpacity onPress={() => setPeriod('this_month')} style={{ justifyContent: "center" }}>
+            <Text style={styles.radioButonText}>Este mês</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.radioButtonView}>
@@ -269,7 +271,10 @@ export const ReportScreen = () => {
             status={period == 'last_month' ? 'checked' : 'unchecked'}
             onPress={() => setPeriod('last_month')}
           />
-          <Text onPress={() => setPeriod('last_month')} style={styles.radioButonText}>Último mês</Text>
+
+          <TouchableOpacity onPress={() => setPeriod('last_month')} style={{ justifyContent: "center" }}>
+            <Text style={styles.radioButonText}>Último mês</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.radioButtonView}>
@@ -279,7 +284,10 @@ export const ReportScreen = () => {
             status={period == 'last_six_months' ? 'checked' : 'unchecked'}
             onPress={() => setPeriod('last_six_months')}
           />
-          <Text onPress={() => setPeriod('last_six_months')} style={styles.radioButonText}>Últimos seis meses</Text>
+
+          <TouchableOpacity onPress={() => setPeriod('last_six_months')} style={{ justifyContent: "center" }}>
+            <Text style={styles.radioButonText}>Últimos seis meses</Text>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.radioButtonView}>
@@ -289,7 +297,10 @@ export const ReportScreen = () => {
             status={period == 'last_year' ? 'checked' : 'unchecked'}
             onPress={() => setPeriod('last_year')}
           />
-          <Text onPress={() => setPeriod('last_year')} style={styles.radioButonText}>Último ano</Text>
+
+          <TouchableOpacity onPress={() => setPeriod('last_year')} style={{ justifyContent: "center" }}>
+            <Text style={styles.radioButonText}>Último ano</Text>
+          </TouchableOpacity>
         </View>
 
           <ButtonCustom

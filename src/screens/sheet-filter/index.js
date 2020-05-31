@@ -4,6 +4,7 @@ import {
   Divider,
   Button,
   HelperText,
+  Checkbox,
 } from "react-native-paper";
 import {
   View,
@@ -26,7 +27,7 @@ import moment from "moment";
 import { Colors } from "../../styles";
 import Autocomplete from "react-native-autocomplete-input";
 import InfoText from "../../components/info/InfoText";
-import { findClient, getClientById, filterWashes, getCarById, findCar } from "../../services/requests";
+import { findClient, filterWashes, filterWashesByPeriod, findCar } from "../../services/requests";
 import ToastMessage from "../../components/info/Toast";
 
 if (
@@ -37,6 +38,8 @@ if (
 }
 
 export const SheetFilterScreen = props => {
+  const [filterByType, setFilterByType] = useState(true);
+  const [filterByPeriod, setFilterByPeriod] = useState(true);
   const [startDate, setStartDate] = useState('');
   const [startDatePicker, setStartDatePicker] = useState(false);
 
@@ -81,6 +84,7 @@ export const SheetFilterScreen = props => {
 
   const getParamSuggestions = async (text, searchFilter) => {
     setSuggestionParam(text);
+    setFilterTypeId("");
 
     if (text.length > 1) {
       let newSuggestions = [];
@@ -100,35 +104,62 @@ export const SheetFilterScreen = props => {
   };
 
   const getData = async () => {
-    if (filterTypeId && startDate && endDate) {
-      Keyboard.dismiss();
-      setError(false);
-      setLoading(true);
+    var filter = {};
+    var result = [];
 
-      const filter = {
-        id: filterType + "Id=" + filterTypeId,
-        startDate: moment(startDate)
-          .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
-          .toISOString(true),
-        endDate: moment(endDate)
-          .set({ hour: 23, minute: 59, second: 59, millisecond: 999 })
-          .toISOString(true)
-      };
+    if (startDate && endDate) {
+      if (filterByType) {
+        if (filterTypeId) {
+          Keyboard.dismiss();
+          setLoading(true);
+          setError(false);
 
-      const result = await filterWashes(filter);
+          filter = {
+            id: filterType + "Id=" + filterTypeId,
+            startDate: moment(startDate).set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toISOString(true),
+            endDate: moment(endDate).set({ hour: 23, minute: 59, second: 59, millisecond: 999 }).toISOString(true)
+          };
 
-      if (result.length === 0) {
-        ToastMessage.warning(`Nenhum serviço encontrado para esse ${filter === 'car' ? "veículo" : "cliente"}.`);
+          result = await filterWashes(filter).finally(() => setLoading(false));
+
+          if (result.length === 0) {
+            ToastMessage.warning(`Nenhum serviço encontrado para o período indicado.`);
+          }
+
+          if (result.length !== 0) {
+            props.navigation.navigate("SheetScreen", {
+              data: result,
+              period: { startDate, endDate },
+            });
+          }
+
+        } else {
+          setError(true);
+        }
+
+      } else {
+        Keyboard.dismiss();
+        setLoading(true);
+        setError(false);
+
+        filter = {
+          startDate: moment(startDate).set({ hour: 0, minute: 0, second: 0, millisecond: 0 }).toISOString(true),
+          endDate: moment(endDate).set({ hour: 23, minute: 59, second: 59, millisecond: 999 }).toISOString(true)
+        };
+        
+        result = await filterWashes(filter).finally(() => setLoading(false));
+
+        if (result.length === 0) {
+          ToastMessage.warning(`Nenhum serviço encontrado para o período indicado.`);
+        }
+
+        if (result.length !== 0) {
+          props.navigation.navigate("SheetScreen", {
+            data: result,
+            period: { startDate, endDate },
+          });
+        }
       }
-
-      if (result.length !== 0) {
-        props.navigation.navigate("SheetScreen", {
-          data: result,
-          period: { startDate, endDate },
-        });
-      }
-
-      setLoading(false);
     } else {
       setError(true);
     }
@@ -191,22 +222,24 @@ export const SheetFilterScreen = props => {
         )}
 
         <Card style={styles.card}>
-          <Card.Title
-            title="Gerar planilha"
-            titleStyle={[FONT_SUBTITLE]}
-          />
-
-          <Divider style={styles.divider} />
-
-          <Card.Title
-            title="Filtro"
-            titleStyle={[FONT_SUBTITLE]}
-          />
+          <View style={{ flexDirection: "row",marginVertical: 8, marginLeft: 5 }}>
+            <Checkbox
+              status={filterByType ? 'checked' : 'unchecked'}
+              color={Colors.PRIMARY}
+              onPress={() => setFilterByType(!filterByType)}
+            />
+            <TouchableOpacity onPress={() => setFilterByType(!filterByType)} style={{ justifyContent: "center" }}>
+              <Text style={{ fontSize: 20, textAlignVertical: "center" }}>
+                Filtrar
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.dateContainer}>
             <Button
               icon="account"
               mode="outlined"
+              disabled={!filterByType}
               uppercase={false}
               style={styles.leftFilter}
               labelStyle={FONT_TEXT}
@@ -225,6 +258,7 @@ export const SheetFilterScreen = props => {
             <Button
               icon="car-hatchback"
               mode="outlined"
+              disabled={!filterByType}
               uppercase={false}
               style={styles.rightFilter}
               labelStyle={FONT_TEXT}
@@ -250,6 +284,7 @@ export const SheetFilterScreen = props => {
             renderItem={({ item, i }) => renderSuggestion(item)}
             renderTextInput={() => (
               <TextInput
+                editable={filterByType}
                 placeholder={
                   filterType == 'car'
                     ? 'Digite a placa ou cartão...'
@@ -266,22 +301,23 @@ export const SheetFilterScreen = props => {
 
           <HelperText
             type="error"
-            visible={error && !filterTypeId}
+            visible={error && filterByType && !filterTypeId}
             padding="none"
-            style={{ marginHorizontal: 25 }}
+            style={{ marginHorizontal: 25, marginBottom: 10 }}
           >
-            Digite para buscar e selecione uma das sugestões.
+            Selecione uma das sugestões ou desative o filtro.
           </HelperText>
 
           <Card.Title
-            title="Período"
-            titleStyle={[FONT_SUBTITLE]}
+            title="Período *"
+            titleStyle={FONT_SUBTITLE}
           />
 
           <View style={styles.dateContainer}>
             <Button
               icon="calendar-today"
               mode="contained"
+              disabled={!filterByPeriod}
               uppercase={false}
               style={styles.leftFilter}
               labelStyle={FONT_TEXT}
@@ -295,6 +331,7 @@ export const SheetFilterScreen = props => {
             <Button
               icon="calendar"
               mode="contained"
+              disabled={!filterByPeriod}
               uppercase={false}
               style={styles.rightFilter}
               labelStyle={FONT_TEXT}

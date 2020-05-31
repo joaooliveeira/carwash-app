@@ -47,7 +47,7 @@ export const TableRow = React.memo(props => {
         onBackButtonPress={() => setRowInfoDialog(false)}
         onBackdropPress={() => setRowInfoDialog(false)}
         useNativeDriver={true}>
-        <ServiceDialog item={item} />
+        <ServiceDialog item={item} {...props} onIconIsPressed={() => setRowInfoDialog(false)}/>
       </Modal>
     </>
   );

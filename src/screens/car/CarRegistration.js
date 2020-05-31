@@ -7,13 +7,13 @@ export default function CarRegistration(props) {
   return (
     <View style={{ flex: 1 }}>
       <Header
-        title="Cadastro"
+        title="Veículo"
         goBack={() => props.navigation.goBack()}
       />
       <ScrollView keyboardShouldPersistTaps="handled">
         <CarForm 
             car={props.route.params.car}
-            onFinished={car => props.route.params.onFinished(car)}
+            onFinished={(car, message) => props.route.params.onFinished(car, message)}
             goBack={props.navigation.goBack}
         />
       </ScrollView>

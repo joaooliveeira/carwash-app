@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="carwash/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/carwash.iml" filepath="$PROJECT_DIR$/.idea/modules/carwash.iml" group="carwash" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1309039032/react-native-android-open-settings.iml" filepath="$PROJECT_DIR$/.idea/modules/-1309039032/react-native-android-open-settings.iml" group="carwash/react-native-android-open-settings" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/392584351/react-native-community_datetimepicker.iml" filepath="$PROJECT_DIR$/.idea/modules/392584351/react-native-community_datetimepicker.iml" group="carwash/react-native-community_datetimepicker" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1491569745/react-native-community_masked-view.iml" filepath="$PROJECT_DIR$/.idea/modules/1491569745/react-native-community_masked-view.iml" group="carwash/react-native-community_masked-view" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-567156948/react-native-extra-dimensions-android.iml" filepath="$PROJECT_DIR$/.idea/modules/-567156948/react-native-extra-dimensions-android.iml" group="carwash/react-native-extra-dimensions-android" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1171259814/react-native-gesture-handler.iml" filepath="$PROJECT_DIR$/.idea/modules/1171259814/react-native-gesture-handler.iml" group="carwash/react-native-gesture-handler" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/656835042/react-native-html-to-pdf.iml" filepath="$PROJECT_DIR$/.idea/modules/656835042/react-native-html-to-pdf.iml" group="carwash/react-native-html-to-pdf" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/2117577910/react-native-reanimated.iml" filepath="$PROJECT_DIR$/.idea/modules/2117577910/react-native-reanimated.iml" group="carwash/react-native-reanimated" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/950618255/react-native-safe-area-context.iml" filepath="$PROJECT_DIR$/.idea/modules/950618255/react-native-safe-area-context.iml" group="carwash/react-native-safe-area-context" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-476299417/react-native-screens.iml" filepath="$PROJECT_DIR$/.idea/modules/-476299417/react-native-screens.iml" group="carwash/react-native-screens" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/793133892/react-native-svg.iml" filepath="$PROJECT_DIR$/.idea/modules/793133892/react-native-svg.iml" group="carwash/react-native-svg" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1870129136/react-native-vector-icons.iml" filepath="$PROJECT_DIR$/.idea/modules/1870129136/react-native-vector-icons.iml" group="carwash/react-native-vector-icons" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1723493575/rn-fetch-blob.iml" filepath="$PROJECT_DIR$/.idea/modules/-1723493575/rn-fetch-blob.iml" group="carwash/rn-fetch-blob" />
+    </modules>
+  </component>
+</project>

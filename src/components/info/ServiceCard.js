@@ -1,11 +1,12 @@
 import InfoText from "../info/InfoText";
 import React, { useState } from "react";
 import ButtonCustom from "../other/ButtonCustom";
-import { Card, Divider} from "react-native-paper";
+import { Card, Divider, IconButton} from "react-native-paper";
 import { View, UIManager, LayoutAnimation, Platform, TextInput, Text } from "react-native";
 import { formatValue, formatCardNumber, formatLicensePlate, formatPhoneNumber } from "../../utils/formatter";
 import { FONT_FAMILY_REGULAR } from "../../styles/typography";
 import { finishWash } from "../../services/requests";
+import moment from "moment";
 
 if (
   Platform.OS === 'android' &&
@@ -15,7 +16,7 @@ if (
 }
 
 export default function ServiceCard(props) {
-  const [authorization, setAuthorization] = useState("");
+  const [authorization, setAuthorization] = useState(props.item.authorization);
   const [finishingWash, setFinishingWash] = useState(false);
   const [washDone, setWashDone] = useState(false);
 
@@ -50,6 +51,23 @@ export default function ServiceCard(props) {
       {!washDone && (
           <View>
             <View style={styles.cardContainer}>
+              <View style={styles.row}>
+                <InfoText
+                    label="Data e horário"
+                    text={moment(props.item.created).format("DD/MM/YYYY - HH:mm")}
+                    viewStyle={{ width: 120 }}
+                  />
+                <IconButton
+                  icon="pencil"
+                  color="rgba(0, 0, 0, 0.54)"
+                  size={20}
+                  style={{ position: "absolute", top: 2, right: 7, margin: 0 }}
+                  onPress={() => props.navigation.navigate("EditService", { wash: props.item })}  
+                />
+              </View>
+
+              <Divider style={{ marginVertical: 10 }}/>
+
               <View style={styles.row}>
                 <InfoText label="Modelo" text={props.item.car.model} />
 
@@ -92,13 +110,13 @@ export default function ServiceCard(props) {
                 />
               </View>
 
-              <View style={[styles.row, { marginTop: 15 }]}>
+              <View style={[styles.row, { marginTop: 10 }]}>
                 <InfoText
                   label="Matrícula"
                   text={props.item.clientRegister || "  -"}
                   viewStyle={{ width: 120 }}
                 />
-                <View style={{ flex: 1, marginLeft: 20 }}>
+                <View style={{ flex: 1.5 }}>
                   <Text
                     style={styles.authorizationTitle}>
                       Autorização

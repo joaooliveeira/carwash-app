@@ -108,9 +108,9 @@ export const saveWash = async wash => {
     kilometrage: wash.kilometrage,
     washType: wash.washType,
     value: wash.value,
-    status: 'RUNNING',
-    created: new Date(moment().toISOString(true)),
-    authorization: ""
+    status: wash.status ? wash.status : 'RUNNING',
+    created: wash.created ? wash.created : new Date(moment().toISOString(true)),
+    authorization: wash.authorization
   };
   return axiosInstance.put("wash/save", body)
     .then(response => response.data)
@@ -124,6 +124,11 @@ export const finishWash = async body => {
 export const filterWashes = async filter => {
     return axiosInstance.get(`wash/filter/?${filter.id}&fromDate=${filter.startDate}&toDate=${filter.endDate}`)
       .then(response => response.data)
+};
+
+export const filterWashesByPeriod = async filter => {
+  return axiosInstance.get(`wash/filter/?fromDate=${filter.startDate}&toDate=${filter.endDate}`)
+    .then(response => response.data)
 };
 
 export const getRunningWashes = async () => {

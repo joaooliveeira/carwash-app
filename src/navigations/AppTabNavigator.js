@@ -16,7 +16,7 @@ export default class AppTabNavigator extends Component {
         key: 'service',
         title: 'Serviço',
         icon: 'car-multiple',
-        headerTitle: 'Serviços'
+        headerTitle: 'Serviço'
       },
       {
         key: 'search',
@@ -26,15 +26,15 @@ export default class AppTabNavigator extends Component {
       },
       {
         key: 'sheet',
-        title: 'Planilha',
+        title: 'Relatório',
         icon: "file-chart",
-        headerTitle: 'Planilhas'
+        headerTitle: 'Relatório'
       },
       {
         key: 'report',
-        title: 'Relatório',
+        title: 'Análise',
         icon: 'finance',
-        headerTitle: 'Relatórios'
+        headerTitle: 'Análise'
       },
     ],
   };

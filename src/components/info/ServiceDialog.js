@@ -1,6 +1,7 @@
 import * as React from "react";
-import { Divider, Card } from "react-native-paper";
+import { Divider, Card, IconButton } from "react-native-paper";
 import { View } from "react-native";
+import moment from 'moment';
 import InfoText from "../info/InfoText";
 import { WINDOW_WIDTH } from "../../styles/mixins";
 import {
@@ -9,7 +10,7 @@ import {
   formatCardNumber,
   formatPhoneNumber,
 } from "../../utils/formatter";
-import { FONT_FAMILY_REGULAR, FONT_BOLD } from "../../styles/typography";
+import { FONT_FAMILY_REGULAR } from "../../styles/typography";
 
 const styles = {
   cardContainer: {
@@ -26,6 +27,7 @@ const styles = {
     flexDirection: 'row',
     justifyContent: "space-between",
     paddingHorizontal: 10,
+    marginHorizontal: 5
   },
   authorizationTitle: {
     fontFamily: FONT_FAMILY_REGULAR,
@@ -58,12 +60,27 @@ const styles = {
 export const ServiceDialog = props => {
   return (
     <Card style={styles.cardContainer}>
-      <Card.Title
-        title="Detalhes da lavagem"
-        titleStyle={[FONT_BOLD, { fontSize: 17 }]}
-      />
+        <View style={styles.row}>
+          <InfoText
+            label="Data e horário"
+            text={moment(props.item.created).format("DD/MM/YYYY - HH:mm")}
+            viewStyle={{ width: 120 }}
+            />
+
+          <IconButton
+            icon="pencil"
+            color="rgba(0, 0, 0, 0.54)"
+            size={20}
+            style={{ position: "absolute", top: 2, right: 7, margin: 0 }}
+            onPress={() =>  {
+              props.onIconIsPressed();
+              props.navigation.navigate("EditService", { wash: props.item });
+            }}
+          />
+        </View>
 
       <Divider style={{ marginVertical: 5 }}/>
+
 
       <View style={styles.row}>
         <InfoText label="Modelo" text={props.item.car.model} />

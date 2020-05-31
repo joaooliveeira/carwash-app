@@ -1,63 +1,63 @@
 import InfoText from "../info/InfoText";
 import { View } from "react-native";
 import React, { useState } from "react";
-import { Card, Menu } from "react-native-paper";
+import { Card, Menu, IconButton } from "react-native-paper";
 import { formatPhoneNumber } from "../../utils/formatter";
 
 export default function ClientCard(props) {
   const [menuIsVisible, setMenuIsVisible] = useState(false);
 
   return (
-    <Card style={styles.card} onLongPress={() => setMenuIsVisible(true)}>
-      <Menu
-        visible={menuIsVisible}
-        onDismiss={() => setMenuIsVisible(false)}
-        anchor={
-          <View style={{ paddingLeft: 15 }}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-              <InfoText label="Nome" text={props.client.name} />
+    <Card style={styles.card}>
+      <View style={{ padding: 8 }}>
+        <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between" }}>
+          <InfoText label="Nome" text={props.client.name} />
 
-              <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                <InfoText
-                  label="Telefone"
-                  text={formatPhoneNumber(props.client.phone)}
-                  viewStyle={{ marginRight: 25 }}
-                />
-              </View>
-            </View>
-
-            <InfoText
-              label="E-mail"
-              text={props.client.email || " - "}
-              viewStyle={{ marginTop: 5 }}
+          <InfoText
+            label="Telefone"
+            text={formatPhoneNumber(props.client.phone)}
+            viewStyle={{ marginLeft: 5 }}
+          />
+          
+          <Menu
+            onDismiss={() => setMenuIsVisible(false)}
+            visible={menuIsVisible}
+            anchor={
+              <IconButton
+                icon="dots-vertical"
+                color="rgba(0, 0, 0, 0.54)"
+                size={22}
+                style={{ margin: 0 }}
+                onPress={() => setMenuIsVisible(true)}
+              />
+            }
+          >
+            <Menu.Item
+              onPress={() => {
+                props.onPress();
+                setMenuIsVisible(false);
+              }}
+              icon="pencil"
+              title="Editar"
             />
-          </View>
-        }>
-        <Menu.Item
-          onPress={() => {
-            props.onPress();
-            setMenuIsVisible(false);
-          }}
-          icon="pencil"
-          title="Editar"
+          </Menu>
+        </View>
+
+        <InfoText
+          label="E-mail"
+          text={props.client.email || " - "}
+          viewStyle={{ marginTop: 5 }}
         />
-      </Menu>
+      </View>
     </Card>
   );
 }
 
 const styles = {
   card: {
+    flex: 1,
     marginTop: 6,
     marginHorizontal: 10,
     borderRadius: 5,
-    padding: 4
   },
-  cardContainer: {
-    marginHorizontal: 5,
-    flexDirection: "row"
-  },
-  checkbox: {
-    marginTop: 6
-  }
 };

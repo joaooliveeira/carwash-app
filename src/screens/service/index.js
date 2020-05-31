@@ -62,7 +62,7 @@ export default function ServiceScree(props) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    refreshRunningWashes();
+    refreshRunningWashes()
   },[])
 
   const getClientSuggestions = async text => {
@@ -80,10 +80,9 @@ export default function ServiceScree(props) {
   const getCarSuggestions = async text => {
     if (text.length > 1) {
       let carSuggestions = await findCarByLicensePlate(text);
-      if (carSuggestions.length === 0) {
-        carSuggestions.push("NOT_FOUND");
-      }
       setCarSuggestions(carSuggestions);
+    } else {
+      setCarSuggestions([]);
     }
   };
 
@@ -148,7 +147,7 @@ export default function ServiceScree(props) {
   const validateCarModel = () => {
     return car.model.length > 1
       ? false
-      : "Insira pelo menos dois caracteres para modelo.";
+      : "Insira pelo menos dois caracteres.";
   };
 
   const validateCardNumber = () => {
@@ -164,7 +163,7 @@ export default function ServiceScree(props) {
   const validateValue = () => {
     return value != "" ? false : "Insira o valor do serviço.";
   };
-
+  
   const createNewWash = async () => {
     let carFromDb = await saveCar(car);
 
@@ -204,11 +203,13 @@ export default function ServiceScree(props) {
       cardNumber: false,
       kilometrage: false,
       washType: false,
-      value: false
+      value: false,
+      authorization: ""
     });
   };
 
-  const onFinishRegisteringTheClient = newClient => {
+  const onFinishRegisteringTheClient = (newClient, message) => {
+    ToastMessage.success(message);
     setClient(newClient);
   };
 
@@ -217,13 +218,6 @@ export default function ServiceScree(props) {
       <ScrollView keyboardShouldPersistTaps="handled">
         <Card style={styles.card}>
           <Card.Title
-            title="Criar novo serviço"
-            titleStyle={[FONT_SUBTITLE]}
-          />
-
-          <Divider style={styles.divider} />
-
-          <Card.Title
             title="Dados do cliente"
             titleStyle={[FONT_SUBTITLE]}
           />
@@ -231,7 +225,7 @@ export default function ServiceScree(props) {
           <View style={{ height: 64 }}>
             <TextInputSuggestion
               type="client"
-              data={clientSuggestions}
+              data={client.name.length > 1 ? clientSuggestions : []}
               label="Cliente *"
               value={client.name}
               theme={themes.input}
@@ -254,10 +248,10 @@ export default function ServiceScree(props) {
             <IconButton
               icon="account-plus-outline"
               style={styles.newClientIcon}
-              color="rgba(0, 0, 0, 0.54)"
+              color={"rgba(0, 0, 0, 0.54)"}
               size={25}
               onPress={() => {
-                props.navigation.navigate("ClientRegistration", { onFinished: onFinishRegisteringTheClient, client })
+                props.navigation.navigate("ClientRegistration", { onFinished: onFinishRegisteringTheClient, client: {id: "", name: "", phone: "", email: "" }})
                 setClientSuggestions([]);
               }}
             />
@@ -294,7 +288,7 @@ export default function ServiceScree(props) {
           <View style={{ height: 64 }}>
             <TextInputSuggestion
               type="car"
-              data={carSuggestions}
+              data={car.licensePlate.length > 1 ? carSuggestions : []}
               label="Placa *"
               value={car.licensePlate}
               theme={themes.input}
@@ -324,14 +318,12 @@ export default function ServiceScree(props) {
                       ...dataError,
                       licensePlate: { type: "error", message: "Placa inválida." }
                     });
-                  } else if (text.length < 7 && text.length > 1) {
+                  } else if (text.length < 7) {
                     setDataError({
                       ...dataError,
                       licensePlate: { type: "", message: "" }
                     });
                     getCarSuggestions(text);
-                  } else {
-                    setCarSuggestions([]);
                   }
                 }
               }}
@@ -513,8 +505,8 @@ export default function ServiceScree(props) {
             theme={themes.input}
             style={styles.input}
             error={dataError.value}
-            value={value.length == 2 ? value + ",00" : value}
-            onChangeText={text => setValue(text.length == 2 ? text + "00" : text)}
+            value={value}
+            onChangeText={text => setValue(text.length == 2 && value.length == 1 ? text + "00" : text)}
             render={props => (
               <TextInputMask
                 {...props}
@@ -551,11 +543,11 @@ export default function ServiceScree(props) {
             />
 
             <ButtonCustom
-              icon="content-save"
+              icon="cash-register"
               mode="contained"
               loading={loading}
               onPress={validateData}
-              label="SALVAR"
+              label="REGISTRAR"
               style={{ flexGrow: 1, marginRight: 15 }}
             />
           </Card.Actions>

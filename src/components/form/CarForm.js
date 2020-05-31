@@ -26,10 +26,9 @@ export default function CarForm(props) {
       if (await validateData()) {
         Keyboard.dismiss();
         saveCar(car).then(response => {
-          ToastMessage.success("Veículo alterado com sucesso.");
-          props.onFinished(response);
+          props.onFinished(response, "Veículo alterado com sucesso.");
           props.goBack();
-        }).finally(() => setLoading(false))
+        }).catch(() => setLoading(false))
       } else {
         setLoading(false);
       }
@@ -41,8 +40,8 @@ export default function CarForm(props) {
 
   const validateData = async () => {
     const modelError = validateModel();
-    const licensePlateError = await validateLicensePlate();
-    const cardNumberError = await validateCardNumber();
+    const licensePlateError = await validateLicensePlate().catch(() => setLoading(false))
+    const cardNumberError = await validateCardNumber().catch(() => setLoading(false))
 
     setError({
       model: modelError,
@@ -59,7 +58,7 @@ export default function CarForm(props) {
 
   const validateLicensePlate = async () => {
     if (car.licensePlate.length == 7) {
-      const carFromDb = await getCarByLicensePlate(car.licensePlate);
+      const carFromDb = await getCarByLicensePlate(car.licensePlate).catch(() => setLoading(false))
       if (carFromDb && carFromDb.id !== props.car.id) {
         return "Placa já cadastrada."
       } else {
@@ -116,7 +115,7 @@ export default function CarForm(props) {
           padding="none"
           style={styles.helperText}
         >
-          Insira pelo menos dois caracteres para modelo.
+          Insira pelo menos dois caracteres.
         </HelperText>
 
         <TextInput
