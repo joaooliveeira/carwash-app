@@ -29,6 +29,7 @@ import Autocomplete from "react-native-autocomplete-input";
 import InfoText from "../../components/info/InfoText";
 import { findClient, filterWashes, filterWashesByPeriod, findCar } from "../../services/requests";
 import ToastMessage from "../../components/info/Toast";
+import { formatLicensePlate } from "../../utils/formatter";
 
 if (
   Platform.OS === "android" &&
@@ -190,14 +191,13 @@ export const SheetFilterScreen = props => {
           >
             <InfoText
               label={filterType == "car" ? "Placa" : "Nome"}
-              text={licensePlate || name}
-              styleView={{ width: '50%' }}
+              text={licensePlate ? formatLicensePlate(licensePlate) : name}
             />
+
             <InfoText
               label={filterType == "car" ? "Modelo" : "Telefone"}
-              text={model || phone}
+              text={model || phone || "  -"}
               phoneType={phone && true}
-              styleView={{ width: '50%' }}
             />
           </TouchableOpacity>
           <Divider />
@@ -281,7 +281,7 @@ export const SheetFilterScreen = props => {
           </View>
 
           <Autocomplete
-            data={suggestions}
+            data={suggestionParam.length > 1 ? suggestions : []}
             hideResults={hideSuggestions}
             inputContainerStyle={styles.input}
             listStyle={styles.listStyle}

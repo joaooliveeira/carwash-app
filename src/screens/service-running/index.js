@@ -19,10 +19,10 @@ export default function ServiceInProgress(props) {
     refreshRunningWashes().finally(() => setRefreshing(false))
   };
 
-  const refreshServices = async wash => {
+  const refreshServices = async (wash, isHasBeenDeleted) => {
     const updatedWashes = runningWashes.filter(function(element, index, arr){ return element.id !== wash.id;});
     store.dispatch(setRunningWashes(updatedWashes));
-    ToastMessage.success("Serviço finalizado com sucesso.");
+    ToastMessage.success(`Serviço ${isHasBeenDeleted ? "deletado" : "finalizado"} com sucesso.`);
   }
 
   const refreshWashes = async wash => {
@@ -50,7 +50,11 @@ export default function ServiceInProgress(props) {
         }
         extraData={runningWashes}
         renderItem={({ item, index }) => (
-          <ServiceCard {...props} item={item} refreshServices={washId => refreshServices(washId)} refreshWashes={wash => refreshWashes(wash)}/>
+          <ServiceCard
+            {...props}
+            item={item}
+            refreshServices={(washId, itHasBeenDeleted) => refreshServices(washId, itHasBeenDeleted)}
+            refreshWashes={wash => refreshWashes(wash)}/>
         )}
         keyExtractor={item => item.id}
         initialNumToRender={15}

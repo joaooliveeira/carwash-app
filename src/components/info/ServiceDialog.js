@@ -97,7 +97,7 @@ export const ServiceDialog = props => {
       <View style={styles.row}>
         <InfoText label="Cliente" text={props.item.client.name} viewStyle={{ flex: 1, marginRight: 5 }}/>
 
-        <InfoText label="Telefone" text={formatPhoneNumber(props.item.client.phone)} viewStyle={{ flex: 1 }}/>
+        <InfoText label="Telefone" text={props.item.client.phone ? formatPhoneNumber(props.item.client.phone) : "  -"} viewStyle={{ flex: 1 }}/>
       </View>
 
       <Divider style={{ marginVertical: 10 }}/>

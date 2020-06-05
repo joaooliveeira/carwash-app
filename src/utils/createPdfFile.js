@@ -4,6 +4,7 @@ import RNHTMLtoPDF from "react-native-html-to-pdf";
 import { requestAppPermition } from "./requestAppPermission";
 import RNFetchBlob from "rn-fetch-blob";
 import moment from "moment";
+import { FONT_SIZE_TEXT } from "../styles/typography";
 
 export const createPdfFile = async (data, period) => {
   if (await requestAppPermition("WRITE_EXTERNAL_STORAGE")) {
@@ -22,8 +23,6 @@ export const createPdfFile = async (data, period) => {
 const generateHtml = (data, period) => {
   let html = `<style>
                 body {
-                  width: 21cm;
-                  height: 29.7cm;
                   font-family: arial;
                   -webkit-print-color-adjust: exact; 
                   /* change the margins as you want them to be. */
@@ -37,17 +36,18 @@ const generateHtml = (data, period) => {
                   margin: 10px;
                 }
                 th {
-                  background-color: #b8dbef;
+                  background-color: #bdbdbd;
                   font-weight: bold;
                 }
                 th, td {
                   border-bottom: 1px solid black;
                   border-collapse: collapse;
-                  padding: 5px, 10px, 5px, 10px;
+                  padding: 5px;
                   text-align: center;
+                  font-size: ${FONT_SIZE_TEXT};
                 }
                 tr:nth-child(odd){
-                  background-color: #b8dbef;
+                  background-color: #e0e0e0;
                 }
                 img {
                   width: 10%;
@@ -57,16 +57,18 @@ const generateHtml = (data, period) => {
                 .title {
                   display: flex;
                   margin: 10px;
+                  font-size: ${FONT_SIZE_TEXT};
                 }
                 h1 {
                   align-self: center;
-                  color: #1a67c0;
+                  color: #000000;
                 }
                 h3 {
                   margin: 10px;
+                  font-size: ${FONT_SIZE_TEXT};
                 }
                 .index {
-                  color: #1a67c0;
+                  color: #000000;
                   font-weight: bold;
                 }
                 .total{
@@ -74,9 +76,11 @@ const generateHtml = (data, period) => {
                   float: right;
                   margin: 0px 10px 10px 10px;
                   padding: 5px;
+                  font-size: ${FONT_SIZE_TEXT};
                 }
                 hr {
-                  margin: 20px 5px 10px;
+                  margin: 10px;
+                  width: 774.9px;
                   border-color: black;
                 }
               </style>

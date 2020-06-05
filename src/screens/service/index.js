@@ -488,6 +488,7 @@ export default function ServiceScree(props) {
           <SinglePickerMaterialDialog
             title={"Selecione uma opção"}
             addPadding={false}
+            scrolled={true}
             items={washTypesData.map((row, index) => ({
               value: index,
               label: row.label,

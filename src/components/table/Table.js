@@ -118,7 +118,7 @@ export const Table = React.memo(props => {
           offset: 47.6 * index,
           index
         })}
-        ListFooterComponent={<View style={{ marginTop: 8 }} />}
+        ListFooterComponent={<View style={{ marginTop: 104 }} />}
       />
     </DataTable>
   );

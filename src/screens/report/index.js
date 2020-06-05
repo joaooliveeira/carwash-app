@@ -146,7 +146,10 @@ export const ReportScreen = () => {
         washesPerDayOfTheWeek.datasets[0].data[moment(item.created).isoWeekday() - 1]++;
 
         switch (period) {
-          case 'this_month' || 'last_month':
+          case 'this_month':
+            lineChart.datasets[0].data[moment(item.created).date() - 1] += item.value / 100;
+            break;
+          case 'last_month':
             lineChart.datasets[0].data[moment(item.created).date() - 1] += item.value / 100;
             break;
           case 'last_six_months':

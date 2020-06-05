@@ -14,7 +14,6 @@ export default function ButtonCustom(props){
       style={[
         {
           borderRadius: 5,
-          borderWidth: 0.5,
           justifyContent: 'center'
         },
         props.style,

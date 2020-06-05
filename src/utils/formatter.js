@@ -21,7 +21,7 @@ export const clearNumber = text => {
 };
 
 export const formatLicensePlate = text => {
-  const response =  text.slice(0, 3) + " " + text.slice(3);
+  const response =  text.slice(0, 3) + "-" + text.slice(3);
   return response.toUpperCase();
 };
 

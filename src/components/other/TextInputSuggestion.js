@@ -35,7 +35,7 @@ export default function TextInputSuggestion(props) {
         <Text style={styles.notFoundText}>{`Nenhum ${props.type === "client" ? "cliente" : "veículo"} encontrado.`}</Text>
       );
     } else {
-      const { licensePlate, model, name, phone } = item;
+      const { id, licensePlate, model, name, phone } = item;
       return (
         <>
           <TouchableOpacity
@@ -48,7 +48,7 @@ export default function TextInputSuggestion(props) {
             />
             <InfoText
               label={props.type == "car" ? "Modelo" : "Telefone"}
-              text={model || phone}
+              text={model || phone || "  -"}
             />
           </TouchableOpacity>
           <Divider />

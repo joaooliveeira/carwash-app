@@ -1,12 +1,13 @@
 import InfoText from "../info/InfoText";
 import React, { useState } from "react";
 import ButtonCustom from "../other/ButtonCustom";
-import { Card, Divider, IconButton} from "react-native-paper";
-import { View, UIManager, LayoutAnimation, Platform, TextInput, Text } from "react-native";
+import { Card, Divider, IconButton, Menu} from "react-native-paper";
+import { View, UIManager, LayoutAnimation, Platform, TextInput, Text, Alert } from "react-native";
 import { formatValue, formatCardNumber, formatLicensePlate, formatPhoneNumber } from "../../utils/formatter";
 import { FONT_FAMILY_REGULAR } from "../../styles/typography";
-import { finishWash } from "../../services/requests";
+import { finishWash, deleteWash } from "../../services/requests";
 import moment from "moment";
+import ToastMessage from "./Toast";
 
 if (
   Platform.OS === 'android' &&
@@ -19,6 +20,7 @@ export default function ServiceCard(props) {
   const [authorization, setAuthorization] = useState(props.item.authorization);
   const [finishingWash, setFinishingWash] = useState(false);
   const [washDone, setWashDone] = useState(false);
+  const [menuIsVisible, setMenuIsVisible] = useState(false);
 
   const showAnimation = () => {
     LayoutAnimation.configureNext(
@@ -56,13 +58,59 @@ export default function ServiceCard(props) {
                   label="Data e horário"
                   text={moment(props.item.created).format("DD/MM/YYYY - HH:mm")}
                 />
-                <IconButton
-                  icon="pencil"
-                  color="rgba(0, 0, 0, 0.54)"
-                  size={20}
-                  style={{ position: "absolute", top: 2, right: 7, margin: 0 }}
-                  onPress={() => props.navigation.navigate("EditService", { wash: props.item, refreshWashes: props.refreshWashes })}  
-                />
+
+                <Menu
+                  onDismiss={() => setMenuIsVisible(false)}
+                  visible={menuIsVisible}
+                  anchor={
+                    <IconButton
+                      icon="dots-vertical"
+                      color="rgba(0, 0, 0, 0.54)"
+                      size={22}
+                      onPress={() => setMenuIsVisible(true)}
+                    />
+                  }
+                >
+                  <Menu.Item
+                    onPress={() => {
+                      setMenuIsVisible(false);
+                      props.navigation.navigate("EditService", { wash: props.item, refreshWashes: props.refreshWashes })
+                    }}
+                    icon="pencil"
+                    title="Editar"
+                  />
+                  <Divider />
+                  <Menu.Item
+                    onPress={() => {
+                      setMenuIsVisible(false);
+                      Alert.alert(
+                        "Tem certeza que deseja deletar este serviço?",
+                        "Esta operação não poderá ser desfeita.",
+                        [
+                          {
+                            text: "Cancelar",
+                            style: "cancel"
+                          },
+                          {
+                            text: "Deletar",
+                            onPress: () => {
+                              deleteWash(props.item.id).then(() => {
+                                showAnimation();
+                                setWashDone(true);
+                                setTimeout(() => {
+                                  props.refreshServices(props.item, true);
+                                }, 100);
+                              });
+                            }
+                          }
+                        ]
+                      );
+                      
+                    }}
+                    icon="delete"
+                    title="Deletar"
+                  />
+                </Menu>
               </View>
 
               <Divider style={{ marginVertical: 10 }}/>
@@ -82,10 +130,12 @@ export default function ServiceCard(props) {
               <View style={styles.row}>
                 <InfoText label="Cliente" text={props.item.client.name}/>
 
-                <InfoText
-                  label="Telefone"
-                  text={formatPhoneNumber(props.item.client.phone)}
-                  viewStyle={{ marginHorizontal: 10 }}/>
+                {props.item.client.id !== "9bdebe00-9ea5-11ea-8708-b958832adde9" &&
+                  <InfoText
+                    label="Telefone"
+                    text={props.item.client.phone ? formatPhoneNumber(props.item.client.phone) : "  -"}
+                    viewStyle={{ marginHorizontal: 10 }}/>
+                }
               </View>
 
               <Divider style={{ marginVertical: 10 }}/>

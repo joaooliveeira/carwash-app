@@ -22,6 +22,7 @@ export default function ClientForm(props) {
 
   const createNewClient = async () => {
     if (!loading) {
+      setLoading(true);
       if (clientHasBeenChanged) {
         if (await validateData()) {
           Keyboard.dismiss();
@@ -33,6 +34,8 @@ export default function ClientForm(props) {
             }
             props.goBack();
           }).catch(() => setLoading(false));
+        } else {
+          setLoading(false);
         }
       } else if (props.client.id) {
         Keyboard.dismiss();
@@ -43,7 +46,7 @@ export default function ClientForm(props) {
       validateData();
       setLoading(false);
     }
-    setLoading(true);
+    
 
   };
 
@@ -66,9 +69,9 @@ export default function ClientForm(props) {
   };
 
   const validatePhone = async text => {
-    if (clearNumber(text).length < 11) {
+    if (client.phone != "" && clearNumber(text).length < 11) {
       return "Número de telefone inválido.";
-    } else {
+    } else if (client.phone != "") {
       const clientFromDb = await getClientByPhone(clearNumber(text)).catch(() => setLoading(false))
       if (clientFromDb && clientFromDb.id != props.client.id) {
         return "Número de telefone já cadastrado.";
@@ -125,7 +128,7 @@ export default function ClientForm(props) {
         </HelperText>
 
         <TextInput
-          label="Telefone *"
+          label="Telefone"
           theme={themes.input}
           style={styles.input}
           value={client.phone || ""}

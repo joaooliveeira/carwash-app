@@ -15,7 +15,7 @@ export default function ClientCard(props) {
 
           <InfoText
             label="Telefone"
-            text={formatPhoneNumber(props.client.phone)}
+            text={props.client.phone ? formatPhoneNumber(props.client.phone) : "  -"}
             viewStyle={{ marginLeft: 5 }}
           />
           
