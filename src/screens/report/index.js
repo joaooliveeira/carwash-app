@@ -316,7 +316,7 @@ export const ReportScreen = () => {
         </Card>
         
         <Card style={[styles.card, { paddingTop: 10 }]}>
-          <Card.Title title={`Lucro - ${grossProfit === 0 ? "R$ 0,00" : formatValue(grossProfit.toString())}`} titleStyle={styles.title}/>
+          <Card.Title title={`Renda - ${grossProfit === 0 ? "R$ 0,00" : formatValue(grossProfit.toString())}`} titleStyle={styles.title}/>
 
           <LineChart
             data={lineChart}
@@ -336,7 +336,7 @@ export const ReportScreen = () => {
 
           <Divider style={styles.divider} />
 
-          <Card.Title title={`Lavagens - ${totalWashes}`} titleStyle={styles.title}/>
+          <Card.Title title={`Nº Lavagens - ${totalWashes}`} titleStyle={styles.title}/>
 
           <BarChart
             data={barChart}
@@ -357,7 +357,7 @@ export const ReportScreen = () => {
 
           <Divider style={styles.divider} />
 
-          <Card.Title title="Tipos de lavagem %" titleStyle={styles.title}/>
+          <Card.Title title="Tipos de Lavagem %" titleStyle={styles.title}/>
           <PieChart
             data={pieChart}
             width={Dimensions.get('window').width - 20}

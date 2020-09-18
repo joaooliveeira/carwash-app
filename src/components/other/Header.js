@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text } from "react-native";
-import { Appbar, Badge } from "react-native-paper";
+import { ActivityIndicator, Appbar, Badge } from "react-native-paper";
 import { useSelector } from "react-redux";
 import { FONT_TITLE, FONT_SIZE_SMALL_TEXT } from "../../styles/typography";
 
@@ -44,12 +44,17 @@ export const Header = props => {
       )}
 
       {props.pdf &&
-        <Appbar.Action
-          icon="file-pdf"
-          color='rgba(0, 0, 0, 0.54)'
-          animated={true}
-          onPress={() => props.onPress()}
-        />
+      <>
+        {props.animating 
+          ? <ActivityIndicator animating={true} size={20} color={'rgba(0, 0, 0, 0.54)'} style={{margin: 15}}/>
+          : <Appbar.Action
+              icon="file-pdf"
+              color='rgba(0, 0, 0, 0.54)'
+              animated={true}
+              onPress={() => props.onPress()}
+            />
+        }
+      </>
       }
     </Appbar.Header>
   );

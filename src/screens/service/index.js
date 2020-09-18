@@ -39,8 +39,9 @@ export default function ServiceScree(props) {
   const [client, setClient] = useState({ id: "", name: "", phone: "", email: "" });
   const [clientSuggestions, setClientSuggestions] = useState([]);
   const [register, setRegister] = useState("");
+  const [registerInfo, setRegisterInfo] = useState(false);
 
-  const [car, setCar] = useState({ id: "", model: "", licensePlate: "", cardNumber: "" });
+  const [car, setCar] = useState({ id: "", model: "", licensePlate: "", cardNumber: "", lastDriverRegister: "" });
   const [carSuggestions, setCarSuggestions] = useState([]);
   const [kilometrage, setKilometrage] = useState("");
 
@@ -177,7 +178,7 @@ export default function ServiceScree(props) {
         washType,
         value: clearNumber(value)
       };
-  
+
       await saveWash(wash).then(newWash => {
         refreshRunningWashes();
         clearAllInputs();
@@ -192,7 +193,8 @@ export default function ServiceScree(props) {
     Keyboard.dismiss();
     setClient({ id: "", name: "", phone: "", email: "" });
     setRegister("");
-    setCar({ licensePlate: "", model: "", cardNumber: "" });
+    setCar({ licensePlate: "", model: "", cardNumber: "", lastDriverRegister: "" });
+    setRegisterInfo(false);
     setKilometrage("");
     setWashType("");
     setValue("");
@@ -267,18 +269,6 @@ export default function ServiceScree(props) {
             {dataError.client}
           </HelperText>
 
-          <TextInput
-            label="Matrícula"
-            theme={themes.input}
-            style={styles.input}
-            error={dataError.register}
-            value={register}
-            onChangeText={text => {
-              setRegister(text);
-            }}
-            render={props => <TextInputMask {...props} type={"only-numbers"} />}
-          />
-
           <Divider style={styles.sectionDivider} />
 
           <Card.Title
@@ -303,6 +293,8 @@ export default function ServiceScree(props) {
                     const carFromDb = await getCarByLicensePlate(text);
                     if (carFromDb) {
                       setCar(carFromDb);
+                      setRegister(carFromDb.lastDriverRegister);
+                      setRegisterInfo(true);
                       setCarSuggestions([]);
                       setDataError({
                         ...dataError,
@@ -330,6 +322,8 @@ export default function ServiceScree(props) {
               }}
               selectItem={car => {
                 setCar(car);
+                setRegister(car.lastDriverRegister);
+                setRegisterInfo(true);
                 setDataError({
                   ...dataError,
                   licensePlate: { type: "info", message: "" },
@@ -391,6 +385,29 @@ export default function ServiceScree(props) {
             style={{ marginHorizontal: 25 }}
           >
             Insira pelo menos dois caracteres.
+          </HelperText>
+
+          <TextInput
+            label="Matrícula"
+            theme={themes.input}
+            style={styles.input}
+            error={dataError.register}
+            value={car.lastDriverRegister}
+            onChangeText={text => {
+              setCar({...car, lastDriverRegister: text});
+              setRegisterInfo(false);
+              setRegister(text);
+            }}
+            render={props => <TextInputMask {...props} type={"only-numbers"} />}
+          />
+
+          <HelperText
+            type="info"
+            visible={registerInfo}
+            padding="none"
+            style={{ marginHorizontal: 25 }}
+          >
+            Matrícula utilizada no último serviço deste veículo.
           </HelperText>
 
           <TextInput
@@ -456,6 +473,15 @@ export default function ServiceScree(props) {
             onChangeText={text => setKilometrage(text)}
             render={props => <TextInputMask {...props} type={"only-numbers"} />}
           />
+
+          <HelperText
+            type="error"
+            visible={false}
+            padding="none"
+            style={{ marginHorizontal: 25 }}
+          >
+            Quilometragem inválida.
+          </HelperText>
 
           <Divider style={styles.sectionDivider} />
 

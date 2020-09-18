@@ -39,7 +39,7 @@ if (
 }
 
 export const SheetFilterScreen = props => {
-  const [filterByType, setFilterByType] = useState(true);
+  const [filterByType, setFilterByType] = useState(false);
   const [filterByPeriod, setFilterByPeriod] = useState(true);
   const [startDate, setStartDate] = useState('');
   const [startDatePicker, setStartDatePicker] = useState(false);

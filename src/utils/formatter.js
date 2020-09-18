@@ -1,12 +1,14 @@
-import moment from "moment";
+import moment from 'moment';
+import {MaskService} from 'react-native-masked-text';
 
 export const formatValue = value => {
-  return (
-    "R$ " +
-    value.slice(0, value.length - 2) +
-    "," +
-    value.slice(value.length - 2)
-  );
+  return MaskService.toMask('money', value, {
+    unit: 'R$ ',
+    precision: 2,
+    separator: ',',
+    delimiter: '.',
+    suffixUnit: ' ',
+  });
 };
 
 export const clearNumber = text => {
@@ -21,7 +23,7 @@ export const clearNumber = text => {
 };
 
 export const formatLicensePlate = text => {
-  const response =  text.slice(0, 3) + "-" + text.slice(3);
+  const response = text.slice(0, 3) + '-' + text.slice(3);
   return response.toUpperCase();
 };
 
@@ -38,16 +40,16 @@ export const formatCardNumber = text => {
 };
 
 export const formatPhoneNumber = text => {
-  let textFormated = "(" + text.slice(0, 2) + ") ";
+  let textFormated = '(' + text.slice(0, 2) + ') ';
   if (text.length == 11) {
     textFormated = textFormated + text.slice(2, 7) + '-' + text.slice(7, 12);
   } else {
     textFormated =
-      textFormated + text.slice(2, 6) + "-" + text.slice(6, 11) + "  ";
+      textFormated + text.slice(2, 6) + '-' + text.slice(6, 11) + '  ';
   }
   return textFormated;
 };
 
 export const formatDate = date => {
-  return moment(date).format("DD/MM/YYYY");
+  return moment(date).format('DD/MM/YYYY');
 };

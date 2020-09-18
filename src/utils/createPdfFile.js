@@ -5,13 +5,14 @@ import { requestAppPermition } from "./requestAppPermission";
 import RNFetchBlob from "rn-fetch-blob";
 import moment from "moment";
 import { FONT_SIZE_TEXT } from "../styles/typography";
+import { formatLicensePlate, formatValue } from "./formatter";
 
 export const createPdfFile = async (data, period) => {
   if (await requestAppPermition("WRITE_EXTERNAL_STORAGE")) {
     let options = {
       html: generateHtml(data, period),
-      fileName: `tabela-${moment().format('DD-MM-YY')}`,
-      directory: "lavarapido/"
+      fileName: `lavagens`,
+      directory: "relatorios/"
     };
 
     return await RNHTMLtoPDF.convert(options);
@@ -107,7 +108,7 @@ const generateHtml = (data, period) => {
       `<tr>
         <td class="index">${index + 1}</td>
         <td>${item.car.model}</td>
-        <td>${item.car.licensePlate}</td>
+        <td>${formatLicensePlate(item.car.licensePlate)}</td>
         <td>${item.client.name}</td>
         <td>${item.washType}</td>
         <td>${moment(item.created).format("DD/MM/YY")}</td>
@@ -134,11 +135,4 @@ const getFullValue = list => {
   return formatValue(fullValue.toString());
 };
 
-const formatValue = value => {
-  return (
-    "R$ " +
-    value.slice(0, value.length - 2) +
-    "," +
-    value.slice(value.length - 2)
-  );
-};
+

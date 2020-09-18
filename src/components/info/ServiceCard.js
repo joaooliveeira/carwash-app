@@ -170,7 +170,7 @@ export default function ServiceCard(props) {
                   text={props.item.clientRegister || "  -"}
                   viewStyle={{ flexGrow: 2 }}
                 />
-                <View style={{ flexGrow: 1, marginHorizontal: 10 }}>
+                <View style={{ flexGrow: 1, marginHorizontal: 10, marginTop: 2 }}>
                   <Text
                     style={styles.authorizationTitle}>
                       Autorização

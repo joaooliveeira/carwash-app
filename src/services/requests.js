@@ -64,6 +64,7 @@ export const saveCar = async car => {
     model: car.model.trim(),
     licensePlate: car.licensePlate,
     cardNumber: clearNumber(car.cardNumber),
+    lastDriverRegister: car.lastDriverRegister
   };
 
   return axiosInstance.put("car/save", body)

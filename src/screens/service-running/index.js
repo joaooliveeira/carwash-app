@@ -38,7 +38,7 @@ export default function ServiceInProgress(props) {
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
       <Header
-        title="Serviços em execução"
+        title="Serviços em Execução"
         goBack={() => props.navigation.goBack()}
       />
 
