@@ -8,7 +8,7 @@ export default function ClientRegistration(props) {
   return (
     <View style={{ flex: 1 }}>
       <Header
-        title="Cliente"
+        title="CLIENTE"
         goBack={() => props.navigation.goBack()}
       />
       <ScrollView keyboardShouldPersistTaps="handled">

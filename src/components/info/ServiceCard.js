@@ -24,7 +24,7 @@ export default function ServiceCard(props) {
 
   const showAnimation = () => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(300, 'easeInEaseOut', 'opacity')
+      LayoutAnimation.create(200, 'easeInEaseOut', 'opacity')
     );
   };
 
@@ -205,7 +205,7 @@ export default function ServiceCard(props) {
 const styles = {
   card: {
     marginTop: 6,
-    marginHorizontal: 10,
+    marginHorizontal: 7,
     paddingVertical: 5,
     borderRadius: 5,
     backgroundColor: 'white',

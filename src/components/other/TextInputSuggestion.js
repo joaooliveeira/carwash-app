@@ -24,7 +24,7 @@ export default function TextInputSuggestion(props) {
   
   const showAnimation = () => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(200, "easeInEaseOut", "opacity")
+      LayoutAnimation.create(130, "easeInEaseOut", "scaleY")
     );
   };
 
@@ -85,7 +85,7 @@ const styles = {
     position: "absolute",
     left: 0,
     right: 0,
-    zIndex: 1,
+    zIndex: 1
   },
   listStyle: {
     marginHorizontal: 25,

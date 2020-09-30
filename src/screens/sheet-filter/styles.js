@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     flex: 1
   },
   card: {
-    margin: 10,
+    margin: 7,
     borderRadius: 8
   },
   divider: {

@@ -30,7 +30,7 @@ const washTypesData = [
   { label: "Ducha", value: '2000' },
   { label: "Simples", value: '4000' },
   { label: "Completa", value: "6000" },
-  { label: "Enceramento", value: "7000" },
+  { label: "Enceramento", value: "6000" },
   { label: "Polimento", value: "150,00" },
   { label: "Higienização", value: "200,00" }
 ];
@@ -74,7 +74,7 @@ export default function ServiceScree(props) {
       }
       setClientSuggestions(clientSuggestions);
     } else {
-      setClientSuggestions([])
+      setClientSuggestions([]);
     }
   };
 
@@ -294,7 +294,7 @@ export default function ServiceScree(props) {
                     if (carFromDb) {
                       setCar(carFromDb);
                       setRegister(carFromDb.lastDriverRegister);
-                      setRegisterInfo(true);
+                      setRegisterInfo(carFromDb.lastDriverRegister ? true : false);
                       setCarSuggestions([]);
                       setDataError({
                         ...dataError,
@@ -323,7 +323,7 @@ export default function ServiceScree(props) {
               selectItem={car => {
                 setCar(car);
                 setRegister(car.lastDriverRegister);
-                setRegisterInfo(true);
+                setRegisterInfo(car.lastDriverRegister ? true : false);
                 setDataError({
                   ...dataError,
                   licensePlate: { type: "info", message: "" },

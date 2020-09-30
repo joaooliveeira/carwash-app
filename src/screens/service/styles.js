@@ -3,7 +3,7 @@ import { FONT_FAMILY_REGULAR } from '../../styles/typography';
 
 export const styles = StyleSheet.create({
   card: {
-    margin: 10,
+    margin: 7,
     borderRadius: 8
   },
   divider: {

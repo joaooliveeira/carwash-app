@@ -7,7 +7,7 @@ export default function CarRegistration(props) {
   return (
     <View style={{ flex: 1 }}>
       <Header
-        title="Veículo"
+        title="VEÍCULO"
         goBack={() => props.navigation.goBack()}
       />
       <ScrollView keyboardShouldPersistTaps="handled">

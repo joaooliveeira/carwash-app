@@ -381,7 +381,7 @@ export const ReportScreen = () => {
 
 const styles = {
   card: {
-    margin: 10,
+    margin: 7,
     borderRadius: 8
   },
   title : [

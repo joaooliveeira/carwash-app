@@ -25,17 +25,17 @@ export const Header = props => {
             <View
               style={{
                 position: "absolute",
-                top: 12,
-                right: 6,
-                height: 13,
-                width: 13,
-                borderRadius: 6.5,
+                top: 8,
+                right: 3,
+                height: 18,
+                width: 18,
+                borderRadius: 9,
                 backgroundColor: "#ff1744",
                 justifyContent: "center",
                 alignItems: "center"
               }}
             >
-              <Text style={{ fontSize: 7, color: "white" }}>
+              <Text style={{ fontSize: 11, color: "white", fontWeight: 'bold' }}>
                {runningWashes.length}
               </Text>
             </View>

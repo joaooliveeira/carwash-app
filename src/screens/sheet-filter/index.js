@@ -58,7 +58,7 @@ export const SheetFilterScreen = props => {
 
   const showAnimation = hidden => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(200, "easeInEaseOut", "opacity")
+      LayoutAnimation.create(130, "easeInEaseOut", "scaleY")
     );
     setHideSuggestions(hidden);
   };
@@ -314,7 +314,7 @@ export const SheetFilterScreen = props => {
           </HelperText>
 
           <Card.Title
-            title="Período *"
+            title="Período"
             titleStyle={FONT_SUBTITLE}
           />
 

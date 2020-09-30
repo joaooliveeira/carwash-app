@@ -51,7 +51,7 @@ export default function SheetScreen(props) {
   return (
     <View style={{ flex: 1 }}>
       <Header
-        title={`Relatório`}
+        title={`RELATÓRIO`}
         goBack={() => props.navigation.goBack()}
         pdf={true}
         animating={animating}
@@ -64,7 +64,7 @@ export default function SheetScreen(props) {
         <List.Item
           title={`${moment(period.startDate).format('DD/MM/YY')} até ${moment(period.endDate).format("DD/MM/YY")}`}
           style={{marginTop: -15, marginBottom: -20}}
-          titleStyle={[{marginLeft: 0}, FONT_SUBTITLE]}
+          titleStyle={[{marginLeft: 0}, FONT_TEXT]}
           left={() => <List.Icon style={{marginRight: 0}} color={'rgba(0, 0, 0, 0.54)'} icon="calendar-search" />}
         />
 
@@ -78,14 +78,14 @@ export default function SheetScreen(props) {
         <List.Item
           title={`${data.length}`}
           style={{marginTop: -10, marginBottom: -20}}
-          titleStyle={[{marginLeft: 0}, FONT_SUBTITLE]}
+          titleStyle={[{marginLeft: 0}, FONT_TEXT]}
           left={() => <List.Icon style={{marginRight: 0}} color={'rgba(0, 0, 0, 0.54)'} icon="car-wash" />}
         />
         
         <List.Item
           title={`${getFullValue(data)}`}
           style={{marginTop: -10}}
-          titleStyle={[{marginLeft: 0}, FONT_SUBTITLE]}
+          titleStyle={[{marginLeft: 0}, FONT_TEXT]}
           left={() => <List.Icon style={{marginRight: 0}} size={17} color={'rgba(0, 0, 0, 0.54)'} icon="cash-register" />}
         />
 
@@ -99,7 +99,7 @@ export default function SheetScreen(props) {
 const styles = {
   card: {
     flex: 1,
-    margin: 5,
+    margin: 7,
     borderRadius: 8,
   },
   title : [

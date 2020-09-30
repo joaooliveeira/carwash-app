@@ -57,7 +57,7 @@ const styles = {
   card: {
     flex: 1,
     marginTop: 6,
-    marginHorizontal: 10,
+    marginHorizontal: 7,
     borderRadius: 5,
   },
 };
