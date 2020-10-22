@@ -24,7 +24,7 @@ export default function TextInputSuggestion(props) {
   
   const showAnimation = () => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(130, "easeInEaseOut", "scaleY")
+      LayoutAnimation.create(200, "easeInEaseOut", "scaleY")
     );
   };
 

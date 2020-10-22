@@ -58,7 +58,7 @@ export const SheetFilterScreen = props => {
 
   const showAnimation = hidden => {
     LayoutAnimation.configureNext(
-      LayoutAnimation.create(130, "easeInEaseOut", "scaleY")
+      LayoutAnimation.create(200, "easeInEaseOut", "scaleY")
     );
     setHideSuggestions(hidden);
   };
@@ -98,6 +98,7 @@ export const SheetFilterScreen = props => {
       if (newSuggestions.length === 0) {
         newSuggestions.push("NOT_FOUND");
       }
+      console.log('newSuggestions: ', newSuggestions);
       setSuggestions(newSuggestions);
     } else {
       setSuggestions([]);
