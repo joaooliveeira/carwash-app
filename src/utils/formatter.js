@@ -23,8 +23,12 @@ export const clearNumber = text => {
 };
 
 export const formatLicensePlate = text => {
-  const response = text.slice(0, 3) + '-' + text.slice(3);
-  return response.toUpperCase();
+  if (text) {
+    const response = text.slice(0, 3) + '-' + text.slice(3);
+    return response.toUpperCase();
+  } else {
+    return "  -  "
+  }
 };
 
 export const formatCardNumber = text => {

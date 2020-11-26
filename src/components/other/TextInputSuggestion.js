@@ -23,9 +23,9 @@ export default function TextInputSuggestion(props) {
   const [hideResults, setHideResults] = useState(true);
   
   const showAnimation = () => {
-    LayoutAnimation.configureNext(
-      LayoutAnimation.create(200, "easeInEaseOut", "scaleY")
-    );
+    // LayoutAnimation.configureNext(
+    //   LayoutAnimation.create(200, "easeInEaseOut", "scaleY")
+    // );
   };
 
   const renderSuggestion = item => {
@@ -64,7 +64,7 @@ export default function TextInputSuggestion(props) {
       hideResults={hideResults}
       containerStyle={hideResults ? [styles.containerStyle, { position: "relative", zIndex: 0 }] : styles.containerStyle}
       inputContainerStyle={styles.inputContainerStyle}
-      listStyle={[styles.listStyle, { height: props.data && props.data.length < 5 ? props.data.length * 63.25 : 316.25 }]}
+      listStyle={[styles.listStyle, { height: props.data && props.data.length >= 4 ? 244 : props.data.length * 61.5 }]}
       keyboardShouldPersistTaps="always"
       flatListProps={{nestedScrollEnabled: true}}
       renderItem={({ item, i }) => renderSuggestion(item)}
@@ -106,7 +106,8 @@ const styles = {
   item: {
     flexDirection: "row",
     justifyContent: 'space-between',
-    marginVertical: 4,
+    marginVertical: 3,
     marginHorizontal: 10,
+    heigth: 55
   }
 };

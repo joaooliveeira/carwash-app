@@ -57,9 +57,9 @@ export const SheetFilterScreen = props => {
   const [error, setError] = useState(false);
 
   const showAnimation = hidden => {
-    LayoutAnimation.configureNext(
-      LayoutAnimation.create(200, "easeInEaseOut", "scaleY")
-    );
+    // LayoutAnimation.configureNext(
+    //   LayoutAnimation.create(250, "easeInEaseOut", "opacity")
+    // );
     setHideSuggestions(hidden);
   };
 
@@ -184,7 +184,7 @@ export const SheetFilterScreen = props => {
         <>
           <TouchableOpacity
             onPress={() => {
-              setSuggestionParam(name || licensePlate);
+              setSuggestionParam(name || licensePlate || model);
               setFilterTypeId(id);
               setSuggestions([]);
             }}
@@ -192,7 +192,7 @@ export const SheetFilterScreen = props => {
           >
             <InfoText
               label={filterType == "car" ? "Placa" : "Nome"}
-              text={licensePlate ? formatLicensePlate(licensePlate) : name}
+              text={name ? name : formatLicensePlate(licensePlate)}
             />
 
             <InfoText
@@ -285,7 +285,8 @@ export const SheetFilterScreen = props => {
             data={suggestionParam.length > 1 ? suggestions : []}
             hideResults={hideSuggestions}
             inputContainerStyle={styles.input}
-            listStyle={styles.listStyle}
+            flatListProps={{ nestedScrollEnabled: true }}
+            listStyle={styles.listStyle(suggestions.length)}
             keyboardShouldPersistTaps="handled"
             renderItem={({ item, i }) => renderSuggestion(item)}
             renderTextInput={() => (

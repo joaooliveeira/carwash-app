@@ -168,9 +168,9 @@ export default function ServiceCard(props) {
                 <InfoText
                   label="Matrícula"
                   text={props.item.clientRegister || "  -"}
-                  viewStyle={{ flexGrow: 2 }}
+                  viewStyle={{width: "50%"}}
                 />
-                <View style={{ flexGrow: 1, marginHorizontal: 10, marginTop: 2 }}>
+                <View style={{width: "50%"}}>
                   <Text
                     style={styles.authorizationTitle}>
                       Autorização
@@ -194,7 +194,7 @@ export default function ServiceCard(props) {
               loading={finishingWash}
               onPress={async () => finish()}
               label="RECEBER"
-              style={{ flexGrow: 1, marginTop: 10 }}
+              style={{ flexGrow: 1, height: 55 }}
             />
         </View>
       )}
@@ -206,7 +206,7 @@ const styles = {
   card: {
     marginTop: 6,
     marginHorizontal: 7,
-    paddingVertical: 5,
+    paddingTop: 5,
     borderRadius: 5,
     backgroundColor: 'white',
   },
@@ -227,7 +227,6 @@ const styles = {
     textAlign: "left",
     marginTop: 3,
     height: 21,
-    marginLeft: 50
   },
   authorizationInput: {
     flex: 1,
@@ -239,7 +238,6 @@ const styles = {
     padding: 0,
     paddingLeft: 5,
     marginTop: 0,
-    marginLeft: 52
   },
   saveButton: {
     position: "absolute",

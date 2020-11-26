@@ -2,26 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8f654ae9-1215-4c85-8e21-e1f1faa425c9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/assets/index.android.bundle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.env.production" beforeDir="false" afterPath="$PROJECT_DIR$/../.env.production" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/components/info/ServiceCard.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/components/info/ServiceCard.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/components/other/ButtonCustom.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/components/other/ButtonCustom.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/components/other/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/components/other/Header.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/components/other/TextInputSuggestion.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/components/other/TextInputSuggestion.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/navigations/AppStackNavigator.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/navigations/AppStackNavigator.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/screens/report/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/screens/report/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/screens/service-running/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/screens/service-running/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/screens/service/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/screens/service/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/screens/sheet-filter/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/screens/sheet-filter/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/screens/sheet-filter/styles.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/screens/sheet-filter/styles.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/services/requests.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/services/requests.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../src/styles/typography.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/styles/typography.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/utils/createPdfFile.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/utils/createPdfFile.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../src/utils/formatter.js" beforeDir="false" afterPath="$PROJECT_DIR$/../src/utils/formatter.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="2.7_QVGA_API_24" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -49,6 +48,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectId" id="1cjOVtgQ9uCiJPfajzvzVZ3Fh67" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -61,7 +61,7 @@
     <property name="ExportApk.SignV2" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/carwash.keystore" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">

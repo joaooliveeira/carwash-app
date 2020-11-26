@@ -13,6 +13,7 @@ export const FONT_SIZE_TITLE = scaleFont(20);
 export const FONT_SIZE_TEXT = scaleFont(17);
 export const FONT_SIZE_SUBTITLE = scaleFont(18);
 export const FONT_SIZE_SMALL_TEXT = scaleFont(15);
+export const FONT_SIZE_BADGE_NUMBER = scaleFont(11);
 
 // LINE HEIGHT
 export const LINE_HEIGHT_24 = scaleFont(24);

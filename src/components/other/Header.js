@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text } from "react-native";
 import { ActivityIndicator, Appbar, Badge } from "react-native-paper";
 import { useSelector } from "react-redux";
-import { FONT_TITLE, FONT_SIZE_SMALL_TEXT } from "../../styles/typography";
+import { FONT_TITLE, FONT_SIZE_SMALL_TEXT, FONT_SIZE_BADGE_NUMBER } from "../../styles/typography";
 
 export const Header = props => {
   const runningWashes = useSelector(state => state.runningWashes.washes);
@@ -35,7 +35,7 @@ export const Header = props => {
                 alignItems: "center"
               }}
             >
-              <Text style={{ fontSize: 11, color: "white", fontWeight: 'bold' }}>
+              <Text style={{ fontSize: FONT_SIZE_BADGE_NUMBER, color: "white", fontWeight: 'bold' }}>
                {runningWashes.length}
               </Text>
             </View>

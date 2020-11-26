@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, RefreshControl, Text } from "react-native";
 import { Header } from "../../components/other/Header";
 import { FlatList } from "react-native-gesture-handler";
@@ -9,6 +9,7 @@ import { setRunningWashes } from "../../redux/actions/runningWashesActions";
 import { refreshRunningWashes } from "../../services/requests";
 import { FONT_BOLD } from "../../styles/typography";
 import ToastMessage from "../../components/info/Toast";
+import moment from 'moment';
 
 export default function ServiceInProgress(props) {
   const runningWashes = useSelector(state => state.runningWashes.washes);

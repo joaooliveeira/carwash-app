@@ -6,6 +6,10 @@ import {
   Keyboard,
   SafeAreaView,
   Alert,
+  Text,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from "react-native";
 import {
   TextInput,
@@ -13,6 +17,7 @@ import {
   IconButton,
   Divider,
   HelperText,
+  Checkbox,
 } from "react-native-paper";
 import { styles } from "./styles";
 import { Colors } from "../../styles";
@@ -35,6 +40,13 @@ const washTypesData = [
   { label: "Higienização", value: "200,00" }
 ];
 
+if (
+  Platform.OS === "android" &&
+  UIManager.setLayoutAnimationEnabledExperimental
+) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
+
 export default function ServiceScree(props) {
   const [client, setClient] = useState({ id: "", name: "", phone: "", email: "" });
   const [clientSuggestions, setClientSuggestions] = useState([]);
@@ -44,6 +56,8 @@ export default function ServiceScree(props) {
   const [car, setCar] = useState({ id: "", model: "", licensePlate: "", cardNumber: "", lastDriverRegister: "" });
   const [carSuggestions, setCarSuggestions] = useState([]);
   const [kilometrage, setKilometrage] = useState("");
+
+  const [withoutLicensePlate, setWithoutLicensePlate] = useState(false);
 
   const [washType, setWashType] = useState("");
   const [washTypesDialog, setWashTypesDialog] = useState(false);
@@ -141,7 +155,7 @@ export default function ServiceScree(props) {
   };
 
   const validateLicensePlate = () => {
-    return car.licensePlate.length == 7
+    return withoutLicensePlate || car.licensePlate.length == 7
       ? false
       : { type: 'error', message: 'Placa inválida.' };
   };
@@ -194,6 +208,7 @@ export default function ServiceScree(props) {
     setClient({ id: "", name: "", phone: "", email: "" });
     setRegister("");
     setCar({ licensePlate: "", model: "", cardNumber: "", lastDriverRegister: "" });
+    setWithoutLicensePlate(false);
     setRegisterInfo(false);
     setKilometrage("");
     setWashType("");
@@ -214,6 +229,12 @@ export default function ServiceScree(props) {
   const onFinishRegisteringTheClient = (newClient, message) => {
     ToastMessage.success(message);
     setClient(newClient);
+  };
+
+  const showAnimation = hidden => {
+    LayoutAnimation.configureNext(
+      LayoutAnimation.create(120, "easeInEaseOut", "scaleY")
+    );
   };
 
   return (
@@ -276,72 +297,106 @@ export default function ServiceScree(props) {
             titleStyle={[FONT_SUBTITLE]}
           />
 
-          <View style={{ height: 64 }}>
-            <TextInputSuggestion
-              type="car"
-              data={car.licensePlate.length > 1 ? carSuggestions : []}
-              label="Placa *"
-              value={car.licensePlate}
-              theme={themes.input}
-              style={styles.input}
-              autoCapitalize="characters"
-              error={dataError.licensePlate.type == 'error'}
-              onChangeText={async text => {
-                if (text !== " ") {
-                  setCar({ ...car, licensePlate: text });
-                  if (text.length == 7) {
-                    const carFromDb = await getCarByLicensePlate(text);
-                    if (carFromDb) {
-                      setCar(carFromDb);
-                      setRegister(carFromDb.lastDriverRegister);
-                      setRegisterInfo(carFromDb.lastDriverRegister ? true : false);
-                      setCarSuggestions([]);
-                      setDataError({
-                        ...dataError,
-                        licensePlate: { type: "info", message: "Veículo já cadastrado." }
-                      });
-                    } else if (dataError.licensePlate.type == 'error') {
-                      setDataError({
-                        ...dataError,
-                        licensePlate: { type: "", message: "" }
-                      });
-                    }
-                  } else if (text.length > 7) {
-                    setDataError({
-                      ...dataError,
-                      licensePlate: { type: "error", message: "Placa inválida." }
-                    });
-                  } else if (text.length < 7) {
-                    setDataError({
-                      ...dataError,
-                      licensePlate: { type: "", message: "" }
-                    });
-                    getCarSuggestions(text);
-                  }
-                }
-              }}
-              selectItem={car => {
-                setCar(car);
-                setRegister(car.lastDriverRegister);
-                setRegisterInfo(car.lastDriverRegister ? true : false);
+          <View style={{ flexDirection: "row", marginTop: 8, marginLeft: 18, alignItems: "center" }}>
+            <Checkbox
+              status={withoutLicensePlate ? 'checked' : 'unchecked'}
+              color={Colors.PRIMARY}
+              onPress={() => {
+                showAnimation();
+                setCar({ ...car, licensePlate: "" });
+                setWithoutLicensePlate(!withoutLicensePlate);
                 setDataError({
                   ...dataError,
-                  licensePlate: { type: "info", message: "" },
-                  model: false
+                  licensePlate: false,
                 });
-                setCarSuggestions([]);
               }}
             />
+            <TouchableOpacity onPress={() => {
+              showAnimation();
+              setCar({ ...car, licensePlate: "" });
+              setWithoutLicensePlate(!withoutLicensePlate);
+              setDataError({
+                ...dataError,
+                licensePlate: false,
+              });
+            }}>
+              <Text style={[FONT_SUBTITLE, { textAlignVertical: "center" }]}>
+                Sem placa
+              </Text>
+            </TouchableOpacity>
           </View>
 
-          <HelperText
-            type={dataError.licensePlate.type}
-            visible={dataError.licensePlate.message}
-            padding="none"
-            style={{ marginHorizontal: 25 }}
-          >
-            {dataError.licensePlate.message}
-          </HelperText>
+          {!withoutLicensePlate ?
+            <>
+              <View style={{ height: 64 }}>
+                <TextInputSuggestion
+                  type="car"
+                  editable={!withoutLicensePlate}
+                  disabled={withoutLicensePlate}
+                  data={car.licensePlate.length > 1 ? carSuggestions : []}
+                  label="Placa *"
+                  value={car.licensePlate}
+                  theme={themes.input}
+                  style={styles.input}
+                  autoCapitalize="characters"
+                  error={dataError.licensePlate.type == 'error'}
+                  onChangeText={async text => {
+                    if (text !== " ") {
+                      setCar({ ...car, licensePlate: text });
+                      if (text.length == 7) {
+                        const carFromDb = await getCarByLicensePlate(text);
+                        if (carFromDb) {
+                          setCar(carFromDb);
+                          setRegister(carFromDb.lastDriverRegister);
+                          setRegisterInfo(carFromDb.lastDriverRegister ? true : false);
+                          setCarSuggestions([]);
+                          setDataError({
+                            ...dataError,
+                            licensePlate: { type: "info", message: "Veículo já cadastrado." }
+                          });
+                        } else if (dataError.licensePlate.type == 'error') {
+                          setDataError({
+                            ...dataError,
+                            licensePlate: { type: "", message: "" }
+                          });
+                        }
+                      } else if (text.length > 7) {
+                        setDataError({
+                          ...dataError,
+                          licensePlate: { type: "error", message: "Placa inválida." }
+                        });
+                      } else if (text.length < 7) {
+                        setDataError({
+                          ...dataError,
+                          licensePlate: { type: "", message: "" }
+                        });
+                        getCarSuggestions(text);
+                      }
+                    }
+                  }}
+                  selectItem={car => {
+                    setCar(car);
+                    setRegister(car.lastDriverRegister);
+                    setRegisterInfo(car.lastDriverRegister ? true : false);
+                    setDataError({
+                      ...dataError,
+                      licensePlate: { type: "info", message: "" },
+                      model: false
+                    });
+                    setCarSuggestions([]);
+                  }}
+                />
+              </View>
+
+              <HelperText
+                type={dataError.licensePlate.type}
+                visible={dataError.licensePlate.message}
+                padding="none"
+                style={{ marginHorizontal: 25 }}
+              >
+                {dataError.licensePlate.message}
+              </HelperText>
+            </> : null}
 
           <TextInput
             label="Modelo *"

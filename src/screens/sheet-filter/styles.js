@@ -59,19 +59,23 @@ export const styles = StyleSheet.create({
   filterContainer: {
     overflow: 'hidden',
   },
-  listStyle: {
-    marginHorizontal: 25,
-    borderBottomLeftRadius: 5,
-    borderBottomRightRadius: 5,
-    elevation: 4,
-    borderWidth: 0,
-    bottom: 2.5
+  listStyle: (length) => {
+    console.log(length)
+    return {
+      marginHorizontal: 25,
+      borderBottomLeftRadius: 5,
+      borderBottomRightRadius: 5,
+      elevation: 4,
+      borderWidth: 0,
+      bottom: 2.5,
+      height: length >= 4 ? 245 : length * 61.3,
+    }
   },
   inputContainerStyle: {
     borderWidth: 0,
   },
   notFoundText: {
-    height: 40,
+    height: 55,
     textAlignVertical: 'center',
     marginLeft: 10,
   },
@@ -79,6 +83,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: 'space-between',
     marginVertical: 3,
-    marginHorizontal: 15
+    marginHorizontal: 15,
+    height: 55
   }
 });

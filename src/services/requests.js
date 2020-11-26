@@ -5,7 +5,7 @@ import { clearNumber } from "../utils/formatter";
 import ToastMessage from "../components/info/Toast";
 import { store } from "../navigations/AppStackNavigator";
 import { setRunningWashes } from "../redux/actions/runningWashesActions";
-import moment from "moment";
+import moment, { isMoment } from "moment";
 
 const axiosInstance = axios.create({
     baseURL: API_URL,
@@ -143,11 +143,19 @@ export const deleteWash = async id => {
 
 export const refreshRunningWashes = () => {
   return new Promise(function(resolve, reject) {
-    getRunningWashes().then(washes => {
+    getRunningWashes().then(async washes => {
         washes.sort(function(a, b) {
-          var dateA = moment(a.created).format("DD/MM/YYYY"), dateB = moment(b.created).format("DD/MM/YYYY");
-          return dateA < dateB ? -1 : dateA > dateB ? 1 : 0
+          if (moment(a.created).isAfter(moment(b.created))) {
+            return -1 
+          }
+
+          if (moment(a.created).isBefore(moment(b.created))) {
+            return 1
+          }
+
+          return 0;
         });
+
         store.dispatch(setRunningWashes(washes))
       resolve(true);
     }).catch(error => reject(error));
