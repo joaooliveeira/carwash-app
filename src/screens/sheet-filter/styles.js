@@ -60,7 +60,6 @@ export const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   listStyle: (length) => {
-    console.log(length)
     return {
       marginHorizontal: 25,
       borderBottomLeftRadius: 5,

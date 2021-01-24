@@ -140,7 +140,6 @@ export const ReportScreen = () => {
       let numberOfEachTypeOfWashing = pieChart;
       numberOfEachTypeOfWashing = pieChart.map(item => {return { ...item, population: 0 }});
 
-
       data.forEach(item => {
         totalProfit += item.value;
         washesPerDayOfTheWeek.datasets[0].data[moment(item.created).isoWeekday() - 1]++;
@@ -153,7 +152,8 @@ export const ReportScreen = () => {
             lineChart.datasets[0].data[moment(item.created).date() - 1] += item.value / 100;
             break;
           case 'last_six_months':
-            lineChart.datasets[0].data[(6 - Math.abs(moment(item.created).get('month') - moment().format("M")))] += item.value / 100;
+            let teste = 6 - Math.abs(moment(item.created).get('month') - moment().format("M"));
+            lineChart.datasets[0].data[Math.abs(6 - Math.abs(moment(item.created).get('month') - moment().format("M")))] += item.value / 100;
             break;
           case  'last_year':
             let index = 12 + (moment(item.created).get('month') - moment().format("M"));

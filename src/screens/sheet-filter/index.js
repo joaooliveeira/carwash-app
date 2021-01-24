@@ -98,7 +98,6 @@ export const SheetFilterScreen = props => {
       if (newSuggestions.length === 0) {
         newSuggestions.push("NOT_FOUND");
       }
-      console.log('newSuggestions: ', newSuggestions);
       setSuggestions(newSuggestions);
     } else {
       setSuggestions([]);
